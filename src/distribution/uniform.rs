@@ -89,6 +89,7 @@ impl ContinuousCDF<f64, f64> for Uniform {
     /// ```ignore
     /// (max - x) / (max - min)
     /// ```
+    #[allow(clippy::if_same_then_else)]
     fn sf(&self, x: f64) -> f64 {
         if x <= self.min {
             1.0
