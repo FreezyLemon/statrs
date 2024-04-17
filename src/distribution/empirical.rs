@@ -165,7 +165,7 @@ impl Max<f64> for Empirical {
 /// Panics if number of samples is zero
 impl Min<f64> for Empirical {
     fn min(&self) -> f64 {
-        self.data.iter().map(|(key, _)| key.0).next().unwrap()
+        self.data.keys().map(|key| key.0).next().unwrap()
     }
 }
 
