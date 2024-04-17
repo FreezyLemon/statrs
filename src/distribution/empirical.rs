@@ -6,17 +6,12 @@ use core::cmp::Ordering;
 use rand::Rng;
 use std::collections::BTreeMap;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
 struct NonNAN<T>(T);
 
 impl<T: PartialEq> Eq for NonNAN<T> {}
 
-impl<T: PartialOrd> PartialOrd for NonNAN<T> {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        self.0.partial_cmp(&other.0)
-    }
-}
-
+#[allow(clippy::derive_ord_xor_partial_ord)]
 impl<T: PartialOrd> Ord for NonNAN<T> {
     fn cmp(&self, other: &Self) -> Ordering {
         self.partial_cmp(other).unwrap()
