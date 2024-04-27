@@ -1,7 +1,7 @@
 //! Provides functions related to factorial calculations (e.g. binomial
 //! coefficient, factorial, multinomial)
 
-use crate::error::StatsError;
+use crate::error::{ArgName, StatsError};
 use crate::function::gamma;
 use crate::Result;
 
@@ -82,7 +82,7 @@ pub fn checked_multinomial(n: u64, ni: &[u64]) -> Result<f64> {
         (acc.0 + x, acc.1 - ln_factorial(x))
     });
     if sum != n {
-        Err(StatsError::ContainerExpectedSumVar("ni", "n"))
+        Err(StatsError::ContainerExpectedSumVar(ArgName::ni, ArgName::n))
     } else {
         Ok((0.5 + ret.exp()).floor())
     }

@@ -2,6 +2,7 @@
 //! related functions
 
 use crate::consts;
+use crate::error::ArgName;
 use crate::error::StatsError;
 use crate::is_zero;
 use crate::prec;
@@ -168,10 +169,10 @@ pub fn checked_gamma_ur(a: f64, x: f64) -> Result<f64> {
         return Ok(f64::NAN);
     }
     if a <= 0.0 || a == f64::INFINITY {
-        return Err(StatsError::ArgIntervalExcl("a", 0.0, f64::INFINITY));
+        return Err(StatsError::ArgIntervalExcl(ArgName::a, 0.0, f64::INFINITY));
     }
     if x <= 0.0 || x == f64::INFINITY {
-        return Err(StatsError::ArgIntervalExcl("x", 0.0, f64::INFINITY));
+        return Err(StatsError::ArgIntervalExcl(ArgName::x, 0.0, f64::INFINITY));
     }
 
     let eps = 0.000000000000001;
@@ -262,10 +263,10 @@ pub fn checked_gamma_lr(a: f64, x: f64) -> Result<f64> {
         return Ok(f64::NAN);
     }
     if a <= 0.0 || a == f64::INFINITY {
-        return Err(StatsError::ArgIntervalExcl("a", 0.0, f64::INFINITY));
+        return Err(StatsError::ArgIntervalExcl(ArgName::a, 0.0, f64::INFINITY));
     }
     if x <= 0.0 || x == f64::INFINITY {
-        return Err(StatsError::ArgIntervalExcl("x", 0.0, f64::INFINITY));
+        return Err(StatsError::ArgIntervalExcl(ArgName::x, 0.0, f64::INFINITY));
     }
 
     let eps = 0.000000000000001;

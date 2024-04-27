@@ -7,43 +7,43 @@ pub enum StatsError {
     /// Generic bad input parameter error
     BadParams,
     /// An argument should have been positive and was not
-    ArgMustBePositive(&'static str),
+    ArgMustBePositive(ArgName),
     /// An argument should have been non-negative and was not
-    ArgNotNegative(&'static str),
+    ArgNotNegative(ArgName),
     /// An argument should have fallen between an inclusive range but didn't
-    ArgIntervalIncl(&'static str, f64, f64),
+    ArgIntervalIncl(ArgName, f64, f64),
     /// An argument should have fallen between an exclusive range but didn't
-    ArgIntervalExcl(&'static str, f64, f64),
+    ArgIntervalExcl(ArgName, f64, f64),
     /// An argument should have fallen in a range excluding the min but didn't
-    ArgIntervalExclMin(&'static str, f64, f64),
+    ArgIntervalExclMin(ArgName, f64, f64),
     /// An argument should have falled in a range excluding the max but didn't
-    ArgIntervalExclMax(&'static str, f64, f64),
+    ArgIntervalExclMax(ArgName, f64, f64),
     /// An argument must have been greater than a value but wasn't
-    ArgGt(&'static str, f64),
+    ArgGt(ArgName, f64),
     /// An argument must have been greater than another argument but wasn't
-    ArgGtArg(&'static str, &'static str),
+    ArgGtArg(ArgName, ArgName),
     /// An argument must have been greater than or equal to a value but wasn't
-    ArgGte(&'static str, f64),
+    ArgGte(ArgName, f64),
     /// An argument must have been greater than or equal to another argument
     /// but wasn't
-    ArgGteArg(&'static str, &'static str),
+    ArgGteArg(ArgName, ArgName),
     /// An argument must have been less than a value but wasn't
-    ArgLt(&'static str, f64),
+    ArgLt(ArgName, f64),
     /// An argument must have been less than another argument but wasn't
-    ArgLtArg(&'static str, &'static str),
+    ArgLtArg(ArgName, ArgName),
     /// An argument must have been less than or equal to a value but wasn't
-    ArgLte(&'static str, f64),
+    ArgLte(ArgName, f64),
     /// An argument must have been less than or equal to another argument but
     /// wasn't
-    ArgLteArg(&'static str, &'static str),
+    ArgLteArg(ArgName, ArgName),
     /// Containers of the same length were expected
     ContainersMustBeSameLength,
     /// Computation failed to converge,
     ComputationFailedToConverge,
     /// Elements in a container were expected to sum to a value but didn't
-    ContainerExpectedSum(&'static str, f64),
+    ContainerExpectedSum(ArgName, f64),
     /// Elements in a container were expected to sum to a variable but didn't
-    ContainerExpectedSumVar(&'static str, &'static str),
+    ContainerExpectedSumVar(ArgName, ArgName),
     /// Special case exception
     SpecialCase(&'static str),
 }
@@ -54,9 +54,41 @@ impl Error for StatsError {
     }
 }
 
+/// Enumeration of possible argument names that could be referenced by [`StatsError`].
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
+#[allow(non_camel_case_types)]
+pub enum ArgName {
+    /// a
+    a,
+    /// b
+    b,
+    /// x
+    x,
+    /// p
+    p,
+    /// nᵢ
+    ni,
+    /// n
+    n,
+}
+
+impl fmt::Display for ArgName {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            ArgName::a => write!(f, "a"),
+            ArgName::b => write!(f, "b"),
+            ArgName::x => write!(f, "x"),
+            ArgName::p => write!(f, "p"),
+            ArgName::ni => write!(f, "nᵢ"),
+            ArgName::n => write!(f, "n"),
+        }
+    }
+}
+
 impl fmt::Display for StatsError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
+        match self {
             StatsError::BadParams => write!(f, "Bad distribution parameters"),
             StatsError::ArgMustBePositive(s) => write!(f, "Argument {} must be positive", s),
             StatsError::ArgNotNegative(s) => write!(f, "Argument {} must be non-negative", s),
