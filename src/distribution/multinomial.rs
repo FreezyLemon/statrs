@@ -1,7 +1,6 @@
 use crate::distribution::Discrete;
 use crate::function::factorial;
 use crate::statistics::*;
-use crate::{Result, StatsError};
 use ::nalgebra::{DMatrix, DVector};
 use rand::Rng;
 

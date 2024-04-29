@@ -1,7 +1,6 @@
 use crate::distribution::{Discrete, DiscreteCDF};
 use crate::function::factorial;
 use crate::statistics::*;
-use crate::{Result, StatsError};
 use rand::Rng;
 use std::cmp;
 use std::f64;

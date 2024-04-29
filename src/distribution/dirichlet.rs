@@ -1,7 +1,7 @@
 use crate::distribution::Continuous;
 use crate::function::gamma;
 use crate::statistics::*;
-use crate::{prec, Result, StatsError};
+use crate::prec;
 use nalgebra::DMatrix;
 use nalgebra::DVector;
 use nalgebra::{

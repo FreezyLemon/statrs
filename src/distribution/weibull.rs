@@ -2,7 +2,7 @@ use crate::distribution::{Continuous, ContinuousCDF};
 use crate::function::gamma;
 use crate::is_zero;
 use crate::statistics::*;
-use crate::{consts, Result, StatsError};
+use crate::consts;
 use rand::Rng;
 use std::f64;
 

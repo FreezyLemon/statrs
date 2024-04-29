@@ -1,7 +1,6 @@
 use crate::distribution::{self, poisson, Discrete, DiscreteCDF};
 use crate::function::{beta, gamma};
 use crate::statistics::*;
-use crate::{Result, StatsError};
 use rand::Rng;
 use std::f64;
 

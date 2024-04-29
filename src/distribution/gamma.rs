@@ -1,7 +1,6 @@
 use crate::distribution::{Continuous, ContinuousCDF};
 use crate::function::gamma;
 use crate::statistics::*;
-use crate::{Result, StatsError};
 use rand::Rng;
 
 /// Implements the [Gamma](https://en.wikipedia.org/wiki/Gamma_distribution)

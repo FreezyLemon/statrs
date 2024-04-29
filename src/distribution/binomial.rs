@@ -2,7 +2,6 @@ use crate::distribution::{Discrete, DiscreteCDF};
 use crate::function::{beta, factorial};
 use crate::is_zero;
 use crate::statistics::*;
-use crate::{Result, StatsError};
 use rand::Rng;
 use std::f64;
 

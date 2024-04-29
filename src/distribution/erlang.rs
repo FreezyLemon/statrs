@@ -1,6 +1,5 @@
 use crate::distribution::{Continuous, ContinuousCDF, Gamma};
 use crate::statistics::*;
-use crate::Result;
 use rand::Rng;
 
 /// Implements the [Erlang](https://en.wikipedia.org/wiki/Erlang_distribution)

@@ -2,7 +2,6 @@ use crate::distribution::{Continuous, ContinuousCDF};
 use crate::function::{beta, gamma};
 use crate::is_zero;
 use crate::statistics::*;
-use crate::{Result, StatsError};
 use rand::Rng;
 
 /// Implements the [Beta](https://en.wikipedia.org/wiki/Beta_distribution)

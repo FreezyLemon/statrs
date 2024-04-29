@@ -1,6 +1,5 @@
 use crate::distribution::{Continuous, ContinuousCDF};
 use crate::statistics::{Distribution, Max, Median, Min, Mode};
-use crate::{Result, StatsError};
 use rand::Rng;
 use std::f64;
 

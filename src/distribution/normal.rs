@@ -1,7 +1,7 @@
 use crate::distribution::{ziggurat, Continuous, ContinuousCDF};
 use crate::function::erf;
 use crate::statistics::*;
-use crate::{consts, Result, StatsError};
+use crate::consts;
 use rand::Rng;
 use std::f64;
 

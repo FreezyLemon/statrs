@@ -1,6 +1,5 @@
 use crate::distribution::{Binomial, Discrete, DiscreteCDF};
 use crate::statistics::*;
-use crate::Result;
 use rand::Rng;
 
 /// Implements the

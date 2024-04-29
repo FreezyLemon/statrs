@@ -1,7 +1,6 @@
 use crate::distribution::Continuous;
 use crate::distribution::Normal;
 use crate::statistics::{Max, MeanN, Min, Mode, VarianceN};
-use crate::{Result, StatsError};
 use nalgebra::{
     base::allocator::Allocator, base::dimension::DimName, Cholesky, DefaultAllocator, Dim, DimMin,
     LU, U1,
