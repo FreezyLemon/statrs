@@ -44,11 +44,11 @@ impl Normal {
     /// result = Normal::new(0.0, 0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(mean: f64, std_dev: f64) -> Result<Normal> {
+    pub fn new(mean: f64, std_dev: f64) -> Option<Normal> {
         if mean.is_nan() || std_dev.is_nan() || std_dev <= 0.0 {
-            Err(StatsError::BadParams)
+            None
         } else {
-            Ok(Normal { mean, std_dev })
+            Some(Normal { mean, std_dev })
         }
     }
 }

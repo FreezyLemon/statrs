@@ -36,11 +36,11 @@ impl Dirac {
     /// result = Dirac::new(f64::NAN);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(v: f64) -> Result<Self> {
+    pub fn new(v: f64) -> Option<Self> {
         if v.is_nan() {
-            Err(StatsError::BadParams)
+            None
         } else {
-            Ok(Dirac(v))
+            Some(Dirac(v))
         }
     }
 }

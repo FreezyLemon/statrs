@@ -43,11 +43,11 @@ impl Poisson {
     /// result = Poisson::new(0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(lambda: f64) -> Result<Poisson> {
+    pub fn new(lambda: f64) -> Option<Poisson> {
         if lambda.is_nan() || lambda <= 0.0 {
-            Err(StatsError::BadParams)
+            None
         } else {
-            Ok(Poisson { lambda })
+            Some(Poisson { lambda })
         }
     }
 

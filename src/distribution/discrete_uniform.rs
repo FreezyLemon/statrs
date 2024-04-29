@@ -42,11 +42,11 @@ impl DiscreteUniform {
     /// result = DiscreteUniform::new(5, 0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(min: i64, max: i64) -> Result<DiscreteUniform> {
+    pub fn new(min: i64, max: i64) -> Option<DiscreteUniform> {
         if max < min {
-            Err(StatsError::BadParams)
+            None
         } else {
-            Ok(DiscreteUniform { min, max })
+            Some(DiscreteUniform { min, max })
         }
     }
 }

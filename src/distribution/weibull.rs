@@ -48,12 +48,12 @@ impl Weibull {
     /// result = Weibull::new(0.0, 0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(shape: f64, scale: f64) -> Result<Weibull> {
+    pub fn new(shape: f64, scale: f64) -> Option<Weibull> {
         let is_nan = shape.is_nan() || scale.is_nan();
         match (shape, scale, is_nan) {
-            (_, _, true) => Err(StatsError::BadParams),
-            (_, _, false) if shape <= 0.0 || scale <= 0.0 => Err(StatsError::BadParams),
-            (_, _, false) => Ok(Weibull {
+            (_, _, true) => None,
+            (_, _, false) if shape <= 0.0 || scale <= 0.0 => None,
+            (_, _, false) => Some(Weibull {
                 shape,
                 scale,
                 scale_pow_shape_inv: scale.powf(-shape),

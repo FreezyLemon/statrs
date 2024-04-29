@@ -44,7 +44,7 @@ impl MultivariateNormal {
     ///
     /// Returns an error if the given covariance matrix is not
     /// symmetric or positive-definite
-    pub fn new(mean: Vec<f64>, cov: Vec<f64>) -> Result<Self> {
+    pub fn new(mean: Vec<f64>, cov: Vec<f64>) -> Option<Self> {
         let mean = DVector::from_vec(mean);
         let cov = DMatrix::from_vec(mean.len(), mean.len(), cov);
         MultivariateNormal::new_from_nalgebra(mean, cov)
@@ -58,7 +58,7 @@ impl MultivariateNormal {
     ///
     /// Returns an error if the given covariance matrix is not
     /// symmetric or positive-definite
-    pub fn new_from_nalgebra(mean: DVector<f64>, cov: DMatrix<f64>) -> Result<Self> {
+    pub fn new_from_nalgebra(mean: DVector<f64>, cov: DMatrix<f64>) -> Option<Self> {
         let dim = mean.len();
         // Check that the provided covariance matrix is symmetric
         if cov.lower_triangle() != cov.upper_triangle().transpose()
@@ -68,7 +68,7 @@ impl MultivariateNormal {
         // Check that the dimensions match
             || mean.nrows() != cov.nrows() || cov.nrows() != cov.ncols()
         {
-            return Err(StatsError::BadParams);
+            return None;
         }
         let cov_det = cov.determinant();
         let pdf_const = ((2. * PI).powi(mean.nrows() as i32) * cov_det.abs())
@@ -77,10 +77,10 @@ impl MultivariateNormal {
         // Store the Cholesky decomposition of the covariance matrix
         // for sampling
         match Cholesky::new(cov.clone()) {
-            None => Err(StatsError::BadParams),
+            None => None,
             Some(cholesky_decomp) => {
                 let precision = cholesky_decomp.inverse();
-                Ok(MultivariateNormal {
+                Some(MultivariateNormal {
                     dim,
                     cov_chol_decomp: cholesky_decomp.unpack(),
                     mu: mean,

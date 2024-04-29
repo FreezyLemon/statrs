@@ -46,12 +46,12 @@ impl FisherSnedecor {
     /// result = FisherSnedecor::new(0.0, 0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(freedom_1: f64, freedom_2: f64) -> Result<FisherSnedecor> {
+    pub fn new(freedom_1: f64, freedom_2: f64) -> Option<FisherSnedecor> {
         if !freedom_1.is_finite() || freedom_1 <= 0.0 || !freedom_2.is_finite() || freedom_2 <= 0.0
         {
-            Err(StatsError::BadParams)
+            None
         } else {
-            Ok(FisherSnedecor {
+            Some(FisherSnedecor {
                 freedom_1,
                 freedom_2,
             })

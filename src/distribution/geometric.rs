@@ -44,11 +44,11 @@ impl Geometric {
     /// result = Geometric::new(0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(p: f64) -> Result<Geometric> {
+    pub fn new(p: f64) -> Option<Geometric> {
         if p <= 0.0 || p > 1.0 || p.is_nan() {
-            Err(StatsError::BadParams)
+            None
         } else {
-            Ok(Geometric { p })
+            Some(Geometric { p })
         }
     }
 

@@ -45,17 +45,17 @@ impl Triangular {
     /// result = Triangular::new(2.5, 1.5, 0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(min: f64, max: f64, mode: f64) -> Result<Triangular> {
+    pub fn new(min: f64, max: f64, mode: f64) -> Option<Triangular> {
         if !min.is_finite() || !max.is_finite() || !mode.is_finite() {
-            return Err(StatsError::BadParams);
+            return None;
         }
         if max < mode || mode < min {
-            return Err(StatsError::BadParams);
+            return None;
         }
         if ulps_eq!(max, min, max_ulps = 0) {
-            return Err(StatsError::BadParams);
+            return None;
         }
-        Ok(Triangular { min, max, mode })
+        Some(Triangular { min, max, mode })
     }
 }
 

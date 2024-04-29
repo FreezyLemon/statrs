@@ -42,11 +42,11 @@ impl Cauchy {
     /// result = Cauchy::new(0.0, -1.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(location: f64, scale: f64) -> Result<Cauchy> {
+    pub fn new(location: f64, scale: f64) -> Option<Cauchy> {
         if location.is_nan() || scale.is_nan() || scale <= 0.0 {
-            Err(StatsError::BadParams)
+            None
         } else {
-            Ok(Cauchy { location, scale })
+            Some(Cauchy { location, scale })
         }
     }
 

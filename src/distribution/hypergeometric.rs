@@ -42,11 +42,11 @@ impl Hypergeometric {
     /// result = Hypergeometric::new(2, 3, 2);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(population: u64, successes: u64, draws: u64) -> Result<Hypergeometric> {
+    pub fn new(population: u64, successes: u64, draws: u64) -> Option<Hypergeometric> {
         if successes > population || draws > population {
-            Err(StatsError::BadParams)
+            None
         } else {
-            Ok(Hypergeometric {
+            Some(Hypergeometric {
                 population,
                 successes,
                 draws,

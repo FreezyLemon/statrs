@@ -45,7 +45,7 @@ impl Bernoulli {
     /// result = Bernoulli::new(-0.5);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(p: f64) -> Result<Bernoulli> {
+    pub fn new(p: f64) -> Option<Bernoulli> {
         Binomial::new(p, 1).map(|b| Bernoulli { b })
     }
 

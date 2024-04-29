@@ -44,11 +44,11 @@ impl Chi {
     /// result = Chi::new(0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(freedom: f64) -> Result<Chi> {
+    pub fn new(freedom: f64) -> Option<Chi> {
         if freedom.is_nan() || freedom <= 0.0 {
-            Err(StatsError::BadParams)
+            None
         } else {
-            Ok(Chi { freedom })
+            Some(Chi { freedom })
         }
     }
 

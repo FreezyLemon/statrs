@@ -51,11 +51,11 @@ impl Multinomial {
     /// result = Multinomial::new(&[0.0, -1.0, 2.0], 3);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(p: &[f64], n: u64) -> Result<Multinomial> {
+    pub fn new(p: &[f64], n: u64) -> Option<Multinomial> {
         if !super::internal::is_valid_multinomial(p, true) {
-            Err(StatsError::BadParams)
+            None
         } else {
-            Ok(Multinomial { p: p.to_vec(), n })
+            Some(Multinomial { p: p.to_vec(), n })
         }
     }
 

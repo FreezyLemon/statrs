@@ -45,11 +45,11 @@ impl Uniform {
     /// result = Uniform::new(f64::NAN, f64::NAN);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(min: f64, max: f64) -> Result<Uniform> {
+    pub fn new(min: f64, max: f64) -> Option<Uniform> {
         if min > max || min.is_nan() || max.is_nan() {
-            Err(StatsError::BadParams)
+            None
         } else {
-            Ok(Uniform { min, max })
+            Some(Uniform { min, max })
         }
     }
 }

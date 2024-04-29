@@ -48,12 +48,12 @@ impl StudentsT {
     /// result = StudentsT::new(0.0, 0.0, 0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(location: f64, scale: f64, freedom: f64) -> Result<StudentsT> {
+    pub fn new(location: f64, scale: f64, freedom: f64) -> Option<StudentsT> {
         let is_nan = location.is_nan() || scale.is_nan() || freedom.is_nan();
         if is_nan || scale <= 0.0 || freedom <= 0.0 {
-            Err(StatsError::BadParams)
+            None
         } else {
-            Ok(StudentsT {
+            Some(StudentsT {
                 location,
                 scale,
                 freedom,

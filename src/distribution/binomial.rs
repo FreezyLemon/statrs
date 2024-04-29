@@ -48,11 +48,11 @@ impl Binomial {
     /// result = Binomial::new(-0.5, 5);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(p: f64, n: u64) -> Result<Binomial> {
+    pub fn new(p: f64, n: u64) -> Option<Binomial> {
         if p.is_nan() || !(0.0..=1.0).contains(&p) {
-            Err(StatsError::BadParams)
+            None
         } else {
-            Ok(Binomial { p, n })
+            Some(Binomial { p, n })
         }
     }
 

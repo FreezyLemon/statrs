@@ -53,9 +53,9 @@ impl Categorical {
     /// result = Categorical::new(&[0.0, -1.0, 2.0]);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(prob_mass: &[f64]) -> Result<Categorical> {
+    pub fn new(prob_mass: &[f64]) -> Option<Categorical> {
         if !super::internal::is_valid_multinomial(prob_mass, true) {
-            Err(StatsError::BadParams)
+            None
         } else {
             // extract un-normalized cdf
             let cdf = prob_mass_to_cdf(prob_mass);
@@ -68,7 +68,7 @@ impl Categorical {
                 .iter_mut()
                 .zip(prob_mass.iter())
                 .for_each(|(np, pm)| *np = *pm / sum);
-            Ok(Categorical { norm_pmf, cdf, sf })
+            Some(Categorical { norm_pmf, cdf, sf })
         }
     }
 

@@ -46,11 +46,11 @@ impl LogNormal {
     /// result = LogNormal::new(0.0, 0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(location: f64, scale: f64) -> Result<LogNormal> {
+    pub fn new(location: f64, scale: f64) -> Option<LogNormal> {
         if location.is_nan() || scale.is_nan() || scale <= 0.0 {
-            Err(StatsError::BadParams)
+            None
         } else {
-            Ok(LogNormal { location, scale })
+            Some(LogNormal { location, scale })
         }
     }
 }

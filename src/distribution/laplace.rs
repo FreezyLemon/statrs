@@ -42,11 +42,11 @@ impl Laplace {
     /// result = Laplace::new(0.0, -1.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(location: f64, scale: f64) -> Result<Laplace> {
+    pub fn new(location: f64, scale: f64) -> Option<Laplace> {
         if location.is_nan() || scale.is_nan() || scale <= 0.0 {
-            Err(StatsError::BadParams)
+            None
         } else {
-            Ok(Laplace { location, scale })
+            Some(Laplace { location, scale })
         }
     }
 

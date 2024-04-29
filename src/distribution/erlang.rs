@@ -45,7 +45,7 @@ impl Erlang {
     /// result = Erlang::new(0, 0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(shape: u64, rate: f64) -> Result<Erlang> {
+    pub fn new(shape: u64, rate: f64) -> Option<Erlang> {
         Gamma::new(shape as f64, rate).map(|g| Erlang { g })
     }
 

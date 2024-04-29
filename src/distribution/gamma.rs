@@ -44,16 +44,16 @@ impl Gamma {
     /// result = Gamma::new(0.0, 0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(shape: f64, rate: f64) -> Result<Gamma> {
+    pub fn new(shape: f64, rate: f64) -> Option<Gamma> {
         if shape.is_nan()
             || rate.is_nan()
             || shape.is_infinite() && rate.is_infinite()
             || shape <= 0.0
             || rate <= 0.0
         {
-            return Err(StatsError::BadParams);
+            return None;
         }
-        Ok(Gamma { shape, rate })
+        Some(Gamma { shape, rate })
     }
 
     /// Returns the shape (α) of the gamma distribution

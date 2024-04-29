@@ -58,8 +58,8 @@ impl Empirical {
     /// assert!(result.is_ok());
     ///
     /// ```
-    pub fn new() -> Result<Empirical> {
-        Ok(Empirical {
+    pub fn new() -> Option<Empirical> {
+        Some(Empirical {
             sum: 0.,
             mean_and_var: None,
             data: BTreeMap::new(),

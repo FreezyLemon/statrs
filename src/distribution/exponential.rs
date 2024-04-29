@@ -44,11 +44,11 @@ impl Exp {
     /// result = Exp::new(-1.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(rate: f64) -> Result<Exp> {
+    pub fn new(rate: f64) -> Option<Exp> {
         if rate.is_nan() || rate <= 0.0 {
-            Err(StatsError::BadParams)
+            None
         } else {
-            Ok(Exp { rate })
+            Some(Exp { rate })
         }
     }
 

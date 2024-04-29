@@ -64,11 +64,11 @@ impl NegativeBinomial {
     /// result = NegativeBinomial::new(-0.5, 5.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(r: f64, p: f64) -> Result<NegativeBinomial> {
+    pub fn new(r: f64, p: f64) -> Option<NegativeBinomial> {
         if p.is_nan() || !(0.0..=1.0).contains(&p) || r.is_nan() || r < 0.0 {
-            Err(StatsError::BadParams)
+            None
         } else {
-            Ok(NegativeBinomial { r, p })
+            Some(NegativeBinomial { r, p })
         }
     }
 

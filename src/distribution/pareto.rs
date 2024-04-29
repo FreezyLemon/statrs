@@ -45,12 +45,12 @@ impl Pareto {
     /// result = Pareto::new(0.0, 0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(scale: f64, shape: f64) -> Result<Pareto> {
+    pub fn new(scale: f64, shape: f64) -> Option<Pareto> {
         let is_nan = scale.is_nan() || shape.is_nan();
         if is_nan || scale <= 0.0 || shape <= 0.0 {
-            Err(StatsError::BadParams)
+            None
         } else {
-            Ok(Pareto { scale, shape })
+            Some(Pareto { scale, shape })
         }
     }
 

@@ -48,7 +48,7 @@ impl ChiSquared {
     /// result = ChiSquared::new(0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(freedom: f64) -> Result<ChiSquared> {
+    pub fn new(freedom: f64) -> Option<ChiSquared> {
         Gamma::new(freedom / 2.0, 0.5).map(|g| ChiSquared { freedom, g })
     }
 

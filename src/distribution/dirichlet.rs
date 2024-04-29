@@ -54,12 +54,12 @@ impl Dirichlet {
     /// result = Dirichlet::new(alpha_err);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(alpha: Vec<f64>) -> Result<Dirichlet> {
+    pub fn new(alpha: Vec<f64>) -> Option<Dirichlet> {
         if !is_valid_alpha(&alpha) {
-            Err(StatsError::BadParams)
+            None
         } else {
             // let vec = alpha.to_vec();
-            Ok(Dirichlet {
+            Some(Dirichlet {
                 alpha: DVector::from_vec(alpha.to_vec()),
             })
         }
@@ -84,7 +84,7 @@ impl Dirichlet {
     /// result = Dirichlet::new_with_param(0.0, 1);
     /// assert!(result.is_err());
     /// ```
-    pub fn new_with_param(alpha: f64, n: usize) -> Result<Dirichlet> {
+    pub fn new_with_param(alpha: f64, n: usize) -> Option<Dirichlet> {
         Self::new(vec![alpha; n])
     }
 
