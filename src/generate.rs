@@ -2,6 +2,10 @@
 
 use crate::euclid::Modulus;
 use core::f64::consts;
+
+#[cfg(feature = "alloc")]
+use alloc::vec::Vec;
+
 /// Generates a base 10 log spaced vector of the given length between the
 /// specified decade exponents (inclusive). Equivalent to MATLAB logspace
 ///
