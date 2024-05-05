@@ -258,8 +258,11 @@ mod tests {
         assert_eq!(data.max(), 10.0);
     }
 
+    #[cfg(feature = "alloc")]
     #[test]
     fn test_mean_variance_stability() {
+        use alloc::vec::Vec;
+
         let seed = [
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
             19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
@@ -286,8 +289,11 @@ mod tests {
 
     // TODO: test github issue 137 (Math.NET)
 
+    #[cfg(feature = "alloc")]
     #[test]
     fn test_large_samples() {
+        use alloc::vec::Vec;
+
         let shorter = InfinitePeriodic::default(4.0, 1.0).take(4*4096).collect::<Vec<f64>>();
         let longer = InfinitePeriodic::default(4.0, 1.0).take(4*32768).collect::<Vec<f64>>();
         assert_almost_eq!((&shorter).mean(), 0.375, 1e-14);
@@ -296,8 +302,11 @@ mod tests {
         assert_almost_eq!((&longer).quadratic_mean(), (0.21875f64).sqrt(), 1e-14);
     }
 
+    #[cfg(feature = "alloc")]
     #[test]
     fn test_quadratic_mean_of_sinusoidal() {
+        use alloc::vec::Vec;
+
         let data = InfiniteSinusoidal::default(64.0, 16.0, 2.0).take(128).collect::<Vec<f64>>();
         assert_almost_eq!((&data).quadratic_mean(), 2.0 / consts::SQRT_2, 1e-15);
     }

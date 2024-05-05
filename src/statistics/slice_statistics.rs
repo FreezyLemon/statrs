@@ -504,8 +504,11 @@ mod tests {
         assert_eq!(odd.median(), 0.2);
     }
 
+    #[cfg(feature = "alloc")]
     #[test]
     fn test_median_long_constant_seq() {
+        use alloc::vec;
+
         let even = vec![2.0; 100000];
         let even = Data::new(even);
         assert_eq!(2.0, even.median());
