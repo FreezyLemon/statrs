@@ -3,7 +3,7 @@ use crate::function::factorial;
 use crate::statistics::*;
 use crate::{Result, StatsError};
 use rand::Rng;
-use std::cmp;
+use core::cmp;
 use core::f64;
 
 /// Implements the
