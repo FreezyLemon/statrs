@@ -53,6 +53,9 @@
 #![cfg_attr(all(test, feature = "nightly"), feature(unboxed_closures))]
 #![cfg_attr(all(test, feature = "nightly"), feature(fn_traits))]
 
+#[cfg(feature = "alloc")]
+extern crate alloc;
+
 #[macro_use]
 extern crate approx;
 

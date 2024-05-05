@@ -19,8 +19,10 @@ path = "src/lib.rs"
 
 [features]
 default = ["std"]
+std = ["alloc", "rand/std", "nalgebra/std"]
+alloc = ["rand/alloc", "nalgebra/alloc"]
+
 nightly = []
-std = ["rand/std", "nalgebra/std"]
 
 [dependencies]
 rand = { version = "0.8", default-features = false }
