@@ -4,7 +4,7 @@ use crate::is_zero;
 use crate::statistics::*;
 use crate::{Result, StatsError};
 use rand::Rng;
-use std::f64;
+use core::f64;
 
 /// Implements the
 /// [Binomial](https://en.wikipedia.org/wiki/Binomial_distribution)

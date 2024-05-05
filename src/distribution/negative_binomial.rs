@@ -3,7 +3,7 @@ use crate::function::{beta, gamma};
 use crate::statistics::*;
 use crate::{Result, StatsError};
 use rand::Rng;
-use std::f64;
+use core::f64;
 
 /// Implements the
 /// [negative binomial](http://en.wikipedia.org/wiki/Negative_binomial_distribution)

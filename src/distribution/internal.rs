@@ -179,7 +179,7 @@ pub mod test {
 
     #[test]
     fn test_is_valid_multinomial() {
-        use std::f64;
+        use core::f64;
 
         let invalid = [1.0, f64::NAN, 3.0];
         assert!(!is_valid_multinomial(&invalid, true));

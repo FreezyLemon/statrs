@@ -2,7 +2,7 @@ use crate::distribution::{Discrete, DiscreteCDF};
 use crate::statistics::*;
 use crate::{Result, StatsError};
 use rand::Rng;
-use std::f64;
+use core::f64;
 
 /// Implements the
 /// [Categorical](https://en.wikipedia.org/wiki/Categorical_distribution)

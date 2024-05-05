@@ -4,7 +4,7 @@ use crate::statistics::*;
 use crate::{Result, StatsError};
 use rand::Rng;
 use std::cmp;
-use std::f64;
+use core::f64;
 
 /// Implements the
 /// [Hypergeometric](http://en.wikipedia.org/wiki/Hypergeometric_distribution)

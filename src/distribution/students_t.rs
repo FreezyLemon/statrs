@@ -4,7 +4,7 @@ use crate::is_zero;
 use crate::statistics::*;
 use crate::{Result, StatsError};
 use rand::Rng;
-use std::f64;
+use core::f64;
 
 /// Implements the [Student's
 /// T](https://en.wikipedia.org/wiki/Student%27s_t-distribution) distribution
@@ -1150,12 +1150,12 @@ mod tests {
     #[test]
     fn test_inv_cdf_p0() {
         let d = StudentsT::new(0.0, 1.0, 12.0).unwrap();
-        assert_eq!(d.inverse_cdf(0.0), std::f64::NEG_INFINITY);
+        assert_eq!(d.inverse_cdf(0.0), core::f64::NEG_INFINITY);
     }
 
     #[test]
     fn test_inv_cdf_p1() {
         let d = StudentsT::new(0.0, 1.0, 12.0).unwrap();
-        assert_eq!(d.inverse_cdf(1.0), std::f64::INFINITY);
+        assert_eq!(d.inverse_cdf(1.0), core::f64::INFINITY);
     }
 }

@@ -3,7 +3,7 @@ use crate::statistics::*;
 use crate::{Result, StatsError};
 use rand::distributions::Uniform as RandUniform;
 use rand::Rng;
-use std::f64;
+use core::f64;
 
 /// Implements the [Continuous
 /// Uniform](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous))

@@ -3,7 +3,7 @@ use crate::function::beta;
 use crate::statistics::*;
 use crate::{Result, StatsError};
 use rand::Rng;
-use std::f64;
+use core::f64;
 
 /// Implements the
 /// [Fisher-Snedecor](https://en.wikipedia.org/wiki/F-distribution) distribution

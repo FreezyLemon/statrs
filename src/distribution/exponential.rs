@@ -2,7 +2,7 @@ use crate::distribution::{ziggurat, Continuous, ContinuousCDF};
 use crate::statistics::*;
 use crate::{Result, StatsError};
 use rand::Rng;
-use std::f64;
+use core::f64;
 
 /// Implements the
 /// [Exp](https://en.wikipedia.org/wiki/Exp_distribution)
@@ -257,7 +257,7 @@ impl Continuous<f64, f64> for Exp {
 #[rustfmt::skip]
 #[cfg(all(test, feature = "nightly"))]
 mod tests {
-    use std::f64;
+    use core::f64;
     use crate::statistics::*;
     use crate::distribution::{ContinuousCDF, Continuous, Exp};
     use crate::distribution::internal::*;

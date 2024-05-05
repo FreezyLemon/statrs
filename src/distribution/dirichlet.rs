@@ -8,7 +8,7 @@ use nalgebra::{
     base::allocator::Allocator, base::dimension::DimName, DefaultAllocator, Dim, DimMin, U1,
 };
 use rand::Rng;
-use std::f64;
+use core::f64;
 
 /// Implements the
 /// [Dirichlet](https://en.wikipedia.org/wiki/Dirichlet_distribution)

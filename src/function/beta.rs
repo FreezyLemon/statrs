@@ -6,7 +6,7 @@ use crate::function::gamma;
 use crate::is_zero;
 use crate::prec;
 use crate::Result;
-use std::f64;
+use core::f64;
 
 /// Computes the natural logarithm
 /// of the beta function

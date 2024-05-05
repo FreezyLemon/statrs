@@ -2,7 +2,7 @@ use crate::distribution::{Continuous, ContinuousCDF};
 use crate::statistics::*;
 use crate::{Result, StatsError};
 use rand::Rng;
-use std::f64;
+use core::f64;
 
 /// Implements the
 /// [Triangular](https://en.wikipedia.org/wiki/Triangular_distribution)

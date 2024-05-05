@@ -8,8 +8,8 @@ use nalgebra::{
 };
 use nalgebra::{DMatrix, DVector};
 use rand::Rng;
-use std::f64;
-use std::f64::consts::{E, PI};
+use core::f64;
+use core::f64::consts::{E, PI};
 
 /// Implements the [Multivariate Normal](https://en.wikipedia.org/wiki/Multivariate_normal_distribution)
 /// distribution using the "nalgebra" crate for matrix operations

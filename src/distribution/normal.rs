@@ -3,7 +3,7 @@ use crate::function::erf;
 use crate::statistics::*;
 use crate::{consts, Result, StatsError};
 use rand::Rng;
-use std::f64;
+use core::f64;
 
 /// Implements the [Normal](https://en.wikipedia.org/wiki/Normal_distribution)
 /// distribution

@@ -34,7 +34,7 @@ pub fn checked_logit(p: f64) -> Result<f64> {
 #[rustfmt::skip]
 #[cfg(test)]
 mod tests {
-    use std::f64;
+    use core::f64;
 
     #[test]
     fn test_logistic() {
