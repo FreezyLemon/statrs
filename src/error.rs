@@ -1,5 +1,5 @@
 use std::error::Error;
-use std::fmt;
+use core::fmt;
 
 /// Enumeration of possible errors thrown within the `statrs` library
 #[derive(Debug)]

@@ -92,4 +92,4 @@ pub use crate::error::StatsError;
 
 /// Result type for the statrs library package that returns
 /// either a result type `T` or a `StatsError`
-pub type Result<T> = std::result::Result<T, StatsError>;
+pub type Result<T> = core::result::Result<T, StatsError>;

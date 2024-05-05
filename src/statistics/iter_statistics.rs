@@ -1,6 +1,6 @@
 use crate::error::StatsError;
 use crate::statistics::*;
-use std::borrow::Borrow;
+use core::borrow::Borrow;
 use core::f64;
 
 impl<T> Statistics<f64> for T
@@ -245,7 +245,7 @@ where
 mod tests {
     use core::f64::consts;
     use rand::rngs::StdRng;
-    use rand::{SeedableRng};
+    use rand::SeedableRng;
     use rand::distributions::Distribution;
     use crate::distribution::Normal;
     use crate::statistics::Statistics;
