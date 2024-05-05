@@ -418,7 +418,7 @@ mod tests {
     use crate::distribution::{Continuous, ContinuousCDF, StudentsT};
     use crate::statistics::*;
     use crate::testing_boiler;
-    use std::panic;
+    use core::panic;
 
     testing_boiler!((f64, f64, f64), StudentsT);
 
