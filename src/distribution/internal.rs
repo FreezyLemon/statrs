@@ -1,6 +1,10 @@
+// `is_valid_multinomial` works fine without `alloc`, but is currently unused.
+// Feel free to remove the #[cfg] attribute if necessary.
+
 /// Returns true if there are no elements in `x` in `arr`
 /// such that `x <= 0.0` or `x` is `f64::NAN` and `sum(arr) > 0.0`.
 /// IF `incl_zero` is true, it tests for `x < 0.0` instead of `x <= 0.0`
+#[cfg(feature = "alloc")]
 pub fn is_valid_multinomial(arr: &[f64], incl_zero: bool) -> bool {
     let mut sum = 0.0;
     for &elt in arr {
