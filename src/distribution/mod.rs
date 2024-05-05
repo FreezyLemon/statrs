@@ -7,13 +7,16 @@ use ::num_traits::{float::Float, Bounded, Num};
 pub use self::bernoulli::Bernoulli;
 pub use self::beta::Beta;
 pub use self::binomial::Binomial;
+#[cfg(feature = "alloc")]
 pub use self::categorical::Categorical;
 pub use self::cauchy::Cauchy;
 pub use self::chi::Chi;
 pub use self::chi_squared::ChiSquared;
 pub use self::dirac::Dirac;
+#[cfg(feature = "alloc")]
 pub use self::dirichlet::Dirichlet;
 pub use self::discrete_uniform::DiscreteUniform;
+#[cfg(feature = "alloc")]
 pub use self::empirical::Empirical;
 pub use self::erlang::Erlang;
 pub use self::exponential::Exp;
@@ -24,7 +27,9 @@ pub use self::hypergeometric::Hypergeometric;
 pub use self::inverse_gamma::InverseGamma;
 pub use self::laplace::Laplace;
 pub use self::log_normal::LogNormal;
+#[cfg(feature = "alloc")]
 pub use self::multinomial::Multinomial;
+#[cfg(feature = "alloc")]
 pub use self::multivariate_normal::MultivariateNormal;
 pub use self::negative_binomial::NegativeBinomial;
 pub use self::normal::Normal;
@@ -38,13 +43,16 @@ pub use self::weibull::Weibull;
 mod bernoulli;
 mod beta;
 mod binomial;
+#[cfg(feature = "alloc")]
 mod categorical;
 mod cauchy;
 mod chi;
 mod chi_squared;
 mod dirac;
+#[cfg(feature = "alloc")]
 mod dirichlet;
 mod discrete_uniform;
+#[cfg(feature = "alloc")]
 mod empirical;
 mod erlang;
 mod exponential;
@@ -57,7 +65,9 @@ mod internal;
 mod inverse_gamma;
 mod laplace;
 mod log_normal;
+#[cfg(feature = "alloc")]
 mod multinomial;
+#[cfg(feature = "alloc")]
 mod multivariate_normal;
 mod negative_binomial;
 mod normal;

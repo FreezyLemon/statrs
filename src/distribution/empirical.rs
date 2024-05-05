@@ -4,7 +4,7 @@ use crate::{Result, StatsError};
 use ::num_traits::float::Float;
 use core::cmp::Ordering;
 use rand::Rng;
-use std::collections::BTreeMap;
+use alloc::collections::BTreeMap;
 
 #[derive(Clone, Debug, PartialEq)]
 struct NonNan<T>(T);
