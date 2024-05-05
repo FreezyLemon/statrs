@@ -295,7 +295,7 @@ pub fn sample_unchecked<R: Rng + ?Sized>(rng: &mut R, lambda: f64) -> f64 {
 #[rustfmt::skip]
 #[cfg(all(test, feature = "nightly"))]
 mod tests {
-    use std::fmt::Debug;
+    use core::fmt::Debug;
     use crate::statistics::*;
     use crate::distribution::{DiscreteCDF, Discrete, Poisson};
     use crate::distribution::internal::*;

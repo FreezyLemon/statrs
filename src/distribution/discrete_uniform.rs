@@ -247,7 +247,7 @@ impl Discrete<i64, f64> for DiscreteUniform {
 #[rustfmt::skip]
 #[cfg(all(test, feature = "nightly"))]
 mod tests {
-    use std::fmt::Debug;
+    use core::fmt::Debug;
     use crate::statistics::*;
     use crate::distribution::{DiscreteCDF, Discrete, DiscreteUniform};
     use crate::consts::ACC;

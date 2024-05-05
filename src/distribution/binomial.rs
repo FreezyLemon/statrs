@@ -320,7 +320,7 @@ impl Discrete<u64, f64> for Binomial {
 #[rustfmt::skip]
 #[cfg(all(test, feature = "nightly"))]
 mod tests {
-    use std::fmt::Debug;
+    use core::fmt::Debug;
     use crate::statistics::*;
     use crate::distribution::{DiscreteCDF, Discrete, Binomial};
     use crate::distribution::internal::*;

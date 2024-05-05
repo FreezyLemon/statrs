@@ -283,7 +283,7 @@ impl Discrete<u64, f64> for NegativeBinomial {
 #[rustfmt::skip]
 #[cfg(all(test, feature = "nightly"))]
 mod tests {
-    use std::fmt::Debug;
+    use core::fmt::Debug;
     use crate::statistics::*;
     use crate::distribution::{DiscreteCDF, Discrete, NegativeBinomial};
     use crate::distribution::internal::test;
@@ -394,7 +394,7 @@ mod tests {
         let min = |x: NegativeBinomial| x.min();
         let max = |x: NegativeBinomial| x.max();
         test_case(1.0, 0.5, 0, min);
-        test_case(1.0, 0.3, std::u64::MAX, max);
+        test_case(1.0, 0.3, core::u64::MAX, max);
     }
 
     #[test]

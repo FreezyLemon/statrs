@@ -310,7 +310,7 @@ fn sample_unchecked<R: Rng + ?Sized>(rng: &mut R, min: f64, max: f64, mode: f64)
 #[rustfmt::skip]
 #[cfg(all(test, feature = "nightly"))]
 mod tests {
-    use std::fmt::Debug;
+    use core::fmt::Debug;
     use crate::statistics::*;
     use crate::distribution::{ContinuousCDF, Continuous, Triangular};
     use crate::distribution::internal::*;
