@@ -13,7 +13,11 @@ use core::f64::consts;
 /// let x = generate::log_spaced(5, 0.0, 4.0);
 /// assert_eq!(x, [1.0, 10.0, 100.0, 1000.0, 10000.0]);
 /// ```
+#[cfg(feature = "alloc")]
 pub fn log_spaced(length: usize, start_exp: f64, stop_exp: f64) -> Vec<f64> {
+    use alloc::vec;
+    use alloc::vec::Vec;
+
     match length {
         0 => Vec::new(),
         1 => vec![10f64.powf(stop_exp)],
