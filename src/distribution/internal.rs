@@ -4,7 +4,7 @@
 /// Returns true if there are no elements in `x` in `arr`
 /// such that `x <= 0.0` or `x` is `f64::NAN` and `sum(arr) > 0.0`.
 /// IF `incl_zero` is true, it tests for `x < 0.0` instead of `x <= 0.0`
-#[cfg(feature = "alloc")]
+#[cfg(any(test, feature = "alloc"))]
 pub fn is_valid_multinomial(arr: &[f64], incl_zero: bool) -> bool {
     let mut sum = 0.0;
     for &elt in arr {
@@ -104,9 +104,9 @@ pub mod test {
             if (sum - cdf).abs() > 1e-3 {
                 #[cfg(feature = "std")]
                 {
-                println!("Integral of pdf doesn't equal cdf!");
-                println!("Integration from {} by {} to {} = {}", x_min, step, x, sum);
-                println!("cdf = {}", cdf);
+                    println!("Integral of pdf doesn't equal cdf!");
+                    println!("Integration from {} by {} to {} = {}", x_min, step, x, sum);
+                    println!("cdf = {}", cdf);
                 }
                 panic!();
             }
