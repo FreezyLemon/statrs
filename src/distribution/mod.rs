@@ -29,7 +29,7 @@ pub use self::laplace::Laplace;
 pub use self::log_normal::LogNormal;
 #[cfg(feature = "alloc")]
 pub use self::multinomial::Multinomial;
-#[cfg(feature = "alloc")]
+#[cfg(feature = "std")]
 pub use self::multivariate_normal::MultivariateNormal;
 pub use self::negative_binomial::NegativeBinomial;
 pub use self::normal::Normal;
@@ -67,7 +67,7 @@ mod laplace;
 mod log_normal;
 #[cfg(feature = "alloc")]
 mod multinomial;
-#[cfg(feature = "alloc")]
+#[cfg(feature = "std")]
 mod multivariate_normal;
 mod negative_binomial;
 mod normal;
