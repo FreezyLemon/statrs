@@ -98,9 +98,12 @@ pub mod test {
 
             let cdf = dist.cdf(x);
             if (sum - cdf).abs() > 1e-3 {
+                #[cfg(feature = "std")]
+                {
                 println!("Integral of pdf doesn't equal cdf!");
                 println!("Integration from {} by {} to {} = {}", x_min, step, x, sum);
                 println!("cdf = {}", cdf);
+                }
                 panic!();
             }
 

@@ -356,6 +356,7 @@ mod tests {
               F: Fn(Binomial) -> T
     {
         let x = get_value(p, n, eval);
+        #[cfg(feature = "std")]
         println!("{} {} {:?}", p, n, expected);
         assert_eq!(expected, x);
     }
