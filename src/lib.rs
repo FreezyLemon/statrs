@@ -43,6 +43,7 @@
 //! ## Distributions implemented
 //! Statrs comes with a number of commonly used distributions including Normal, Gamma, Student's T, Exponential, Weibull, etc. view all implemented in `distributions` module.
 
+#![cfg_attr(not(feature = "std"), no_std)]
 #![crate_type = "lib"]
 #![crate_name = "statrs"]
 #![allow(clippy::excessive_precision)]

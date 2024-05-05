@@ -18,11 +18,13 @@ name = "statrs"
 path = "src/lib.rs"
 
 [features]
+default = ["std"]
 nightly = []
+std = ["rand/std", "nalgebra/std"]
 
 [dependencies]
-rand = "0.8"
-nalgebra = { version = "0.32", features = ["rand"] }
+rand = { version = "0.8", default-features = false }
+nalgebra = { version = "0.32", default-features = false, features = ["rand"] }
 approx = "0.5.0"
 num-traits = "0.2.14"
 
