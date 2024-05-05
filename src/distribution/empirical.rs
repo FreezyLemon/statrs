@@ -206,6 +206,8 @@ impl ContinuousCDF<f64, f64> for Empirical {
 #[cfg(all(test, feature = "nightly"))]
 mod tests {
     use super::*;
+    use alloc::vec;
+
     #[test]
     fn test_cdf() {
         let samples = vec![5.0, 10.0];
