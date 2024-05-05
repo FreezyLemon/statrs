@@ -250,61 +250,6 @@ mod tests {
     use crate::distribution::Normal;
     use crate::statistics::Statistics;
     use crate::generate::{InfinitePeriodic, InfiniteSinusoidal};
-    use crate::testing;
-
-    #[test]
-    fn test_mean() {
-        let mut data = testing::load_data("nist/lottery.txt");
-        assert_almost_eq!((&data).mean(), 518.958715596330, 1e-12);
-
-        data = testing::load_data("nist/lew.txt");
-        assert_almost_eq!((&data).mean(), -177.435000000000, 1e-13);
-
-        data = testing::load_data("nist/mavro.txt");
-        assert_almost_eq!((&data).mean(), 2.00185600000000, 1e-15);
-
-        data = testing::load_data("nist/michaelso.txt");
-        assert_almost_eq!((&data).mean(), 299.852400000000, 1e-13);
-
-        data = testing::load_data("nist/numacc1.txt");
-        assert_eq!((&data).mean(), 10000002.0);
-
-        data = testing::load_data("nist/numacc2.txt");
-        assert_almost_eq!((&data).mean(), 1.2, 1e-15);
-
-        data = testing::load_data("nist/numacc3.txt");
-        assert_eq!((&data).mean(), 1000000.2);
-
-        data = testing::load_data("nist/numacc4.txt");
-        assert_almost_eq!((&data).mean(), 10000000.2, 1e-8);
-    }
-
-    #[test]
-    fn test_std_dev() {
-        let mut data = testing::load_data("nist/lottery.txt");
-        assert_almost_eq!((&data).std_dev(), 291.699727470969, 1e-13);
-
-        data = testing::load_data("nist/lew.txt");
-        assert_almost_eq!((&data).std_dev(), 277.332168044316, 1e-12);
-
-        data = testing::load_data("nist/mavro.txt");
-        assert_almost_eq!((&data).std_dev(), 0.000429123454003053, 1e-15);
-
-        data = testing::load_data("nist/michaelso.txt");
-        assert_almost_eq!((&data).std_dev(), 0.0790105478190518, 1e-13);
-
-        data = testing::load_data("nist/numacc1.txt");
-        assert_eq!((&data).std_dev(), 1.0);
-
-        data = testing::load_data("nist/numacc2.txt");
-        assert_almost_eq!((&data).std_dev(), 0.1, 1e-16);
-
-        data = testing::load_data("nist/numacc3.txt");
-        assert_almost_eq!((&data).std_dev(), 0.1, 1e-10);
-
-        data = testing::load_data("nist/numacc4.txt");
-        assert_almost_eq!((&data).std_dev(), 0.1, 1e-9);
-    }
 
     #[test]
     fn test_min_max_short() {
@@ -326,50 +271,6 @@ mod tests {
         assert_almost_eq!((&samples).variance(), 4.0, 0.1);
         assert_almost_eq!((&samples).std_dev(), 2.0, 0.01);
         assert_almost_eq!((&samples).quadratic_mean(), 1e9, 10.0);
-    }
-
-    #[test]
-    fn test_covariance_consistent_with_variance() {
-        let mut data = testing::load_data("nist/lottery.txt");
-        assert_almost_eq!((&data).variance(), (&data).covariance(&data), 1e-10);
-
-        data = testing::load_data("nist/lew.txt");
-        assert_almost_eq!((&data).variance(), (&data).covariance(&data), 1e-10);
-
-        data = testing::load_data("nist/mavro.txt");
-        assert_almost_eq!((&data).variance(), (&data).covariance(&data), 1e-10);
-
-        data = testing::load_data("nist/michaelso.txt");
-        assert_almost_eq!((&data).variance(), (&data).covariance(&data), 1e-10);
-
-        data = testing::load_data("nist/numacc1.txt");
-        assert_almost_eq!((&data).variance(), (&data).covariance(&data), 1e-10);
-    }
-
-    #[test]
-    fn test_pop_covar_consistent_with_pop_var() {
-        let mut data = testing::load_data("nist/lottery.txt");
-        assert_almost_eq!((&data).population_variance(), (&data).population_covariance(&data), 1e-10);
-
-        data = testing::load_data("nist/lew.txt");
-        assert_almost_eq!((&data).population_variance(), (&data).population_covariance(&data), 1e-10);
-
-        data = testing::load_data("nist/mavro.txt");
-        assert_almost_eq!((&data).population_variance(), (&data).population_covariance(&data), 1e-10);
-
-        data = testing::load_data("nist/michaelso.txt");
-        assert_almost_eq!((&data).population_variance(), (&data).population_covariance(&data), 1e-10);
-
-        data = testing::load_data("nist/numacc1.txt");
-        assert_almost_eq!((&data).population_variance(), (&data).population_covariance(&data), 1e-10);
-    }
-
-    #[test]
-    fn test_covariance_is_symmetric() {
-        let data_a = &testing::load_data("nist/lottery.txt")[0..200];
-        let data_b = &testing::load_data("nist/lew.txt")[0..200];
-        assert_almost_eq!(data_a.covariance(data_b), data_b.covariance(data_a), 1e-10);
-        assert_almost_eq!(data_a.population_covariance(data_b), data_b.population_covariance(data_a), 1e-11);
     }
 
     #[test]
@@ -400,4 +301,127 @@ mod tests {
         let data = InfiniteSinusoidal::default(64.0, 16.0, 2.0).take(128).collect::<Vec<f64>>();
         assert_almost_eq!((&data).quadratic_mean(), 2.0 / consts::SQRT_2, 1e-15);
     }
+}
+
+#[cfg(all(test, feature = "std"))]
+mod nist_tests {
+    use std::fs::File;
+    use std::io::{BufRead, BufReader};
+
+    // Loads a test data file into a vector of `f64`'s.
+    // Path is relative to /data.
+    fn load_data(path: &str) -> Vec<f64> {
+        let path_prefix = "./data/".to_string();
+        let true_path = path_prefix + path.trim().trim_start_matches('/');
+    
+        let f = File::open(true_path).unwrap();
+        let mut reader = BufReader::new(f);
+    
+        let mut buf = String::new();
+        let mut data: Vec<f64> = vec![];
+        while reader.read_line(&mut buf).unwrap() > 0 {
+            data.push(buf.trim().parse::<f64>().unwrap());
+            buf.clear();
+        }
+        data
+    }
+
+    #[test]
+    fn test_mean() {
+        let mut data = load_data("nist/lottery.txt");
+        assert_almost_eq!((&data).mean(), 518.958715596330, 1e-12);
+
+        data = load_data("nist/lew.txt");
+        assert_almost_eq!((&data).mean(), -177.435000000000, 1e-13);
+
+        data = load_data("nist/mavro.txt");
+        assert_almost_eq!((&data).mean(), 2.00185600000000, 1e-15);
+
+        data = load_data("nist/michaelso.txt");
+        assert_almost_eq!((&data).mean(), 299.852400000000, 1e-13);
+
+        data = load_data("nist/numacc1.txt");
+        assert_eq!((&data).mean(), 10000002.0);
+
+        data = load_data("nist/numacc2.txt");
+        assert_almost_eq!((&data).mean(), 1.2, 1e-15);
+
+        data = load_data("nist/numacc3.txt");
+        assert_eq!((&data).mean(), 1000000.2);
+
+        data = load_data("nist/numacc4.txt");
+        assert_almost_eq!((&data).mean(), 10000000.2, 1e-8);
+    }
+
+    #[test]
+    fn test_std_dev() {
+        let mut data = load_data("nist/lottery.txt");
+        assert_almost_eq!((&data).std_dev(), 291.699727470969, 1e-13);
+
+        data = load_data("nist/lew.txt");
+        assert_almost_eq!((&data).std_dev(), 277.332168044316, 1e-12);
+
+        data = load_data("nist/mavro.txt");
+        assert_almost_eq!((&data).std_dev(), 0.000429123454003053, 1e-15);
+
+        data = load_data("nist/michaelso.txt");
+        assert_almost_eq!((&data).std_dev(), 0.0790105478190518, 1e-13);
+
+        data = load_data("nist/numacc1.txt");
+        assert_eq!((&data).std_dev(), 1.0);
+
+        data = load_data("nist/numacc2.txt");
+        assert_almost_eq!((&data).std_dev(), 0.1, 1e-16);
+
+        data = load_data("nist/numacc3.txt");
+        assert_almost_eq!((&data).std_dev(), 0.1, 1e-10);
+
+        data = load_data("nist/numacc4.txt");
+        assert_almost_eq!((&data).std_dev(), 0.1, 1e-9);
+    }
+
+    #[test]
+    fn test_covariance_consistent_with_variance() {
+        let mut data = load_data("nist/lottery.txt");
+        assert_almost_eq!((&data).variance(), (&data).covariance(&data), 1e-10);
+
+        data = load_data("nist/lew.txt");
+        assert_almost_eq!((&data).variance(), (&data).covariance(&data), 1e-10);
+
+        data = load_data("nist/mavro.txt");
+        assert_almost_eq!((&data).variance(), (&data).covariance(&data), 1e-10);
+
+        data = load_data("nist/michaelso.txt");
+        assert_almost_eq!((&data).variance(), (&data).covariance(&data), 1e-10);
+
+        data = load_data("nist/numacc1.txt");
+        assert_almost_eq!((&data).variance(), (&data).covariance(&data), 1e-10);
+    }
+
+    #[test]
+    fn test_pop_covar_consistent_with_pop_var() {
+        let mut data = load_data("nist/lottery.txt");
+        assert_almost_eq!((&data).population_variance(), (&data).population_covariance(&data), 1e-10);
+
+        data = load_data("nist/lew.txt");
+        assert_almost_eq!((&data).population_variance(), (&data).population_covariance(&data), 1e-10);
+
+        data = load_data("nist/mavro.txt");
+        assert_almost_eq!((&data).population_variance(), (&data).population_covariance(&data), 1e-10);
+
+        data = load_data("nist/michaelso.txt");
+        assert_almost_eq!((&data).population_variance(), (&data).population_covariance(&data), 1e-10);
+
+        data = load_data("nist/numacc1.txt");
+        assert_almost_eq!((&data).population_variance(), (&data).population_covariance(&data), 1e-10);
+    }
+
+    #[test]
+    fn test_covariance_is_symmetric() {
+        let data_a = &load_data("nist/lottery.txt")[0..200];
+        let data_b = &load_data("nist/lew.txt")[0..200];
+        assert_almost_eq!(data_a.covariance(data_b), data_b.covariance(data_a), 1e-10);
+        assert_almost_eq!(data_a.population_covariance(data_b), data_b.population_covariance(data_a), 1e-11);
+    }
+
 }
