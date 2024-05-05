@@ -9,6 +9,7 @@ use nalgebra::{
 };
 use rand::Rng;
 use core::f64;
+use alloc::{vec, vec::Vec};
 
 /// Implements the
 /// [Dirichlet](https://en.wikipedia.org/wiki/Dirichlet_distribution)
@@ -303,7 +304,7 @@ fn is_valid_alpha(a: &[f64]) -> bool {
 #[cfg(all(test, feature = "nightly"))]
 mod tests {
     use super::*;
-    use nalgebra::{DVector};
+    use nalgebra::DVector;
     use crate::function::gamma;
     use crate::statistics::*;
     use crate::distribution::{Continuous, Dirichlet};

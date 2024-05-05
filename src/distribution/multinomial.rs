@@ -4,6 +4,7 @@ use crate::statistics::*;
 use crate::{Result, StatsError};
 use ::nalgebra::{DMatrix, DVector};
 use rand::Rng;
+use alloc::{vec, vec::Vec};
 
 /// Implements the
 /// [Multinomial](https://en.wikipedia.org/wiki/Multinomial_distribution)

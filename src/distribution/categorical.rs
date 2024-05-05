@@ -2,7 +2,9 @@ use crate::distribution::{Discrete, DiscreteCDF};
 use crate::statistics::*;
 use crate::{Result, StatsError};
 use rand::Rng;
+use core::cmp;
 use core::f64;
+use alloc::{vec, vec::Vec};
 
 /// Implements the
 /// [Categorical](https://en.wikipedia.org/wiki/Categorical_distribution)
@@ -307,8 +309,6 @@ pub fn cdf_to_sf(cdf: &[f64]) -> Vec<f64> {
 // return 0. Otherwise val returns the index of the first element larger than
 // it within the search array.
 fn binary_index(search: &[f64], val: f64) -> usize {
-    use std::cmp;
-
     let mut low = 0_isize;
     let mut high = search.len() as isize - 1;
     while low <= high {

@@ -5,6 +5,7 @@ use ::num_traits::float::Float;
 use core::cmp::Ordering;
 use rand::Rng;
 use alloc::collections::BTreeMap;
+use alloc::vec::Vec;
 
 #[derive(Clone, Debug, PartialEq)]
 struct NonNan<T>(T);
