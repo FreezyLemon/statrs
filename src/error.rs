@@ -1,4 +1,3 @@
-use std::error::Error;
 use core::fmt;
 
 /// Enumeration of possible errors thrown within the `statrs` library
@@ -48,7 +47,8 @@ pub enum StatsError {
     SpecialCase(&'static str),
 }
 
-impl Error for StatsError {
+#[cfg(feature = "std")]
+impl std::error::Error for StatsError {
     fn description(&self) -> &str {
         "Error performing statistical calculation"
     }
