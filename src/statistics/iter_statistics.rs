@@ -314,6 +314,8 @@ mod tests {
 
 #[cfg(all(test, feature = "std"))]
 mod nist_tests {
+    use crate::statistics::Statistics;
+
     use std::fs::File;
     use std::io::{BufRead, BufReader};
 
