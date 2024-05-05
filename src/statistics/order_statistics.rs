@@ -215,5 +215,6 @@ pub trait OrderStatistics<T> {
     /// assert_eq!(y.clone().ranks(RankTieBreaker::Min), [1.0, 4.0, 2.0,
     /// 2.0]);
     /// ```
+    #[cfg(feature = "alloc")]
     fn ranks(&mut self, tie_breaker: RankTieBreaker) -> Vec<T>;
 }

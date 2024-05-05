@@ -164,6 +164,7 @@ impl<D: AsMut<[f64]> + AsRef<[f64]>> OrderStatistics<f64> for Data<D> {
         self.upper_quartile() - self.lower_quartile()
     }
 
+    #[cfg(feature = "alloc")]
     fn ranks(&mut self, tie_breaker: RankTieBreaker) -> Vec<f64> {
         let n = self.len();
         let mut ranks: Vec<f64> = vec![0.0; n];
