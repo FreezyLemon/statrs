@@ -216,5 +216,5 @@ pub trait OrderStatistics<T> {
     /// 2.0]);
     /// ```
     #[cfg(feature = "alloc")]
-    fn ranks(&mut self, tie_breaker: RankTieBreaker) -> Vec<T>;
+    fn ranks(&mut self, tie_breaker: RankTieBreaker) -> alloc::vec::Vec<T>;
 }

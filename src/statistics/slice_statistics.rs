@@ -2,6 +2,9 @@ use crate::statistics::*;
 use core::ops::{Index, IndexMut};
 use rand::prelude::SliceRandom;
 
+#[cfg(feature = "alloc")]
+use alloc::{vec, vec::Vec};
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Data<D>(D);
 
