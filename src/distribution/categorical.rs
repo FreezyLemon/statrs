@@ -344,11 +344,10 @@ fn test_binary_index() {
 #[rustfmt::skip]
 #[cfg(all(test, feature = "nightly"))]
 mod tests {
-    use std::fmt::Debug;
-    use crate::statistics::*;
-    use crate::distribution::{Categorical, Discrete, DiscreteCDF};
-    use crate::distribution::internal::*;
-    use crate::consts::ACC;
+    use super::*;
+
+    use crate::distribution::internal::test;
+    use core::fmt::Debug;
 
     fn try_create(prob_mass: &[f64]) -> Categorical {
         let n = Categorical::new(prob_mass);
