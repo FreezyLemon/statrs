@@ -359,6 +359,8 @@ impl<D: AsMut<[f64]> + AsRef<[f64]> + Clone> Median<f64> for Data<D> {
     }
 }
 
+// helper for `OrderStatistics::ranks`, which depends on `alloc`.
+#[cfg(feature = "alloc")]
 fn handle_rank_ties(
     ranks: &mut [f64],
     index: &[(usize, &f64)],
