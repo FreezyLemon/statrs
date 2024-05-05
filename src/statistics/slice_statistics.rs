@@ -412,6 +412,8 @@ mod tests {
         assert_almost_eq!(data.quantile(0.325), -37.0 / 240.0, 1e-15);
     }
 
+    // fn ranks() is hidden behind the alloc feature
+    #[cfg(feature = "alloc")]
     #[test]
     fn test_ranks() {
         let sorted_distinct = [1.0, 2.0, 4.0, 7.0, 8.0, 9.0, 10.0, 12.0];
