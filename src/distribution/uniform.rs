@@ -261,44 +261,12 @@ mod tests {
     use crate::distribution::{ContinuousCDF, Continuous, Uniform};
     use crate::distribution::internal::*;
 
-    fn try_create(min: f64, max: f64) -> Uniform {
-        let n = Uniform::new(min, max);
-        assert!(n.is_ok(), "failed create over interval [{}, {}]", min, max);
-        n.unwrap()
-    }
+    testing_boiler!(min: f64, max: f64; Uniform);
 
     fn create_case(min: f64, max: f64) {
         let n = try_create(min, max);
         assert_eq!(n.min(), min);
         assert_eq!(n.max(), max);
-    }
-
-    fn bad_create_case(min: f64, max: f64) {
-        let n = Uniform::new(min, max);
-        assert!(n.is_err());
-    }
-
-    fn get_value<F>(min: f64, max: f64, eval: F) -> f64
-        where F: Fn(Uniform) -> f64
-    {
-        let n = try_create(min, max);
-        eval(n)
-    }
-
-    fn test_case<F>(min: f64, max: f64, expected: f64, eval: F)
-        where F: Fn(Uniform) -> f64
-    {
-
-        let x = get_value(min, max, eval);
-        assert_eq!(expected, x);
-    }
-
-    fn test_almost<F>(min: f64, max: f64, expected: f64, acc: f64, eval: F)
-        where F: Fn(Uniform) -> f64
-    {
-
-        let x = get_value(min, max, eval);
-        assert_almost_eq!(expected, x, acc);
     }
 
     #[test]
@@ -324,7 +292,7 @@ mod tests {
         let variance = |x: Uniform| x.variance().unwrap();
         test_case(-0.0, 2.0, 1.0 / 3.0, variance);
         test_case(0.0, 2.0, 1.0 / 3.0, variance);
-        test_almost(0.1, 4.0, 1.2675, 1e-15, variance);
+        test_case_special(0.1, 4.0, 1.2675, 1e-15, variance);
         test_case(10.0, 11.0, 1.0 / 12.0, variance);
     }
 
@@ -333,7 +301,7 @@ mod tests {
         let entropy = |x: Uniform| x.entropy().unwrap();
         test_case(-0.0, 2.0, 0.6931471805599453094172, entropy);
         test_case(0.0, 2.0, 0.6931471805599453094172, entropy);
-        test_almost(0.1, 4.0, 1.360976553135600743431, 1e-15, entropy);
+        test_case_special(0.1, 4.0, 1.360976553135600743431, 1e-15, entropy);
         test_case(1.0, 10.0, 2.19722457733621938279, entropy);
         test_case(10.0, 11.0, 0.0, entropy);
     }
@@ -391,7 +359,7 @@ mod tests {
     fn test_ln_pdf() {
         let ln_pdf = |arg: f64| move |x: Uniform| x.ln_pdf(arg);
         test_case(0.0, 0.1, f64::NEG_INFINITY, ln_pdf(-5.0));
-        test_almost(0.0, 0.1, 2.302585092994045684018, 1e-15, ln_pdf(0.05));
+        test_case_special(0.0, 0.1, 2.302585092994045684018, 1e-15, ln_pdf(0.05));
         test_case(0.0, 0.1, f64::NEG_INFINITY, ln_pdf(5.0));
         test_case(0.0, 1.0, f64::NEG_INFINITY, ln_pdf(-5.0));
         test_case(0.0, 1.0, 0.0, ln_pdf(0.5));
