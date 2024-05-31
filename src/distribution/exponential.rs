@@ -275,44 +275,15 @@ impl Continuous<f64, f64> for Exp {
 mod tests {
     use std::f64;
     use crate::statistics::*;
+    use crate::testing_boiler;
     use crate::distribution::{ContinuousCDF, Continuous, Exp};
     use crate::distribution::internal::*;
 
-    fn try_create(rate: f64) -> Exp {
-        let n = Exp::new(rate);
-        assert!(n.is_ok());
-        n.unwrap()
-    }
+    testing_boiler!(rate: f64; Exp);
 
     fn create_case(rate: f64) {
         let n = try_create(rate);
         assert_eq!(rate, n.rate());
-    }
-
-    fn bad_create_case(rate: f64) {
-        let n = Exp::new(rate);
-        assert!(n.is_err());
-    }
-
-    fn get_value<F>(rate: f64, eval: F) -> f64
-        where F: Fn(Exp) -> f64
-    {
-        let n = try_create(rate);
-        eval(n)
-    }
-
-    fn test_case<F>(rate: f64, expected: f64, eval: F)
-        where F: Fn(Exp) -> f64
-    {
-        let x = get_value(rate, eval);
-        assert_eq!(expected, x);
-    }
-
-    fn test_almost<F>(rate: f64, expected: f64, acc: f64, eval: F)
-        where F: Fn(Exp) -> f64
-    {
-        let x = get_value(rate, eval);
-        assert_almost_eq!(expected, x, acc);
     }
 
     fn test_is_nan<F>(rate: f64, eval: F)
@@ -348,7 +319,7 @@ mod tests {
     #[test]
     fn test_variance() {
         let variance = |x: Exp| x.variance().unwrap();
-        test_almost(0.1, 100.0, 1e-13, variance);
+        test_case_special(0.1, 100.0, 1e-13, variance);
         test_case(1.0, 1.0, variance);
         test_case(10.0, 0.01, variance);
     }
@@ -356,9 +327,9 @@ mod tests {
     #[test]
     fn test_entropy() {
         let entropy = |x: Exp| x.entropy().unwrap();
-        test_almost(0.1, 3.302585092994045684018, 1e-15, entropy);
+        test_case_special(0.1, 3.302585092994045684018, 1e-15, entropy);
         test_case(1.0, 1.0, entropy);
-        test_almost(10.0, -1.302585092994045684018, 1e-15, entropy);
+        test_case_special(10.0, -1.302585092994045684018, 1e-15, entropy);
     }
 
     #[test]
@@ -372,7 +343,7 @@ mod tests {
     #[test]
     fn test_median() {
         let median = |x: Exp| x.median();
-        test_almost(0.1, 6.931471805599453094172, 1e-15, median);
+        test_case_special(0.1, 6.931471805599453094172, 1e-15, median);
         test_case(1.0, f64::consts::LN_2, median);
         test_case(10.0, 0.06931471805599453094172, median);
     }
@@ -405,12 +376,12 @@ mod tests {
         test_case(10.0, 10.0, pdf(0.0));
         test_is_nan(f64::INFINITY, pdf(0.0));
         test_case(0.1, 0.09900498337491680535739, pdf(0.1));
-        test_almost(1.0, 0.9048374180359595731642, 1e-15, pdf(0.1));
+        test_case_special(1.0, 0.9048374180359595731642, 1e-15, pdf(0.1));
         test_case(10.0, 3.678794411714423215955, pdf(0.1));
         test_is_nan(f64::INFINITY, pdf(0.1));
         test_case(0.1, 0.09048374180359595731642, pdf(1.0));
         test_case(1.0, 0.3678794411714423215955, pdf(1.0));
-        test_almost(10.0, 4.539992976248485153559e-4, 1e-19, pdf(1.0));
+        test_case_special(10.0, 4.539992976248485153559e-4, 1e-19, pdf(1.0));
         test_is_nan(f64::INFINITY, pdf(1.0));
         test_case(0.1, 0.0, pdf(f64::INFINITY));
         test_case(1.0, 0.0, pdf(f64::INFINITY));
@@ -427,13 +398,13 @@ mod tests {
     #[test]
     fn test_ln_pdf() {
         let ln_pdf = |arg: f64| move |x: Exp| x.ln_pdf(arg);
-        test_almost(0.1, -2.302585092994045684018, 1e-15, ln_pdf(0.0));
+        test_case_special(0.1, -2.302585092994045684018, 1e-15, ln_pdf(0.0));
         test_case(1.0, 0.0, ln_pdf(0.0));
         test_case(10.0, 2.302585092994045684018, ln_pdf(0.0));
         test_is_nan(f64::INFINITY, ln_pdf(0.0));
-        test_almost(0.1, -2.312585092994045684018, 1e-15, ln_pdf(0.1));
+        test_case_special(0.1, -2.312585092994045684018, 1e-15, ln_pdf(0.1));
         test_case(1.0, -0.1, ln_pdf(0.1));
-        test_almost(10.0, 1.302585092994045684018, 1e-15, ln_pdf(0.1));
+        test_case_special(10.0, 1.302585092994045684018, 1e-15, ln_pdf(0.1));
         test_is_nan(f64::INFINITY, ln_pdf(0.1));
         test_case(0.1, -2.402585092994045684018, ln_pdf(1.0));
         test_case(1.0, -1.0, ln_pdf(1.0));
@@ -458,11 +429,11 @@ mod tests {
         test_case(1.0, 0.0, cdf(0.0));
         test_case(10.0, 0.0, cdf(0.0));
         test_is_nan(f64::INFINITY, cdf(0.0));
-        test_almost(0.1, 0.009950166250831946426094, 1e-16, cdf(0.1));
-        test_almost(1.0, 0.0951625819640404268358, 1e-16, cdf(0.1));
+        test_case_special(0.1, 0.009950166250831946426094, 1e-16, cdf(0.1));
+        test_case_special(1.0, 0.0951625819640404268358, 1e-16, cdf(0.1));
         test_case(10.0, 0.6321205588285576784045, cdf(0.1));
         test_case(f64::INFINITY, 1.0, cdf(0.1));
-        test_almost(0.1, 0.0951625819640404268358, 1e-16, cdf(1.0));
+        test_case_special(0.1, 0.0951625819640404268358, 1e-16, cdf(1.0));
         test_case(1.0, 0.6321205588285576784045, cdf(1.0));
         test_case(10.0, 0.9999546000702375151485, cdf(1.0));
         test_case(f64::INFINITY, 1.0, cdf(1.0));
@@ -500,9 +471,9 @@ mod tests {
         test_case(1.0, 1.0, sf(0.0));
         test_case(10.0, 1.0, sf(0.0));
         test_is_nan(f64::INFINITY, sf(0.0));
-        test_almost(0.1, 0.9900498337491681, 1e-16, sf(0.1));
-        test_almost(1.0, 0.9048374180359595, 1e-16, sf(0.1));
-        test_almost(10.0, 0.36787944117144233, 1e-15, sf(0.1));
+        test_case_special(0.1, 0.9900498337491681, 1e-16, sf(0.1));
+        test_case_special(1.0, 0.9048374180359595, 1e-16, sf(0.1));
+        test_case_special(10.0, 0.36787944117144233, 1e-15, sf(0.1));
         test_case(f64::INFINITY, 0.0, sf(0.1));
     }
 
