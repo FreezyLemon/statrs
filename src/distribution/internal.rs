@@ -69,6 +69,7 @@ pub mod test {
                 n.unwrap()
             }
 
+            #[allow(dead_code)] // This is not used by all distributions.
             fn bad_create_case($($arg_name: $arg_ty),+) {
                 let n = <$dist>::new($($arg_name),+);
                 assert!(n.is_err());

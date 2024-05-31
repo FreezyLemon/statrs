@@ -188,29 +188,14 @@ impl Mode<Option<f64>> for Dirac {
 #[cfg(test)]
 mod tests {
     use crate::statistics::*;
+    use crate::testing_boiler;
     use crate::distribution::{ContinuousCDF, Continuous, Dirac};
 
-    fn try_create(v: f64) -> Dirac {
-        let d = Dirac::new(v);
-        assert!(d.is_ok());
-        d.unwrap()
-    }
+    testing_boiler!(v: f64; Dirac);
 
     fn create_case(v: f64) {
         let d = try_create(v);
         assert_eq!(v, d.mean().unwrap());
-    }
-
-    fn bad_create_case(v: f64) {
-        let d = Dirac::new(v);
-        assert!(d.is_err());
-    }
-
-    fn test_case<F>(v: f64, expected: f64, eval: F)
-        where F: Fn(Dirac) -> f64
-    {
-        let x = eval(try_create(v));
-        assert_eq!(expected, x);
     }
 
     #[test]
