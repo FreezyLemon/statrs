@@ -318,44 +318,13 @@ mod tests {
     use crate::distribution::{ContinuousCDF, Continuous, Triangular};
     use crate::distribution::internal::*;
 
-    fn try_create(min: f64, max: f64, mode: f64) -> Triangular {
-        let n = Triangular::new(min, max, mode);
-        assert!(n.is_ok());
-        n.unwrap()
-    }
+    testing_boiler!(min: f64, max: f64, mode: f64; Triangular);
 
     fn create_case(min: f64, max: f64, mode: f64) {
         let n = try_create(min, max, mode);
         assert_eq!(n.min(), min);
         assert_eq!(n.max(), max);
         assert_eq!(n.mode().unwrap(), mode);
-    }
-
-    fn bad_create_case(min: f64, max: f64, mode: f64) {
-        let n = Triangular::new(min, max, mode);
-        assert!(n.is_err());
-    }
-
-    fn get_value<T, F>(min: f64, max: f64, mode: f64, eval: F) -> T
-        where T: PartialEq + Debug,
-              F: Fn(Triangular) -> T
-    {
-        let n = try_create(min, max, mode);
-        eval(n)
-    }
-
-    fn test_case<F>(min: f64, max: f64, mode: f64, expected: f64, eval: F)
-        where F: Fn(Triangular) -> f64
-    {
-        let x = get_value(min, max, mode, eval);
-        assert_eq!(expected, x);
-    }
-
-    fn test_almost<F>(min: f64, max: f64, mode: f64, expected: f64, acc: f64, eval: F)
-        where F: Fn(Triangular) -> f64
-    {
-        let x = get_value(min, max, mode, eval);
-        assert_almost_eq!(expected, x, acc);
     }
 
     #[test]
@@ -398,8 +367,8 @@ mod tests {
     #[test]
     fn test_entropy() {
         let entropy = |x: Triangular| x.entropy().unwrap();
-        test_almost(0.0, 1.0, 0.5, -0.1931471805599453094172, 1e-16, entropy);
-        test_almost(0.0, 1.0, 0.75, -0.1931471805599453094172, 1e-16, entropy);
+        test_case_special(0.0, 1.0, 0.5, -0.1931471805599453094172, 1e-16, entropy);
+        test_case_special(0.0, 1.0, 0.75, -0.1931471805599453094172, 1e-16, entropy);
         test_case(-5.0, 8.0, -3.5, 2.371802176901591426636, entropy);
         test_case(-5.0, 8.0, 5.0, 2.371802176901591426636, entropy);
         test_case(-5.0, -3.0, -4.0, 0.5, entropy);
@@ -433,10 +402,10 @@ mod tests {
         let median = |x: Triangular| x.median();
         test_case(0.0, 1.0, 0.5, 0.5, median);
         test_case(0.0, 1.0, 0.75, 0.6123724356957945245493, median);
-        test_almost(-5.0, 8.0, -3.5, -0.6458082328952913226724, 1e-15, median);
-        test_almost(-5.0, 8.0, 5.0, 3.062257748298549652367, 1e-15, median);
+        test_case_special(-5.0, 8.0, -3.5, -0.6458082328952913226724, 1e-15, median);
+        test_case_special(-5.0, 8.0, 5.0, 3.062257748298549652367, 1e-15, median);
         test_case(-5.0, -3.0, -4.0, -4.0, median);
-        test_almost(15.0, 134.0, 21.0, 52.00304883716712238797, 1e-14, median);
+        test_case_special(15.0, 134.0, 21.0, 52.00304883716712238797, 1e-14, median);
     }
 
     #[test]
