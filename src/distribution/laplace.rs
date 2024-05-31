@@ -296,25 +296,7 @@ mod tests {
     use super::*;
     use rand::thread_rng;
 
-    fn try_create(location: f64, scale: f64) -> Laplace {
-        let n = Laplace::new(location, scale);
-        assert!(n.is_ok());
-        n.unwrap()
-    }
-
-    fn bad_create_case(location: f64, scale: f64) {
-        let n = Laplace::new(location, scale);
-        assert!(n.is_err());
-    }
-
-    fn test_case<F>(location: f64, scale: f64, expected: f64, eval: F)
-    where
-        F: Fn(Laplace) -> f64,
-    {
-        let n = try_create(location, scale);
-        let x = eval(n);
-        assert_eq!(expected, x);
-    }
+    testing_boiler!(location: f64, scale: f64; Laplace);
 
     fn test_is_nan<F>(location: f64, scale: f64, eval: F)
     where
