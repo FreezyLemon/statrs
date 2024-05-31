@@ -83,6 +83,7 @@ pub mod test {
                 eval(n)
             }
 
+            #[allow(dead_code)] // This is not used by all distributions.
             fn test_case<F, T>($($arg_name: $arg_ty),+, expected: T, eval: F)
             where
                 F: Fn($dist) -> T,

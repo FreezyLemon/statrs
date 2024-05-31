@@ -304,9 +304,10 @@ fn is_valid_alpha(a: &[f64]) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use nalgebra::{DVector};
+    use nalgebra::DVector;
     use crate::function::gamma;
     use crate::statistics::*;
+    use crate::testing_boiler;
     use crate::distribution::{Continuous, Dirichlet};
 
     #[test]
@@ -315,40 +316,29 @@ mod tests {
         assert!(!is_valid_alpha(&invalid));
     }
 
-    fn try_create(alpha: &[f64]) -> Dirichlet
-    {
-        let n = Dirichlet::new(alpha.to_vec());
-        assert!(n.is_ok());
-        n.unwrap()
-    }
+    testing_boiler!(alpha: Vec<f64>; Dirichlet);
 
-    fn create_case(alpha: &[f64])
+    fn create_case(alpha: Vec<f64>)
     {
-        let n = try_create(alpha);
+        let n = try_create(alpha.clone());
         let a2 = n.alpha();
         for i in 0..alpha.len() {
             assert_eq!(alpha[i], a2[i]);
         }
     }
 
-    fn bad_create_case(alpha: &[f64])
-    {
-        let n = Dirichlet::new(alpha.to_vec());
-        assert!(n.is_err());
-    }
-
     #[test]
     fn test_create() {
-        create_case(&[1.0, 2.0, 3.0, 4.0, 5.0]);
-        create_case(&[0.001, f64::INFINITY, 3756.0]);
+        create_case(vec![1.0, 2.0, 3.0, 4.0, 5.0]);
+        create_case(vec![0.001, f64::INFINITY, 3756.0]);
     }
 
     #[test]
     fn test_bad_create() {
-        bad_create_case(&[1.0]);
-        bad_create_case(&[1.0, 2.0, 0.0, 4.0, 5.0]);
-        bad_create_case(&[1.0, f64::NAN, 3.0, 4.0, 5.0]);
-        bad_create_case(&[0.0, 0.0, 0.0]);
+        bad_create_case(vec![1.0]);
+        bad_create_case(vec![1.0, 2.0, 0.0, 4.0, 5.0]);
+        bad_create_case(vec![1.0, f64::NAN, 3.0, 4.0, 5.0]);
+        bad_create_case(vec![0.0, 0.0, 0.0]);
     }
 
     // #[test]
@@ -386,10 +376,10 @@ mod tests {
 
     #[test]
     fn test_entropy() {
-        let mut n = try_create(&[0.1, 0.3, 0.5, 0.8]);
+        let mut n = try_create(vec![0.1, 0.3, 0.5, 0.8]);
         assert_eq!(n.entropy().unwrap(), -17.46469081094079);
 
-        n = try_create(&[0.1, 0.2, 0.3, 0.4]);
+        n = try_create(vec![0.1, 0.2, 0.3, 0.4]);
         assert_eq!(n.entropy().unwrap(), -21.53881433791513);
     }
 
@@ -399,14 +389,14 @@ mod tests {
 
     #[test]
     fn test_pdf() {
-        let n = try_create(&[0.1, 0.3, 0.5, 0.8]);
+        let n = try_create(vec![0.1, 0.3, 0.5, 0.8]);
         assert_almost_eq!(n.pdf(&dvec![0.01, 0.03, 0.5, 0.46]), 18.77225681167061, 1e-12);
         assert_almost_eq!(n.pdf(&dvec![0.1,0.2,0.3,0.4]), 0.8314656481199253, 1e-14);
     }
 
     #[test]
     fn test_ln_pdf() {
-        let n = try_create(&[0.1, 0.3, 0.5, 0.8]);
+        let n = try_create(vec![0.1, 0.3, 0.5, 0.8]);
         assert_almost_eq!(n.ln_pdf(&dvec![0.01, 0.03, 0.5, 0.46]), 18.77225681167061f64.ln(), 1e-12);
         assert_almost_eq!(n.ln_pdf(&dvec![0.1,0.2,0.3,0.4]), 0.8314656481199253f64.ln(), 1e-14);
     }
@@ -414,42 +404,42 @@ mod tests {
     #[test]
     #[should_panic]
     fn test_pdf_bad_input_length() {
-        let n = try_create(&[0.1, 0.3, 0.5, 0.8]);
+        let n = try_create(vec![0.1, 0.3, 0.5, 0.8]);
         n.pdf(&dvec![0.5]);
     }
 
     #[test]
     #[should_panic]
     fn test_pdf_bad_input_range() {
-        let n = try_create(&[0.1, 0.3, 0.5, 0.8]);
+        let n = try_create(vec![0.1, 0.3, 0.5, 0.8]);
         n.pdf(&dvec![1.5, 0.0, 0.0, 0.0]);
     }
 
     #[test]
     #[should_panic]
     fn test_pdf_bad_input_sum() {
-        let n = try_create(&[0.1, 0.3, 0.5, 0.8]);
+        let n = try_create(vec![0.1, 0.3, 0.5, 0.8]);
         n.pdf(&dvec![0.5, 0.25, 0.8, 0.9]);
     }
 
     #[test]
     #[should_panic]
     fn test_ln_pdf_bad_input_length() {
-        let n = try_create(&[0.1, 0.3, 0.5, 0.8]);
+        let n = try_create(vec![0.1, 0.3, 0.5, 0.8]);
         n.ln_pdf(&dvec![0.5]);
     }
 
     #[test]
     #[should_panic]
     fn test_ln_pdf_bad_input_range() {
-        let n = try_create(&[0.1, 0.3, 0.5, 0.8]);
+        let n = try_create(vec![0.1, 0.3, 0.5, 0.8]);
         n.ln_pdf(&dvec![1.5, 0.0, 0.0, 0.0]);
     }
 
     #[test]
     #[should_panic]
     fn test_ln_pdf_bad_input_sum() {
-        let n = try_create(&[0.1, 0.3, 0.5, 0.8]);
+        let n = try_create(vec![0.1, 0.3, 0.5, 0.8]);
         n.ln_pdf(&dvec![0.5, 0.25, 0.8, 0.9]);
     }
 }
