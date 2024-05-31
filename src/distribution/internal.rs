@@ -91,6 +91,16 @@ pub mod test {
                 assert_relative_eq!(expected, x, max_relative = $crate::consts::ACC);
             }
 
+            #[allow(dead_code)] // This is not used by all distributions
+            fn test_case_exact<F, T>($($arg_name: $arg_ty),+, expected: T, eval: F)
+            where
+                F: Fn($dist) -> T,
+                T: ::core::fmt::Debug + ::core::cmp::PartialEq
+            {
+                let x = get_value($($arg_name),+, eval);
+                assert_eq!(expected, x);
+            }
+
             #[allow(dead_code)] // This is not used by all distributions.
             fn test_case_special<F, T>($($arg_name: $arg_ty),+, expected: T, acc: f64, eval: F)
             where
