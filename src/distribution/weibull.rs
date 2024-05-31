@@ -331,42 +331,12 @@ mod tests {
     use crate::distribution::{ContinuousCDF, Continuous, Weibull};
     use crate::distribution::internal::*;
 
-    fn try_create(shape: f64, scale: f64) -> Weibull {
-        let n = Weibull::new(shape, scale);
-        assert!(n.is_ok());
-        n.unwrap()
-    }
+    testing_boiler!(shape: f64, scale: f64; Weibull);
 
     fn create_case(shape: f64, scale: f64) {
         let n = try_create(shape, scale);
         assert_eq!(shape, n.shape());
         assert_eq!(scale, n.scale());
-    }
-
-    fn bad_create_case(shape: f64, scale: f64) {
-        let n = Weibull::new(shape, scale);
-        assert!(n.is_err());
-    }
-
-    fn get_value<F>(shape: f64, scale: f64, eval: F) -> f64
-        where F: Fn(Weibull) -> f64
-    {
-        let n = try_create(shape, scale);
-        eval(n)
-    }
-
-    fn test_case<F>(shape: f64, scale: f64, expected: f64, eval: F)
-        where F: Fn(Weibull) -> f64
-    {
-        let x = get_value(shape, scale, eval);
-        assert_eq!(expected, x);
-    }
-
-    fn test_almost<F>(shape: f64, scale: f64, expected: f64, acc: f64, eval: F)
-        where F: Fn(Weibull) -> f64
-    {
-        let x = get_value(shape, scale, eval);
-        assert_almost_eq!(expected, x, acc);
     }
 
     #[test]
@@ -395,35 +365,35 @@ mod tests {
         let mean = |x: Weibull| x.mean().unwrap();
         test_case(1.0, 0.1, 0.1, mean);
         test_case(1.0, 1.0, 1.0, mean);
-        test_almost(10.0, 10.0, 9.5135076986687318362924871772654021925505786260884, 1e-14, mean);
-        test_almost(10.0, 1.0, 0.95135076986687318362924871772654021925505786260884, 1e-15, mean);
+        test_case_special(10.0, 10.0, 9.5135076986687318362924871772654021925505786260884, 1e-14, mean);
+        test_case_special(10.0, 1.0, 0.95135076986687318362924871772654021925505786260884, 1e-15, mean);
     }
 
     #[test]
     fn test_variance() {
         let variance = |x: Weibull| x.variance().unwrap();
-        test_almost(1.0, 0.1, 0.01, 1e-16, variance);
-        test_almost(1.0, 1.0, 1.0, 1e-14, variance);
-        test_almost(10.0, 10.0, 1.3100455073468309147154581687505295026863354547057, 1e-12, variance);
-        test_almost(10.0, 1.0, 0.013100455073468309147154581687505295026863354547057, 1e-14, variance);
+        test_case_special(1.0, 0.1, 0.01, 1e-16, variance);
+        test_case_special(1.0, 1.0, 1.0, 1e-14, variance);
+        test_case_special(10.0, 10.0, 1.3100455073468309147154581687505295026863354547057, 1e-12, variance);
+        test_case_special(10.0, 1.0, 0.013100455073468309147154581687505295026863354547057, 1e-14, variance);
     }
 
     #[test]
     fn test_entropy() {
         let entropy = |x: Weibull| x.entropy().unwrap();
-        test_almost(1.0, 0.1, -1.302585092994045684018, 1e-15, entropy);
+        test_case_special(1.0, 0.1, -1.302585092994045684018, 1e-15, entropy);
         test_case(1.0, 1.0, 1.0, entropy);
         test_case(10.0, 10.0, 1.519494098411379574546, entropy);
-        test_almost(10.0, 1.0, -0.783090994582666109472, 1e-15, entropy);
+        test_case_special(10.0, 1.0, -0.783090994582666109472, 1e-15, entropy);
     }
 
     #[test]
     fn test_skewnewss() {
         let skewness = |x: Weibull| x.skewness().unwrap();
-        test_almost(1.0, 0.1, 2.0, 1e-13, skewness);
-        test_almost(1.0, 1.0, 2.0, 1e-13, skewness);
-        test_almost(10.0, 10.0, -0.63763713390314440916597757156663888653981696212127, 1e-11, skewness);
-        test_almost(10.0, 1.0, -0.63763713390314440916597757156663888653981696212127, 1e-11, skewness);
+        test_case_special(1.0, 0.1, 2.0, 1e-13, skewness);
+        test_case_special(1.0, 1.0, 2.0, 1e-13, skewness);
+        test_case_special(10.0, 10.0, -0.63763713390314440916597757156663888653981696212127, 1e-11, skewness);
+        test_case_special(10.0, 1.0, -0.63763713390314440916597757156663888653981696212127, 1e-11, skewness);
     }
 
     #[test]
@@ -462,7 +432,7 @@ mod tests {
         test_case(1.0, 1.0, 0.36787944117144232159552377016146086744581113103177, pdf(1.0));
         test_case(1.0, 1.0, 0.000045399929762484851535591515560550610237918088866565, pdf(10.0));
         test_case(10.0, 10.0, 0.0, pdf(0.0));
-        test_almost(10.0, 10.0, 9.9999999990000000000499999999983333333333750000000e-10, 1e-24, pdf(1.0));
+        test_case_special(10.0, 10.0, 9.9999999990000000000499999999983333333333750000000e-10, 1e-24, pdf(1.0));
         test_case(10.0, 10.0, 0.36787944117144232159552377016146086744581113103177, pdf(10.0));
         test_case(10.0, 1.0, 0.0, pdf(0.0));
         test_case(10.0, 1.0, 3.6787944117144232159552377016146086744581113103177, pdf(1.0));
@@ -472,17 +442,17 @@ mod tests {
     #[test]
     fn test_ln_pdf() {
         let ln_pdf = |arg: f64| move |x: Weibull| x.ln_pdf(arg);
-        test_almost(1.0, 0.1, 2.3025850929940456840179914546843642076011014886288, 1e-15, ln_pdf(0.0));
-        test_almost(1.0, 0.1, -7.6974149070059543159820085453156357923988985113712, 1e-15, ln_pdf(1.0));
+        test_case_special(1.0, 0.1, 2.3025850929940456840179914546843642076011014886288, 1e-15, ln_pdf(0.0));
+        test_case_special(1.0, 0.1, -7.6974149070059543159820085453156357923988985113712, 1e-15, ln_pdf(1.0));
         test_case(1.0, 0.1, -97.697414907005954315982008545315635792398898511371, ln_pdf(10.0));
         test_case(1.0, 1.0, 0.0, ln_pdf(0.0));
         test_case(1.0, 1.0, -1.0, ln_pdf(1.0));
         test_case(1.0, 1.0, -10.0, ln_pdf(10.0));
         test_case(10.0, 10.0, f64::NEG_INFINITY, ln_pdf(0.0));
-        test_almost(10.0, 10.0, -20.723265837046411156161923092159277868409913397659, 1e-14, ln_pdf(1.0));
+        test_case_special(10.0, 10.0, -20.723265837046411156161923092159277868409913397659, 1e-14, ln_pdf(1.0));
         test_case(10.0, 10.0, -1.0, ln_pdf(10.0));
         test_case(10.0, 1.0, f64::NEG_INFINITY, ln_pdf(0.0));
-        test_almost(10.0, 1.0, 1.3025850929940456840179914546843642076011014886288, 1e-15, ln_pdf(1.0));
+        test_case_special(10.0, 1.0, 1.3025850929940456840179914546843642076011014886288, 1e-15, ln_pdf(1.0));
         test_case(10.0, 1.0, -9.999999976974149070059543159820085453156357923988985113712e9, ln_pdf(10.0));
     }
 
@@ -496,7 +466,7 @@ mod tests {
         test_case(1.0, 1.0, 0.63212055882855767840447622983853913255418886896823, cdf(1.0));
         test_case(1.0, 1.0, 0.99995460007023751514846440848443944938976208191113, cdf(10.0));
         test_case(10.0, 10.0, 0.0, cdf(0.0));
-        test_almost(10.0, 10.0, 9.9999999995000000000166666666662500000000083333333e-11, 1e-25, cdf(1.0));
+        test_case_special(10.0, 10.0, 9.9999999995000000000166666666662500000000083333333e-11, 1e-25, cdf(1.0));
         test_case(10.0, 10.0, 0.63212055882855767840447622983853913255418886896823, cdf(10.0));
         test_case(10.0, 1.0, 0.0, cdf(0.0));
         test_case(10.0, 1.0, 0.63212055882855767840447622983853913255418886896823, cdf(1.0));
@@ -513,7 +483,7 @@ mod tests {
         test_case(1.0, 1.0, 0.36787944117144233, sf(1.0));
         test_case(1.0, 1.0, 4.5399929762484854e-5, sf(10.0));
         test_case(10.0, 10.0, 1.0, sf(0.0));
-        test_almost(10.0, 10.0, 0.9999999999, 1e-25, sf(1.0));
+        test_case_special(10.0, 10.0, 0.9999999999, 1e-25, sf(1.0));
         test_case(10.0, 10.0, 0.36787944117144233, sf(10.0));
         test_case(10.0, 1.0, 1.0, sf(0.0));
         test_case(10.0, 1.0, 0.36787944117144233, sf(1.0));
