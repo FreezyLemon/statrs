@@ -370,48 +370,17 @@ impl Discrete<u64, f64> for Hypergeometric {
 mod tests {
     use std::fmt::Debug;
     use crate::statistics::*;
+    use crate::testing_boiler;
     use crate::distribution::{DiscreteCDF, Discrete, Hypergeometric};
     use crate::distribution::internal::*;
 
-    fn try_create(population: u64, successes: u64, draws: u64) -> Hypergeometric {
-        let n = Hypergeometric::new(population, successes, draws);
-        assert!(n.is_ok());
-        n.unwrap()
-    }
+    testing_boiler!(population: u64, successes: u64, draws: u64; Hypergeometric);
 
     fn create_case(population: u64, successes: u64, draws: u64) {
         let n = try_create(population, successes, draws);
         assert_eq!(population, n.population());
         assert_eq!(successes, n.successes());
         assert_eq!(draws, n.draws());
-    }
-
-    fn bad_create_case(population: u64, successes: u64, draws: u64) {
-        let n = Hypergeometric::new(population, successes, draws);
-        assert!(n.is_err());
-    }
-
-    fn get_value<T, F>(population: u64, successes: u64, draws: u64, eval: F) -> T
-        where T: PartialEq + Debug,
-              F: Fn(Hypergeometric) -> T
-    {
-        let n = try_create(population, successes, draws);
-        eval(n)
-    }
-
-    fn test_case<T, F>(population: u64, successes: u64, draws: u64, expected: T, eval: F)
-        where T: PartialEq + Debug,
-              F: Fn(Hypergeometric) -> T
-    {
-        let x = get_value(population, successes, draws, eval);
-        assert_eq!(expected, x);
-    }
-
-    fn test_almost<F>(population: u64, successes: u64, draws: u64, expected: f64, acc: f64, eval: F)
-        where F: Fn(Hypergeometric) -> f64
-    {
-        let x = get_value(population, successes, draws, eval);
-        assert_almost_eq!(expected, x, acc);
     }
 
     #[test]
@@ -481,34 +450,34 @@ mod tests {
     #[test]
     fn test_mode() {
         let mode = |x: Hypergeometric| x.mode().unwrap();
-        test_case(0, 0, 0, 0, mode);
-        test_case(1, 1, 1, 1, mode);
-        test_case(2, 1, 1, 1, mode);
-        test_case(2, 2, 2, 2, mode);
-        test_case(10, 1, 1, 0, mode);
-        test_case(10, 5, 3, 2, mode);
+        test_case_exact(0, 0, 0, 0, mode);
+        test_case_exact(1, 1, 1, 1, mode);
+        test_case_exact(2, 1, 1, 1, mode);
+        test_case_exact(2, 2, 2, 2, mode);
+        test_case_exact(10, 1, 1, 0, mode);
+        test_case_exact(10, 5, 3, 2, mode);
     }
 
     #[test]
     fn test_min() {
         let min = |x: Hypergeometric| x.min();
-        test_case(0, 0, 0, 0, min);
-        test_case(1, 1, 1, 1, min);
-        test_case(2, 1, 1, 0, min);
-        test_case(2, 2, 2, 2, min);
-        test_case(10, 1, 1, 0, min);
-        test_case(10, 5, 3, 0, min);
+        test_case_exact(0, 0, 0, 0, min);
+        test_case_exact(1, 1, 1, 1, min);
+        test_case_exact(2, 1, 1, 0, min);
+        test_case_exact(2, 2, 2, 2, min);
+        test_case_exact(10, 1, 1, 0, min);
+        test_case_exact(10, 5, 3, 0, min);
     }
 
     #[test]
     fn test_max() {
         let max = |x: Hypergeometric| x.max();
-        test_case(0, 0, 0, 0, max);
-        test_case(1, 1, 1, 1, max);
-        test_case(2, 1, 1, 1, max);
-        test_case(2, 2, 2, 2, max);
-        test_case(10, 1, 1, 1, max);
-        test_case(10, 5, 3, 3, max);
+        test_case_exact(0, 0, 0, 0, max);
+        test_case_exact(1, 1, 1, 1, max);
+        test_case_exact(2, 1, 1, 1, max);
+        test_case_exact(2, 2, 2, 2, max);
+        test_case_exact(10, 1, 1, 1, max);
+        test_case_exact(10, 5, 3, 3, max);
     }
 
     #[test]
@@ -533,32 +502,32 @@ mod tests {
         test_case(2, 1, 1, -0.6931471805599453094172, ln_pmf(0));
         test_case(2, 1, 1, -0.6931471805599453094172, ln_pmf(1));
         test_case(2, 2, 2, 0.0, ln_pmf(2));
-        test_almost(10, 1, 1, -0.1053605156578263012275, 1e-14, ln_pmf(0));
-        test_almost(10, 1, 1, -2.302585092994045684018, 1e-14, ln_pmf(1));
-        test_almost(10, 5, 3, -0.875468737353899935621, 1e-14, ln_pmf(1));
-        test_almost(10, 5, 3, -2.484906649788000310234, 1e-14, ln_pmf(3));
+        test_case_special(10, 1, 1, -0.1053605156578263012275, 1e-14, ln_pmf(0));
+        test_case_special(10, 1, 1, -2.302585092994045684018, 1e-14, ln_pmf(1));
+        test_case_special(10, 5, 3, -0.875468737353899935621, 1e-14, ln_pmf(1));
+        test_case_special(10, 5, 3, -2.484906649788000310234, 1e-14, ln_pmf(3));
     }
 
     #[test]
     fn test_cdf() {
         let cdf = |arg: u64| move |x: Hypergeometric| x.cdf(arg);
         test_case(2, 1, 1, 0.5, cdf(0));
-        test_almost(10, 1, 1, 0.9, 1e-14, cdf(0));
-        test_almost(10, 5, 3, 0.5, 1e-15, cdf(1));
-        test_almost(10, 5, 3, 11.0 / 12.0, 1e-14, cdf(2));
-        test_almost(10000, 2, 9800, 199.0 / 499950.0, 1e-14, cdf(0));
-        test_almost(10000, 2, 9800, 19799.0 / 499950.0, 1e-12, cdf(1));
+        test_case_special(10, 1, 1, 0.9, 1e-14, cdf(0));
+        test_case_special(10, 5, 3, 0.5, 1e-15, cdf(1));
+        test_case_special(10, 5, 3, 11.0 / 12.0, 1e-14, cdf(2));
+        test_case_special(10000, 2, 9800, 199.0 / 499950.0, 1e-14, cdf(0));
+        test_case_special(10000, 2, 9800, 19799.0 / 499950.0, 1e-12, cdf(1));
     }
 
     #[test]
     fn test_sf() {
         let sf = |arg: u64| move |x: Hypergeometric| x.sf(arg);
         test_case(2, 1, 1, 0.5, sf(0));
-        test_almost(10, 1, 1, 0.1, 1e-14, sf(0));
-        test_almost(10, 5, 3, 0.5, 1e-15, sf(1));
-        test_almost(10, 5, 3, 1.0 / 12.0, 1e-14, sf(2));
-        test_almost(10000, 2, 9800, 499751. / 499950.0, 1e-10, sf(0));
-        test_almost(10000, 2, 9800, 480151. / 499950.0, 1e-10, sf(1));
+        test_case_special(10, 1, 1, 0.1, 1e-14, sf(0));
+        test_case_special(10, 5, 3, 0.5, 1e-15, sf(1));
+        test_case_special(10, 5, 3, 1.0 / 12.0, 1e-14, sf(2));
+        test_case_special(10000, 2, 9800, 499751. / 499950.0, 1e-10, sf(0));
+        test_case_special(10000, 2, 9800, 480151. / 499950.0, 1e-10, sf(1));
     }
 
     #[test]
