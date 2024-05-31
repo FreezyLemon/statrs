@@ -229,40 +229,16 @@ impl Continuous<f64, f64> for Cauchy {
 #[cfg(test)]
 mod tests {
     use crate::statistics::*;
+    use crate::testing_boiler;
     use crate::distribution::{ContinuousCDF, Continuous, Cauchy};
     use crate::distribution::internal::*;
 
-    fn try_create(location: f64, scale: f64) -> Cauchy {
-        let n = Cauchy::new(location, scale);
-        assert!(n.is_ok());
-        n.unwrap()
-    }
+    testing_boiler!(location: f64, scale: f64; Cauchy);
 
     fn create_case(location: f64, scale: f64) {
         let n = try_create(location, scale);
         assert_eq!(location, n.location());
         assert_eq!(scale, n.scale());
-    }
-
-    fn bad_create_case(location: f64, scale: f64) {
-        let n = Cauchy::new(location, scale);
-        assert!(n.is_err());
-    }
-
-    fn test_case<F>(location: f64, scale: f64, expected: f64, eval: F)
-        where F: Fn(Cauchy) -> f64
-    {
-        let n = try_create(location, scale);
-        let x = eval(n);
-        assert_eq!(expected, x);
-    }
-
-    fn test_almost<F>(location: f64, scale: f64, expected: f64, acc: f64, eval: F)
-        where F: Fn(Cauchy) -> f64
-    {
-        let n = try_create(location, scale);
-        let x = eval(n);
-        assert_almost_eq!(expected, x, acc);
     }
 
     #[test]
@@ -325,24 +301,24 @@ mod tests {
         let pdf = |arg: f64| move |x: Cauchy| x.pdf(arg);
         test_case(0.0, 0.1, 0.001272730452554141029739, pdf(-5.0));
         test_case(0.0, 0.1, 0.03151583031522679916216, pdf(-1.0));
-        test_almost(0.0, 0.1, 3.183098861837906715378, 1e-14, pdf(0.0));
+        test_case_special(0.0, 0.1, 3.183098861837906715378, 1e-14, pdf(0.0));
         test_case(0.0, 0.1, 0.03151583031522679916216, pdf(1.0));
         test_case(0.0, 0.1, 0.001272730452554141029739, pdf(5.0));
-        test_almost(0.0, 1.0, 0.01224268793014579505914, 1e-17, pdf(-5.0));
+        test_case_special(0.0, 1.0, 0.01224268793014579505914, 1e-17, pdf(-5.0));
         test_case(0.0, 1.0, 0.1591549430918953357689, pdf(-1.0));
         test_case(0.0, 1.0, 0.3183098861837906715378, pdf(0.0));
         test_case(0.0, 1.0, 0.1591549430918953357689, pdf(1.0));
-        test_almost(0.0, 1.0, 0.01224268793014579505914, 1e-17, pdf(5.0));
+        test_case_special(0.0, 1.0, 0.01224268793014579505914, 1e-17, pdf(5.0));
         test_case(0.0, 10.0, 0.02546479089470325372302, pdf(-5.0));
         test_case(0.0, 10.0, 0.03151583031522679916216, pdf(-1.0));
         test_case(0.0, 10.0, 0.03183098861837906715378, pdf(0.0));
         test_case(0.0, 10.0, 0.03151583031522679916216, pdf(1.0));
         test_case(0.0, 10.0, 0.02546479089470325372302, pdf(5.0));
         test_case(-5.0, 100.0, 0.003183098861837906715378, pdf(-5.0));
-        test_almost(-5.0, 100.0, 0.003178014039374906864395, 1e-17, pdf(-1.0));
+        test_case_special(-5.0, 100.0, 0.003178014039374906864395, 1e-17, pdf(-1.0));
         test_case(-5.0, 100.0, 0.003175160959439308444267, pdf(0.0));
         test_case(-5.0, 100.0, 0.003171680810918599756255, pdf(1.0));
-        test_almost(-5.0, 100.0, 0.003151583031522679916216, 1e-17, pdf(5.0));
+        test_case_special(-5.0, 100.0, 0.003151583031522679916216, 1e-17, pdf(5.0));
         test_case(0.0, f64::INFINITY, 0.0, pdf(-5.0));
         test_case(0.0, f64::INFINITY, 0.0, pdf(-1.0));
         test_case(0.0, f64::INFINITY, 0.0, pdf(0.0));
@@ -359,19 +335,19 @@ mod tests {
     fn test_ln_pdf() {
         let ln_pdf = |arg: f64| move |x: Cauchy| x.ln_pdf(arg);
         test_case(0.0, 0.1, -6.666590723732973542744, ln_pdf(-5.0));
-        test_almost(0.0, 0.1, -3.457265309696613941009, 1e-14, ln_pdf(-1.0));
+        test_case_special(0.0, 0.1, -3.457265309696613941009, 1e-14, ln_pdf(-1.0));
         test_case(0.0, 0.1, 1.157855207144645509875, ln_pdf(0.0));
-        test_almost(0.0, 0.1, -3.457265309696613941009, 1e-14, ln_pdf(1.0));
+        test_case_special(0.0, 0.1, -3.457265309696613941009, 1e-14, ln_pdf(1.0));
         test_case(0.0, 0.1, -6.666590723732973542744, ln_pdf(5.0));
         test_case(0.0, 1.0, -4.402826423870882219615, ln_pdf(-5.0));
-        test_almost(0.0, 1.0, -1.837877066409345483561, 1e-15, ln_pdf(-1.0));
+        test_case_special(0.0, 1.0, -1.837877066409345483561, 1e-15, ln_pdf(-1.0));
         test_case(0.0, 1.0, -1.144729885849400174143, ln_pdf(0.0));
-        test_almost(0.0, 1.0, -1.837877066409345483561, 1e-15, ln_pdf(1.0));
+        test_case_special(0.0, 1.0, -1.837877066409345483561, 1e-15, ln_pdf(1.0));
         test_case(0.0, 1.0, -4.402826423870882219615, ln_pdf(5.0));
         test_case(0.0, 10.0, -3.670458530157655613928, ln_pdf(-5.0));
-        test_almost(0.0, 10.0, -3.457265309696613941009, 1e-14, ln_pdf(-1.0));
+        test_case_special(0.0, 10.0, -3.457265309696613941009, 1e-14, ln_pdf(-1.0));
         test_case(0.0, 10.0, -3.447314978843445858161, ln_pdf(0.0));
-        test_almost(0.0, 10.0, -3.457265309696613941009, 1e-14, ln_pdf(1.0));
+        test_case_special(0.0, 10.0, -3.457265309696613941009, 1e-14, ln_pdf(1.0));
         test_case(0.0, 10.0, -3.670458530157655613928, ln_pdf(5.0));
         test_case(-5.0, 100.0, -5.749900071837491542179, ln_pdf(-5.0));
         test_case(-5.0, 100.0, -5.751498793201188569872, ln_pdf(-1.0));
@@ -393,12 +369,12 @@ mod tests {
     #[test]
     fn test_cdf() {
         let cdf = |arg: f64| move |x: Cauchy| x.cdf(arg);
-        test_almost(0.0, 0.1, 0.006365349100972796679298, 1e-16, cdf(-5.0));
-        test_almost(0.0, 0.1, 0.03172551743055356951498, 1e-16, cdf(-1.0));
+        test_case_special(0.0, 0.1, 0.006365349100972796679298, 1e-16, cdf(-5.0));
+        test_case_special(0.0, 0.1, 0.03172551743055356951498, 1e-16, cdf(-1.0));
         test_case(0.0, 0.1, 0.5, cdf(0.0));
         test_case(0.0, 0.1, 0.968274482569446430485, cdf(1.0));
         test_case(0.0, 0.1, 0.9936346508990272033207, cdf(5.0));
-        test_almost(0.0, 1.0, 0.06283295818900118381375, 1e-16, cdf(-5.0));
+        test_case_special(0.0, 1.0, 0.06283295818900118381375, 1e-16, cdf(-5.0));
         test_case(0.0, 1.0, 0.25, cdf(-1.0));
         test_case(0.0, 1.0, 0.5, cdf(0.0));
         test_case(0.0, 1.0, 0.75, cdf(1.0));
@@ -428,12 +404,12 @@ mod tests {
     #[test]
     fn test_sf() {
         let sf = |arg: f64| move |x: Cauchy| x.sf(arg);
-        test_almost(0.0, 0.1, 0.9936346508990272, 1e-16, sf(-5.0));
-        test_almost(0.0, 0.1, 0.9682744825694465, 1e-16, sf(-1.0));
+        test_case_special(0.0, 0.1, 0.9936346508990272, 1e-16, sf(-5.0));
+        test_case_special(0.0, 0.1, 0.9682744825694465, 1e-16, sf(-1.0));
         test_case(0.0, 0.1, 0.5, sf(0.0));
-        test_almost(0.0, 0.1, 0.03172551743055352, 1e-16, sf(1.0));
+        test_case_special(0.0, 0.1, 0.03172551743055352, 1e-16, sf(1.0));
         test_case(0.0, 0.1, 0.006365349100972806, sf(5.0));
-        test_almost(0.0, 1.0, 0.9371670418109989, 1e-16, sf(-5.0));
+        test_case_special(0.0, 1.0, 0.9371670418109989, 1e-16, sf(-5.0));
         test_case(0.0, 1.0, 0.75, sf(-1.0));
         test_case(0.0, 1.0, 0.5, sf(0.0));
         test_case(0.0, 1.0, 0.25, sf(1.0));
