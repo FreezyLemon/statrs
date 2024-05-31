@@ -286,35 +286,16 @@ impl Continuous<f64, f64> for ChiSquared {
 #[cfg(test)]
 mod tests {
     use crate::statistics::Median;
+    use crate::testing_boiler;
     use crate::distribution::ChiSquared;
     use crate::distribution::internal::*;
 
-    fn try_create(freedom: f64) -> ChiSquared {
-        let n = ChiSquared::new(freedom);
-        assert!(n.is_ok());
-        n.unwrap()
-    }
-
-    fn test_case<F>(freedom: f64, expected: f64, eval: F)
-        where F: Fn(ChiSquared) -> f64
-    {
-        let n = try_create(freedom);
-        let x = eval(n);
-        assert_eq!(expected, x);
-    }
-
-    fn test_almost<F>(freedom: f64, expected: f64, acc: f64, eval: F)
-        where F: Fn(ChiSquared) -> f64
-    {
-        let n = try_create(freedom);
-        let x = eval(n);
-        assert_almost_eq!(expected, x, acc);
-    }
+    testing_boiler!(freedom: f64; ChiSquared);
 
     #[test]
     fn test_median() {
         let median = |x: ChiSquared| x.median();
-        test_almost(0.5, 0.0857338820301783264746, 1e-16, median);
+        test_case_special(0.5, 0.0857338820301783264746, 1e-16, median);
         test_case(1.0, 1.0 - 2.0 / 3.0, median);
         test_case(2.0, 2.0 - 2.0 / 3.0, median);
         test_case(2.5, 2.5 - 2.0 / 3.0, median);
