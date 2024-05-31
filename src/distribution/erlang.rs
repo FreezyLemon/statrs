@@ -274,22 +274,14 @@ impl Continuous<f64, f64> for Erlang {
 mod tests {
     use crate::distribution::Erlang;
     use crate::distribution::internal::*;
+    use crate::testing_boiler;
 
-    fn try_create(shape: u64, rate: f64) -> Erlang {
-        let n = Erlang::new(shape, rate);
-        assert!(n.is_ok());
-        n.unwrap()
-    }
+    testing_boiler!(shape: u64, rate: f64; Erlang);
 
     fn create_case(shape: u64, rate: f64) {
         let n = try_create(shape, rate);
         assert_eq!(shape, n.shape());
         assert_eq!(rate, n.rate());
-    }
-
-    fn bad_create_case(shape: u64, rate: f64) {
-        let n = Erlang::new(shape, rate);
-        assert!(n.is_err());
     }
 
     #[test]
