@@ -260,46 +260,14 @@ impl Discrete<u64, f64> for Bernoulli {
 #[cfg(test)]
 mod testing {
     use std::fmt::Debug;
-    use crate::distribution::DiscreteCDF;
-    use super::Bernoulli;
+    use crate::distribution::{Bernoulli, DiscreteCDF};
+    use crate::testing_boiler;
 
-    fn try_create(p: f64) -> Bernoulli {
-        let n = Bernoulli::new(p);
-        assert!(n.is_ok());
-        n.unwrap()
-    }
+    testing_boiler!(p: f64; Bernoulli);
 
     fn create_case(p: f64) {
         let dist = try_create(p);
         assert_eq!(p, dist.p());
-    }
-
-    fn bad_create_case(p: f64) {
-        let n = Bernoulli::new(p);
-        assert!(n.is_err());
-    }
-
-    fn get_value<T, F>(p: f64, eval: F) -> T
-        where T: PartialEq + Debug,
-              F: Fn(Bernoulli) -> T
-    {
-        let n = try_create(p);
-        eval(n)
-    }
-
-    fn test_case<T, F>(p: f64, expected: T, eval: F)
-        where T: PartialEq + Debug,
-              F: Fn(Bernoulli) -> T
-    {
-        let x = get_value(p, eval);
-        assert_eq!(expected, x);
-    }
-
-    fn test_almost<F>(p: f64, expected: f64, acc: f64, eval: F)
-        where F: Fn(Bernoulli) -> f64
-    {
-        let x = get_value(p, eval);
-        assert_almost_eq!(expected, x, acc);
     }
 
     #[test]
@@ -333,8 +301,8 @@ mod testing {
         let cdf = |arg: u64| move |x: Bernoulli| x.cdf(arg);
         test_case(0.0, 1.0, cdf(0));
         test_case(0.0, 1.0, cdf(1));
-        test_almost(0.3, 0.7, 1e-15, cdf(0));
-        test_almost(0.7, 0.3, 1e-15, cdf(0));
+        test_case_special(0.3, 0.7, 1e-15, cdf(0));
+        test_case_special(0.7, 0.3, 1e-15, cdf(0));
     }
 
     #[test]
@@ -342,7 +310,7 @@ mod testing {
         let sf = |arg: u64| move |x: Bernoulli| x.sf(arg);
         test_case(0.0, 0.0, sf(0));
         test_case(0.0, 0.0, sf(1));
-        test_almost(0.3, 0.3, 1e-15, sf(0));
-        test_almost(0.7, 0.7, 1e-15, sf(0));
+        test_case_special(0.3, 0.3, 1e-15, sf(0));
+        test_case_special(0.7, 0.7, 1e-15, sf(0));
     }
 }
