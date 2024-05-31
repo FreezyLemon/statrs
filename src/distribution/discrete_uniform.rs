@@ -252,39 +252,15 @@ impl Discrete<i64, f64> for DiscreteUniform {
 mod tests {
     use std::fmt::Debug;
     use crate::statistics::*;
+    use crate::testing_boiler;
     use crate::distribution::{DiscreteCDF, Discrete, DiscreteUniform};
 
-    fn try_create(min: i64, max: i64) -> DiscreteUniform {
-        let n = DiscreteUniform::new(min, max);
-        assert!(n.is_ok());
-        n.unwrap()
-    }
+    testing_boiler!(min: i64, max: i64; DiscreteUniform);
 
     fn create_case(min: i64, max: i64) {
         let n = try_create(min, max);
         assert_eq!(min, n.min());
         assert_eq!(max, n.max());
-    }
-
-    fn bad_create_case(min: i64, max: i64) {
-        let n = DiscreteUniform::new(min, max);
-        assert!(n.is_err());
-    }
-
-    fn get_value<T, F>(min: i64, max: i64, eval: F) -> T
-        where T: PartialEq + Debug,
-              F: Fn(DiscreteUniform) -> T
-    {
-        let n = try_create(min, max);
-        eval(n)
-    }
-
-    fn test_case<T, F>(min: i64, max: i64, expected: T, eval: F)
-        where T: PartialEq + Debug,
-              F: Fn(DiscreteUniform) -> T
-    {
-        let x = get_value(min, max, eval);
-        assert_eq!(expected, x);
     }
 
     #[test]
@@ -349,10 +325,10 @@ mod tests {
     #[test]
     fn test_mode() {
         let mode = |x: DiscreteUniform| x.mode().unwrap();
-        test_case(-10, 10, 0, mode);
-        test_case(0, 4, 2, mode);
-        test_case(10, 20, 15, mode);
-        test_case(20, 20, 20, mode);
+        test_case_exact(-10, 10, 0, mode);
+        test_case_exact(0, 4, 2, mode);
+        test_case_exact(10, 20, 15, mode);
+        test_case_exact(20, 20, 20, mode);
     }
 
     #[test]
