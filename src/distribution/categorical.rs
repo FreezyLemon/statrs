@@ -348,45 +348,14 @@ fn test_binary_index() {
 mod tests {
     use std::fmt::Debug;
     use crate::statistics::*;
+    use crate::testing_boiler;
     use crate::distribution::{Categorical, Discrete, DiscreteCDF};
     use crate::distribution::internal::*;
 
-    fn try_create(prob_mass: &[f64]) -> Categorical {
-        let n = Categorical::new(prob_mass);
-        assert!(n.is_ok());
-        n.unwrap()
-    }
+    testing_boiler!(prob_mass: &[f64]; Categorical);
 
     fn create_case(prob_mass: &[f64]) {
         try_create(prob_mass);
-    }
-
-    fn bad_create_case(prob_mass: &[f64]) {
-        let n = Categorical::new(prob_mass);
-        assert!(n.is_err());
-    }
-
-    fn get_value<T, F>(prob_mass: &[f64], eval: F) -> T
-        where T: PartialEq + Debug,
-              F: Fn(Categorical) -> T
-    {
-        let n = try_create(prob_mass);
-        eval(n)
-    }
-
-    fn test_case<T, F>(prob_mass: &[f64], expected: T, eval: F)
-        where T: PartialEq + Debug,
-              F: Fn(Categorical) -> T
-    {
-        let x = get_value(prob_mass, eval);
-        assert_eq!(expected, x);
-    }
-
-    fn test_almost<F>(prob_mass: &[f64], expected: f64, acc: f64, eval: F)
-        where F: Fn(Categorical) -> f64
-    {
-        let x = get_value(prob_mass, eval);
-        assert_almost_eq!(expected, x, acc);
     }
 
     #[test]
@@ -424,10 +393,10 @@ mod tests {
     fn test_entropy() {
         let entropy = |x: Categorical| x.entropy().unwrap();
         test_case(&[0.0, 1.0], 0.0, entropy);
-        test_almost(&[0.0, 1.0, 1.0], 2f64.ln(), 1e-15, entropy);
-        test_almost(&[1.0, 1.0, 1.0], 3f64.ln(), 1e-15, entropy);
-        test_almost(&vec![1.0; 100], 100f64.ln(), 1e-14, entropy);
-        test_almost(&[0.0, 0.25, 0.5, 0.25], 1.0397207708399179, 1e-15, entropy);
+        test_case_special(&[0.0, 1.0, 1.0], 2f64.ln(), 1e-15, entropy);
+        test_case_special(&[1.0, 1.0, 1.0], 3f64.ln(), 1e-15, entropy);
+        test_case_special(&vec![1.0; 100], 100f64.ln(), 1e-14, entropy);
+        test_case_special(&[0.0, 0.25, 0.5, 0.25], 1.0397207708399179, 1e-15, entropy);
     }
 
     #[test]
@@ -441,8 +410,8 @@ mod tests {
     fn test_min_max() {
         let min = |x: Categorical| x.min();
         let max = |x: Categorical| x.max();
-        test_case(&[4.0, 2.5, 2.5, 1.0], 0, min);
-        test_case(&[4.0, 2.5, 2.5, 1.0], 3, max);
+        test_case_exact(&[4.0, 2.5, 2.5, 1.0], 0, min);
+        test_case_exact(&[4.0, 2.5, 2.5, 1.0], 3, max);
     }
 
     #[test]
@@ -518,12 +487,12 @@ mod tests {
     #[test]
     fn test_inverse_cdf() {
         let inverse_cdf = |arg: f64| move |x: Categorical| x.inverse_cdf(arg);
-        test_case(&[0.0, 3.0, 1.0, 1.0], 1, inverse_cdf(0.2));
-        test_case(&[0.0, 3.0, 1.0, 1.0], 1, inverse_cdf(0.5));
-        test_case(&[0.0, 3.0, 1.0, 1.0], 3, inverse_cdf(0.95));
-        test_case(&[4.0, 2.5, 2.5, 1.0], 0, inverse_cdf(0.2));
-        test_case(&[4.0, 2.5, 2.5, 1.0], 1, inverse_cdf(0.5));
-        test_case(&[4.0, 2.5, 2.5, 1.0], 3, inverse_cdf(0.95));
+        test_case_exact(&[0.0, 3.0, 1.0, 1.0], 1, inverse_cdf(0.2));
+        test_case_exact(&[0.0, 3.0, 1.0, 1.0], 1, inverse_cdf(0.5));
+        test_case_exact(&[0.0, 3.0, 1.0, 1.0], 3, inverse_cdf(0.95));
+        test_case_exact(&[4.0, 2.5, 2.5, 1.0], 0, inverse_cdf(0.2));
+        test_case_exact(&[4.0, 2.5, 2.5, 1.0], 1, inverse_cdf(0.5));
+        test_case_exact(&[4.0, 2.5, 2.5, 1.0], 3, inverse_cdf(0.95));
     }
 
     #[test]
