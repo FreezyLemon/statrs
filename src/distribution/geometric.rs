@@ -269,46 +269,15 @@ impl Discrete<u64, f64> for Geometric {
 mod tests {
     use std::fmt::Debug;
     use crate::statistics::*;
+    use crate::testing_boiler;
     use crate::distribution::{DiscreteCDF, Discrete, Geometric};
     use crate::distribution::internal::*;
 
-    fn try_create(p: f64) -> Geometric {
-        let n = Geometric::new(p);
-        assert!(n.is_ok());
-        n.unwrap()
-    }
+    testing_boiler!(p: f64; Geometric);
 
     fn create_case(p: f64) {
         let n = try_create(p);
         assert_eq!(p, n.p());
-    }
-
-    fn bad_create_case(p: f64) {
-        let n = Geometric::new(p);
-        assert!(n.is_err());
-    }
-
-    fn get_value<T, F>(p: f64, eval: F) -> T
-        where T: PartialEq + Debug,
-              F: Fn(Geometric) -> T
-    {
-        let n = try_create(p);
-        eval(n)
-    }
-
-    fn test_case<T, F>(p: f64, expected: T, eval: F)
-        where T: PartialEq + Debug,
-              F: Fn(Geometric) -> T
-    {
-        let x = get_value(p, eval);
-        assert_eq!(expected, x);
-    }
-
-    fn test_almost<F>(p: f64, expected: f64, acc: f64, eval: F)
-        where F: Fn(Geometric) -> f64
-    {
-        let x = get_value(p, eval);
-        assert_almost_eq!(expected, x, acc);
     }
 
     fn test_is_nan<F>(p: f64, eval: F)
@@ -349,14 +318,14 @@ mod tests {
     #[test]
     fn test_entropy() {
         let entropy = |x: Geometric| x.entropy().unwrap();
-        test_almost(0.3, 2.937636330768973333333, 1e-14, entropy);
+        test_case_special(0.3, 2.937636330768973333333, 1e-14, entropy);
         test_is_nan(1.0, entropy);
     }
 
     #[test]
     fn test_skewness() {
         let skewness = |x: Geometric| x.skewness().unwrap();
-        test_almost(0.3, 2.031888635868469187947, 1e-15, skewness);
+        test_case_special(0.3, 2.031888635868469187947, 1e-15, skewness);
         test_case(1.0, f64::INFINITY, skewness);
     }
 
@@ -374,16 +343,16 @@ mod tests {
     #[test]
     fn test_mode() {
         let mode = |x: Geometric| x.mode().unwrap();
-        test_case(0.3, 1, mode);
-        test_case(1.0, 1, mode);
+        test_case_exact(0.3, 1, mode);
+        test_case_exact(1.0, 1, mode);
     }
 
     #[test]
     fn test_min_max() {
         let min = |x: Geometric| x.min();
         let max = |x: Geometric| x.max();
-        test_case(0.3, 1, min);
-        test_case(0.3, u64::MAX, max);
+        test_case_exact(0.3, 1, min);
+        test_case_exact(0.3, u64::MAX, max);
     }
 
     #[test]
@@ -393,8 +362,8 @@ mod tests {
         test_case(0.3, 0.21, pmf(2));
         test_case(1.0, 1.0, pmf(1));
         test_case(1.0, 0.0, pmf(2));
-        test_almost(0.5, 0.5, 1e-10, pmf(1));
-        test_almost(0.5, 0.25, 1e-10, pmf(2));
+        test_case_special(0.5, 0.5, 1e-10, pmf(1));
+        test_case_special(0.5, 0.25, 1e-10, pmf(2));
     }
 
     #[test]
@@ -406,8 +375,8 @@ mod tests {
     #[test]
     fn test_ln_pmf() {
         let ln_pmf = |arg: u64| move |x: Geometric| x.ln_pmf(arg);
-        test_almost(0.3, -1.203972804325935992623, 1e-15, ln_pmf(1));
-        test_almost(0.3, -1.560647748264668371535, 1e-15, ln_pmf(2));
+        test_case_special(0.3, -1.203972804325935992623, 1e-15, ln_pmf(1));
+        test_case_special(0.3, -1.560647748264668371535, 1e-15, ln_pmf(2));
         test_case(1.0, 0.0, ln_pmf(1));
         test_case(1.0, f64::NEG_INFINITY, ln_pmf(2));
     }
@@ -423,8 +392,8 @@ mod tests {
         let cdf = |arg: u64| move |x: Geometric| x.cdf(arg);
         test_case(1.0, 1.0, cdf(1));
         test_case(1.0, 1.0, cdf(2));
-        test_almost(0.5, 0.5, 1e-15, cdf(1));
-        test_almost(0.5, 0.75, 1e-15, cdf(2));
+        test_case_special(0.5, 0.5, 1e-15, cdf(1));
+        test_case_special(0.5, 0.75, 1e-15, cdf(2));
     }
 
     #[test]
@@ -432,8 +401,8 @@ mod tests {
         let sf = |arg: u64| move |x: Geometric| x.sf(arg);
         test_case(1.0, 0.0, sf(1));
         test_case(1.0, 0.0, sf(2));
-        test_almost(0.5, 0.5, 1e-15, sf(1));
-        test_almost(0.5, 0.25, 1e-15, sf(2));
+        test_case_special(0.5, 0.5, 1e-15, sf(1));
+        test_case_special(0.5, 0.25, 1e-15, sf(2));
     }
 
     #[test]
