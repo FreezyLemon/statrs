@@ -358,45 +358,16 @@ impl Continuous<f64, f64> for FisherSnedecor {
 #[cfg(test)]
 mod tests {
     use crate::statistics::*;
+    use crate::testing_boiler;
     use crate::distribution::{ContinuousCDF, Continuous, FisherSnedecor};
     use crate::distribution::internal::*;
 
-    fn try_create(freedom_1: f64, freedom_2: f64) -> FisherSnedecor {
-        let n = FisherSnedecor::new(freedom_1, freedom_2);
-        assert!(n.is_ok());
-        n.unwrap()
-    }
+    testing_boiler!(freedom_1: f64, freedom_2: f64; FisherSnedecor);
 
     fn create_case(freedom_1: f64, freedom_2: f64) {
         let n = try_create(freedom_1, freedom_2);
         assert_eq!(freedom_1, n.freedom_1());
         assert_eq!(freedom_2, n.freedom_2());
-    }
-
-    fn bad_create_case(freedom_1: f64, freedom_2: f64) {
-        let n = FisherSnedecor::new(freedom_1, freedom_2);
-        assert!(n.is_err());
-    }
-
-     fn get_value<F>(freedom_1: f64, freedom_2: f64, eval: F) -> f64
-        where F: Fn(FisherSnedecor) -> f64
-    {
-        let n = try_create(freedom_1, freedom_2);
-        eval(n)
-    }
-
-    fn test_case<F>(freedom_1: f64, freedom_2: f64, expected: f64, eval: F)
-        where F: Fn(FisherSnedecor) -> f64
-    {
-        let x = get_value(freedom_1, freedom_2, eval);
-        assert_eq!(expected, x);
-    }
-
-    fn test_almost<F>(freedom_1: f64, freedom_2: f64, expected: f64, acc: f64, eval: F)
-        where F: Fn(FisherSnedecor) -> f64
-    {
-        let x = get_value(freedom_1, freedom_2, eval);
-        assert_almost_eq!(expected, x, acc);
     }
 
     #[test]
@@ -450,7 +421,7 @@ mod tests {
     #[test]
     fn test_variance() {
         let variance = |x: FisherSnedecor| x.variance().unwrap();
-        test_almost(0.1, 10.0, 42.1875, 1e-14, variance);
+        test_case_special(0.1, 10.0, 42.1875, 1e-14, variance);
         test_case(1.0, 10.0, 4.6875, variance);
         test_case(10.0, 10.0, 0.9375, variance);
     }
@@ -465,7 +436,7 @@ mod tests {
     #[test]
     fn test_skewness() {
         let skewness = |x: FisherSnedecor| x.skewness().unwrap();
-        test_almost(0.1, 10.0, 15.78090735784977089658, 1e-14, skewness);
+        test_case_special(0.1, 10.0, 15.78090735784977089658, 1e-14, skewness);
         test_case(1.0, 10.0, 5.773502691896257645091, skewness);
         test_case(10.0, 10.0, 3.614784456460255759501, skewness);
     }
@@ -503,58 +474,58 @@ mod tests {
     #[test]
     fn test_pdf() {
         let pdf = |arg: f64| move |x: FisherSnedecor| x.pdf(arg);
-        test_almost(0.1, 0.1, 0.0234154207226588982471, 1e-16, pdf(1.0));
-        test_almost(1.0, 0.1, 0.0396064560910663979961, 1e-16, pdf(1.0));
-        test_almost(10.0, 0.1, 0.0418440630400545297349, 1e-14, pdf(1.0));
-        test_almost(0.1, 1.0, 0.0396064560910663979961, 1e-16, pdf(1.0));
-        test_almost(1.0, 1.0, 0.1591549430918953357689, 1e-16, pdf(1.0));
-        test_almost(10.0, 1.0, 0.230361989229138647108, 1e-16, pdf(1.0));
-        test_almost(0.1, 0.1, 0.00221546909694001013517, 1e-18, pdf(10.0));
-        test_almost(1.0, 0.1, 0.00369960370387922619592, 1e-17, pdf(10.0));
-        test_almost(10.0, 0.1, 0.00390179721174142927402, 1e-15, pdf(10.0));
-        test_almost(0.1, 1.0, 0.00319864073359931548273, 1e-17, pdf(10.0));
-        test_almost(1.0, 1.0, 0.009150765837179460915678, 1e-17, pdf(10.0));
-        test_almost(10.0, 1.0, 0.0116493859171442148446, 1e-17, pdf(10.0));
-        test_almost(0.1, 10.0, 0.00305087016058573989694, 1e-15, pdf(10.0));
-        test_almost(1.0, 10.0, 0.00271897749113479577864, 1e-17, pdf(10.0));
-        test_almost(10.0, 10.0, 2.4289227234060500084E-4, 1e-18, pdf(10.0));
+        test_case_special(0.1, 0.1, 0.0234154207226588982471, 1e-16, pdf(1.0));
+        test_case_special(1.0, 0.1, 0.0396064560910663979961, 1e-16, pdf(1.0));
+        test_case_special(10.0, 0.1, 0.0418440630400545297349, 1e-14, pdf(1.0));
+        test_case_special(0.1, 1.0, 0.0396064560910663979961, 1e-16, pdf(1.0));
+        test_case_special(1.0, 1.0, 0.1591549430918953357689, 1e-16, pdf(1.0));
+        test_case_special(10.0, 1.0, 0.230361989229138647108, 1e-16, pdf(1.0));
+        test_case_special(0.1, 0.1, 0.00221546909694001013517, 1e-18, pdf(10.0));
+        test_case_special(1.0, 0.1, 0.00369960370387922619592, 1e-17, pdf(10.0));
+        test_case_special(10.0, 0.1, 0.00390179721174142927402, 1e-15, pdf(10.0));
+        test_case_special(0.1, 1.0, 0.00319864073359931548273, 1e-17, pdf(10.0));
+        test_case_special(1.0, 1.0, 0.009150765837179460915678, 1e-17, pdf(10.0));
+        test_case_special(10.0, 1.0, 0.0116493859171442148446, 1e-17, pdf(10.0));
+        test_case_special(0.1, 10.0, 0.00305087016058573989694, 1e-15, pdf(10.0));
+        test_case_special(1.0, 10.0, 0.00271897749113479577864, 1e-17, pdf(10.0));
+        test_case_special(10.0, 10.0, 2.4289227234060500084E-4, 1e-18, pdf(10.0));
     }
 
     #[test]
     fn test_ln_pdf() {
         let ln_pdf = |arg: f64| move |x: FisherSnedecor| x.ln_pdf(arg);
-        test_almost(0.1, 0.1, 0.0234154207226588982471f64.ln(), 1e-15, ln_pdf(1.0));
-        test_almost(1.0, 0.1, 0.0396064560910663979961f64.ln(), 1e-15, ln_pdf(1.0));
-        test_almost(10.0, 0.1, 0.0418440630400545297349f64.ln(), 1e-13, ln_pdf(1.0));
-        test_almost(0.1, 1.0, 0.0396064560910663979961f64.ln(), 1e-15, ln_pdf(1.0));
-        test_almost(1.0, 1.0, 0.1591549430918953357689f64.ln(), 1e-15, ln_pdf(1.0));
-        test_almost(10.0, 1.0, 0.230361989229138647108f64.ln(), 1e-15, ln_pdf(1.0));
+        test_case_special(0.1, 0.1, 0.0234154207226588982471f64.ln(), 1e-15, ln_pdf(1.0));
+        test_case_special(1.0, 0.1, 0.0396064560910663979961f64.ln(), 1e-15, ln_pdf(1.0));
+        test_case_special(10.0, 0.1, 0.0418440630400545297349f64.ln(), 1e-13, ln_pdf(1.0));
+        test_case_special(0.1, 1.0, 0.0396064560910663979961f64.ln(), 1e-15, ln_pdf(1.0));
+        test_case_special(1.0, 1.0, 0.1591549430918953357689f64.ln(), 1e-15, ln_pdf(1.0));
+        test_case_special(10.0, 1.0, 0.230361989229138647108f64.ln(), 1e-15, ln_pdf(1.0));
         test_case(0.1, 0.1, 0.00221546909694001013517f64.ln(), ln_pdf(10.0));
-        test_almost(1.0, 0.1, 0.00369960370387922619592f64.ln(), 1e-15, ln_pdf(10.0));
-        test_almost(10.0, 0.1, 0.00390179721174142927402f64.ln(), 1e-13, ln_pdf(10.0));
-        test_almost(0.1, 1.0, 0.00319864073359931548273f64.ln(), 1e-15, ln_pdf(10.0));
-        test_almost(1.0, 1.0, 0.009150765837179460915678f64.ln(), 1e-15, ln_pdf(10.0));
+        test_case_special(1.0, 0.1, 0.00369960370387922619592f64.ln(), 1e-15, ln_pdf(10.0));
+        test_case_special(10.0, 0.1, 0.00390179721174142927402f64.ln(), 1e-13, ln_pdf(10.0));
+        test_case_special(0.1, 1.0, 0.00319864073359931548273f64.ln(), 1e-15, ln_pdf(10.0));
+        test_case_special(1.0, 1.0, 0.009150765837179460915678f64.ln(), 1e-15, ln_pdf(10.0));
         test_case(10.0, 1.0, 0.0116493859171442148446f64.ln(), ln_pdf(10.0));
-        test_almost(0.1, 10.0, 0.00305087016058573989694f64.ln(), 1e-13, ln_pdf(10.0));
+        test_case_special(0.1, 10.0, 0.00305087016058573989694f64.ln(), 1e-13, ln_pdf(10.0));
         test_case(1.0, 10.0, 0.00271897749113479577864f64.ln(), ln_pdf(10.0));
-        test_almost(10.0, 10.0, 2.4289227234060500084E-4f64.ln(), 1e-14, ln_pdf(10.0));
+        test_case_special(10.0, 10.0, 2.4289227234060500084E-4f64.ln(), 1e-14, ln_pdf(10.0));
     }
 
     #[test]
     fn test_cdf() {
         let cdf = |arg: f64| move |x: FisherSnedecor| x.cdf(arg);
-        test_almost(0.1, 0.1, 0.44712986033425140335, 1e-15, cdf(0.1));
-        test_almost(1.0, 0.1, 0.08156522095104674015, 1e-15, cdf(0.1));
-        test_almost(10.0, 0.1, 0.033184005716276536322, 1e-13, cdf(0.1));
-        test_almost(0.1, 1.0, 0.74378710917986379989, 1e-15, cdf(0.1));
-        test_almost(1.0, 1.0, 0.1949822290421366451595, 1e-16, cdf(0.1));
-        test_almost(10.0, 1.0, 0.0101195597354337146205, 1e-17, cdf(0.1));
-        test_almost(0.1, 0.1, 0.5, 1e-15, cdf(1.0));
-        test_almost(1.0, 0.1, 0.16734351500944271141, 1e-14, cdf(1.0));
-        test_almost(10.0, 0.1, 0.12207560664741704938, 1e-13, cdf(1.0));
-        test_almost(0.1, 1.0, 0.83265648499055728859, 1e-15, cdf(1.0));
-        test_almost(1.0, 1.0, 0.5, 1e-15, cdf(1.0));
-        test_almost(10.0, 1.0, 0.340893132302059872675, 1e-15, cdf(1.0));
+        test_case_special(0.1, 0.1, 0.44712986033425140335, 1e-15, cdf(0.1));
+        test_case_special(1.0, 0.1, 0.08156522095104674015, 1e-15, cdf(0.1));
+        test_case_special(10.0, 0.1, 0.033184005716276536322, 1e-13, cdf(0.1));
+        test_case_special(0.1, 1.0, 0.74378710917986379989, 1e-15, cdf(0.1));
+        test_case_special(1.0, 1.0, 0.1949822290421366451595, 1e-16, cdf(0.1));
+        test_case_special(10.0, 1.0, 0.0101195597354337146205, 1e-17, cdf(0.1));
+        test_case_special(0.1, 0.1, 0.5, 1e-15, cdf(1.0));
+        test_case_special(1.0, 0.1, 0.16734351500944271141, 1e-14, cdf(1.0));
+        test_case_special(10.0, 0.1, 0.12207560664741704938, 1e-13, cdf(1.0));
+        test_case_special(0.1, 1.0, 0.83265648499055728859, 1e-15, cdf(1.0));
+        test_case_special(1.0, 1.0, 0.5, 1e-15, cdf(1.0));
+        test_case_special(10.0, 1.0, 0.340893132302059872675, 1e-15, cdf(1.0));
     }
 
     #[test]
@@ -566,18 +537,18 @@ mod tests {
     #[test]
     fn test_sf() {
         let sf = |arg: f64| move |x: FisherSnedecor| x.sf(arg);
-        test_almost(0.1, 0.1, 0.5528701396657489, 1e-12, sf(0.1));
-        test_almost(1.0, 0.1, 0.9184347790489533, 1e-12, sf(0.1));
-        test_almost(10.0, 0.1, 0.9668159942836896, 1e-12, sf(0.1));
-        test_almost(0.1, 1.0, 0.25621289082013654, 1e-12, sf(0.1));
-        test_almost(1.0, 1.0, 0.8050177709578634, 1e-12, sf(0.1));
-        test_almost(10.0, 1.0, 0.9898804402645662, 1e-12, sf(0.1));
-        test_almost(0.1, 0.1, 0.5, 1e-15, sf(1.0));
-        test_almost(1.0, 0.1, 0.8326564849905562, 1e-12, sf(1.0));
-        test_almost(10.0, 0.1, 0.8779243933525519, 1e-12, sf(1.0));
-        test_almost(0.1, 1.0, 0.16734351500944344, 1e-12, sf(1.0));
-        test_almost(1.0, 1.0, 0.5, 1e-12, sf(1.0));
-        test_almost(10.0, 1.0, 0.65910686769794, 1e-12, sf(1.0));
+        test_case_special(0.1, 0.1, 0.5528701396657489, 1e-12, sf(0.1));
+        test_case_special(1.0, 0.1, 0.9184347790489533, 1e-12, sf(0.1));
+        test_case_special(10.0, 0.1, 0.9668159942836896, 1e-12, sf(0.1));
+        test_case_special(0.1, 1.0, 0.25621289082013654, 1e-12, sf(0.1));
+        test_case_special(1.0, 1.0, 0.8050177709578634, 1e-12, sf(0.1));
+        test_case_special(10.0, 1.0, 0.9898804402645662, 1e-12, sf(0.1));
+        test_case_special(0.1, 0.1, 0.5, 1e-15, sf(1.0));
+        test_case_special(1.0, 0.1, 0.8326564849905562, 1e-12, sf(1.0));
+        test_case_special(10.0, 0.1, 0.8779243933525519, 1e-12, sf(1.0));
+        test_case_special(0.1, 1.0, 0.16734351500944344, 1e-12, sf(1.0));
+        test_case_special(1.0, 1.0, 0.5, 1e-12, sf(1.0));
+        test_case_special(10.0, 1.0, 0.65910686769794, 1e-12, sf(1.0));
     }
 
     #[test]
