@@ -334,43 +334,12 @@ mod tests {
     use crate::distribution::{ContinuousCDF, Continuous, Pareto};
     use crate::distribution::internal::*;
 
-    fn try_create(scale: f64, shape: f64) -> Pareto {
-        let p = Pareto::new(scale, shape);
-        assert!(p.is_ok());
-        p.unwrap()
-    }
+    testing_boiler!(scale: f64, shape: f64; Pareto);
 
     fn create_case(scale: f64, shape: f64) {
         let p = try_create(scale, shape);
         assert_eq!(scale, p.scale());
         assert_eq!(shape, p.shape());
-    }
-
-    fn bad_create_case(scale: f64, shape: f64) {
-        let p = Pareto::new(scale, shape);
-        assert!(p.is_err());
-    }
-
-    fn get_value<T, F>(scale: f64, shape: f64, eval: F) -> T
-        where F: Fn(Pareto) -> T
-    {
-        let p = try_create(scale, shape);
-        eval(p)
-    }
-
-    fn test_case<F>(scale: f64, shape: f64, expected: f64, eval: F)
-        where F: Fn(Pareto) -> f64
-    {
-        let x = get_value(scale, shape, eval);
-        assert_eq!(expected, x);
-    }
-
-    fn test_almost<F>(scale: f64, shape: f64, expected: f64, acc: f64, eval: F)
-        where F: Fn(Pareto) -> f64
-    {
-        let p = try_create(scale, shape);
-        let x = eval(p);
-        assert_almost_eq!(expected, x, acc);
     }
 
     #[test]
@@ -398,7 +367,7 @@ mod tests {
     fn test_variance() {
         let variance = |x: Pareto| x.variance().unwrap();
         test_case(1.0, 3.0, 0.75, variance);
-        test_almost(10.0, 10.0, 125.0 / 81.0, 1e-13, variance);
+        test_case_special(10.0, 10.0, 125.0 / 81.0, 1e-13, variance);
     }
 
     #[test]
@@ -475,8 +444,8 @@ mod tests {
         test_case(1.0, 4.0, 1.0/78125000.0, pdf(50.0));
         test_case(3.0, 2.0, 2.0/3.0, pdf(3.0));
         test_case(3.0, 2.0, 18.0/125.0, pdf(5.0));
-        test_almost(25.0, 100.0, 1.5777218104420236e-30, 1e-50, pdf(50.0));
-        test_almost(100.0, 25.0, 6.6003546737276816e-6, 1e-16, pdf(150.0));
+        test_case_special(25.0, 100.0, 1.5777218104420236e-30, 1e-50, pdf(50.0));
+        test_case_special(100.0, 25.0, 6.6003546737276816e-6, 1e-16, pdf(150.0));
         test_case(1.0, 2.0, 0.0, pdf(f64::INFINITY));
     }
 
@@ -485,16 +454,16 @@ mod tests {
         let ln_pdf = |arg: f64| move |x: Pareto| x.ln_pdf(arg);
         test_case(1.0, 1.0, f64::NEG_INFINITY, ln_pdf(0.1));
         test_case(1.0, 1.0, 0.0, ln_pdf(1.0));
-        test_almost(1.0, 1.0, 4f64.ln() - 9f64.ln(), 1e-14, ln_pdf(1.5));
-        test_almost(1.0, 1.0, -(25f64.ln()), 1e-14, ln_pdf(5.0));
-        test_almost(1.0, 1.0, -(2500f64.ln()), 1e-14, ln_pdf(50.0));
-        test_almost(1.0, 4.0, 4f64.ln(), 1e-14, ln_pdf(1.0));
-        test_almost(1.0, 4.0, 128f64.ln() - 243f64.ln(), 1e-14, ln_pdf(1.5));
-        test_almost(1.0, 4.0, -(78125000f64.ln()), 1e-14, ln_pdf(50.0));
-        test_almost(3.0, 2.0, 2f64.ln() - 3f64.ln(), 1e-14, ln_pdf(3.0));
-        test_almost(3.0, 2.0, 18f64.ln() - 125f64.ln(), 1e-14, ln_pdf(5.0));
-        test_almost(25.0, 100.0, 1.5777218104420236e-30f64.ln(), 1e-12, ln_pdf(50.0));
-        test_almost(100.0, 25.0, 6.6003546737276816e-6f64.ln(), 1e-12, ln_pdf(150.0));
+        test_case_special(1.0, 1.0, 4f64.ln() - 9f64.ln(), 1e-14, ln_pdf(1.5));
+        test_case_special(1.0, 1.0, -(25f64.ln()), 1e-14, ln_pdf(5.0));
+        test_case_special(1.0, 1.0, -(2500f64.ln()), 1e-14, ln_pdf(50.0));
+        test_case_special(1.0, 4.0, 4f64.ln(), 1e-14, ln_pdf(1.0));
+        test_case_special(1.0, 4.0, 128f64.ln() - 243f64.ln(), 1e-14, ln_pdf(1.5));
+        test_case_special(1.0, 4.0, -(78125000f64.ln()), 1e-14, ln_pdf(50.0));
+        test_case_special(3.0, 2.0, 2f64.ln() - 3f64.ln(), 1e-14, ln_pdf(3.0));
+        test_case_special(3.0, 2.0, 18f64.ln() - 125f64.ln(), 1e-14, ln_pdf(5.0));
+        test_case_special(25.0, 100.0, 1.5777218104420236e-30f64.ln(), 1e-12, ln_pdf(50.0));
+        test_case_special(100.0, 25.0, 6.6003546737276816e-6f64.ln(), 1e-12, ln_pdf(150.0));
         test_case(1.0, 2.0, f64::NEG_INFINITY, ln_pdf(f64::INFINITY));
     }
 
@@ -517,10 +486,10 @@ mod tests {
         test_case(0.1, 0.1, 1.0, sf(0.1));
         test_case(1.0, 1.0, 1.0, sf(1.0));
         test_case(5.0, 5.0, 1.0, sf(2.0));
-        test_almost(7.0, 7.0, 0.08235429999999999, 1e-14, sf(10.0));
-        test_almost(10.0, 10.0, 0.16150558288984573, 1e14, sf(12.0));
+        test_case_special(7.0, 7.0, 0.08235429999999999, 1e-14, sf(10.0));
+        test_case_special(10.0, 10.0, 0.16150558288984573, 1e14, sf(12.0));
         test_case(5.0, 1.0, 0.5, sf(10.0));
-        test_almost(3.0, 10.0, 0.0009765625, 1e-14, sf(6.0));
+        test_case_special(3.0, 10.0, 0.0009765625, 1e-14, sf(6.0));
         test_case(1.0, 1.0, 0.0, sf(f64::INFINITY));
     }
 
