@@ -2,7 +2,6 @@ use crate::distribution::{Discrete, DiscreteCDF};
 use crate::function::{beta, factorial};
 use crate::statistics::*;
 use crate::{Result, StatsError};
-use rand::Rng;
 use std::f64;
 
 /// Implements the
@@ -92,8 +91,9 @@ impl std::fmt::Display for Binomial {
     }
 }
 
+#[cfg(feature = "rand")]
 impl ::rand::distributions::Distribution<f64> for Binomial {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> f64 {
+    fn sample<R: ::rand::Rng + ?Sized>(&self, rng: &mut R) -> f64 {
         (0..self.n).fold(0.0, |acc, _| {
             let n: f64 = rng.gen();
             if n < self.p {

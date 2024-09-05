@@ -1,7 +1,6 @@
 use crate::distribution::{Discrete, DiscreteCDF};
 use crate::statistics::*;
 use crate::{Result, StatsError};
-use rand::Rng;
 use std::f64;
 
 /// Implements the
@@ -83,8 +82,9 @@ impl std::fmt::Display for Categorical {
     }
 }
 
+#[cfg(feature = "rand")]
 impl ::rand::distributions::Distribution<f64> for Categorical {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> f64 {
+    fn sample<R: ::rand::Rng + ?Sized>(&self, rng: &mut R) -> f64 {
         sample_unchecked(rng, &self.cdf)
     }
 }
@@ -281,7 +281,8 @@ impl Discrete<u64, f64> for Categorical {
 
 /// Draws a sample from the categorical distribution described by `cdf`
 /// without doing any bounds checking
-pub fn sample_unchecked<R: Rng + ?Sized>(rng: &mut R, cdf: &[f64]) -> f64 {
+#[cfg(feature = "rand")]
+pub fn sample_unchecked<R: ::rand::Rng + ?Sized>(rng: &mut R, cdf: &[f64]) -> f64 {
     let draw = rng.gen::<f64>() * cdf.last().unwrap();
     cdf.iter()
         .enumerate()

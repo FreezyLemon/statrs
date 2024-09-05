@@ -1,7 +1,6 @@
 use crate::distribution::{Continuous, ContinuousCDF, Gamma};
 use crate::statistics::*;
 use crate::Result;
-use rand::Rng;
 
 /// Implements the [Erlang](https://en.wikipedia.org/wiki/Erlang_distribution)
 /// distribution
@@ -84,8 +83,9 @@ impl std::fmt::Display for Erlang {
     }
 }
 
+#[cfg(feature = "rand")]
 impl ::rand::distributions::Distribution<f64> for Erlang {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> f64 {
+    fn sample<R: ::rand::Rng + ?Sized>(&self, rng: &mut R) -> f64 {
         ::rand::distributions::Distribution::sample(&self.g, rng)
     }
 }

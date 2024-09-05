@@ -1,7 +1,6 @@
 use crate::distribution::{Continuous, ContinuousCDF, Gamma};
 use crate::statistics::*;
 use crate::Result;
-use rand::Rng;
 use std::f64;
 
 /// Implements the
@@ -102,8 +101,9 @@ impl std::fmt::Display for ChiSquared {
     }
 }
 
+#[cfg(feature = "rand")]
 impl ::rand::distributions::Distribution<f64> for ChiSquared {
-    fn sample<R: Rng + ?Sized>(&self, r: &mut R) -> f64 {
+    fn sample<R: ::rand::Rng + ?Sized>(&self, r: &mut R) -> f64 {
         ::rand::distributions::Distribution::sample(&self.g, r)
     }
 }

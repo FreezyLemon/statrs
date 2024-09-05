@@ -2,7 +2,6 @@ use crate::distribution::{Continuous, ContinuousCDF};
 use crate::function::gamma;
 use crate::statistics::*;
 use crate::{Result, StatsError};
-use rand::Rng;
 use std::f64;
 
 /// Implements the [Inverse
@@ -93,8 +92,9 @@ impl std::fmt::Display for InverseGamma {
     }
 }
 
+#[cfg(feature = "rand")]
 impl ::rand::distributions::Distribution<f64> for InverseGamma {
-    fn sample<R: Rng + ?Sized>(&self, r: &mut R) -> f64 {
+    fn sample<R: ::rand::Rng + ?Sized>(&self, r: &mut R) -> f64 {
         1.0 / super::gamma::sample_unchecked(r, self.shape, self.rate)
     }
 }

@@ -2,7 +2,6 @@ use crate::distribution::{Continuous, ContinuousCDF};
 use crate::function::erf;
 use crate::statistics::*;
 use crate::{consts, Result, StatsError};
-use rand::Rng;
 use std::f64;
 
 /// Implements the
@@ -61,8 +60,9 @@ impl std::fmt::Display for LogNormal {
     }
 }
 
+#[cfg(feature = "rand")]
 impl ::rand::distributions::Distribution<f64> for LogNormal {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> f64 {
+    fn sample<R: ::rand::Rng + ?Sized>(&self, rng: &mut R) -> f64 {
         super::normal::sample_unchecked(rng, self.location, self.scale).exp()
     }
 }

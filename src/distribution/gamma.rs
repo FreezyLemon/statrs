@@ -3,7 +3,6 @@ use crate::function::gamma;
 use crate::prec;
 use crate::statistics::*;
 use crate::{Result, StatsError};
-use rand::Rng;
 
 /// Implements the [Gamma](https://en.wikipedia.org/wiki/Gamma_distribution)
 /// distribution
@@ -92,8 +91,9 @@ impl std::fmt::Display for Gamma {
     }
 }
 
+#[cfg(feature = "rand")]
 impl ::rand::distributions::Distribution<f64> for Gamma {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> f64 {
+    fn sample<R: ::rand::Rng + ?Sized>(&self, rng: &mut R) -> f64 {
         sample_unchecked(rng, self.shape, self.rate)
     }
 }
@@ -374,7 +374,8 @@ impl Continuous<f64, f64> for Gamma {
 /// Pages 363-372
 /// </div>
 /// <br />
-pub fn sample_unchecked<R: Rng + ?Sized>(rng: &mut R, shape: f64, rate: f64) -> f64 {
+#[cfg(feature = "rand")]
+pub fn sample_unchecked<R: ::rand::Rng + ?Sized>(rng: &mut R, shape: f64, rate: f64) -> f64 {
     let mut a = shape;
     let mut afix = 1.0;
     if shape < 1.0 {

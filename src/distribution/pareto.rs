@@ -1,8 +1,6 @@
 use crate::distribution::{Continuous, ContinuousCDF};
 use crate::statistics::*;
 use crate::{Result, StatsError};
-use rand::distributions::OpenClosed01;
-use rand::Rng;
 use std::f64;
 
 /// Implements the [Pareto](https://en.wikipedia.org/wiki/Pareto_distribution)
@@ -89,8 +87,11 @@ impl std::fmt::Display for Pareto {
     }
 }
 
+#[cfg(feature = "rand")]
 impl ::rand::distributions::Distribution<f64> for Pareto {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> f64 {
+    fn sample<R: ::rand::Rng + ?Sized>(&self, rng: &mut R) -> f64 {
+        use rand::distributions::OpenClosed01;
+
         // Inverse transform sampling
         let u: f64 = rng.sample(OpenClosed01);
         self.scale * u.powf(-1.0 / self.shape)

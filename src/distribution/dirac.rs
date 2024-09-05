@@ -1,7 +1,6 @@
 use crate::distribution::ContinuousCDF;
 use crate::statistics::*;
 use crate::{Result, StatsError};
-use rand::Rng;
 
 /// Implements the [Dirac Delta](https://en.wikipedia.org/wiki/Dirac_delta_function#As_a_distribution)
 /// distribution
@@ -51,8 +50,9 @@ impl std::fmt::Display for Dirac {
     }
 }
 
+#[cfg(feature = "rand")]
 impl ::rand::distributions::Distribution<f64> for Dirac {
-    fn sample<R: Rng + ?Sized>(&self, _: &mut R) -> f64 {
+    fn sample<R: ::rand::Rng + ?Sized>(&self, _: &mut R) -> f64 {
         self.0
     }
 }
