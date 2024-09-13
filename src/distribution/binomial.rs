@@ -115,7 +115,7 @@ fn btpe<R: rand::Rng>(n: u64, p: f64, rng: &mut R) -> Option<u32> {
 
     let (n, n_int) = match u32::try_from(n) {
         Ok(n_32) => (f64::from(n_32), n_32),
-        // not supported
+        // more than u32::MAX: not supported
         Err(_) => return None,
     };
 
@@ -148,7 +148,7 @@ fn btpe<R: rand::Rng>(n: u64, p: f64, rng: &mut R) -> Option<u32> {
     let x_L = x_M - p1;
     let x_R = x_M + p1;
     let c = 0.134 + 20.5 / (15.3 + M as f64);
-    let a = (f_M - x_L)/(f_M - x_L * r);
+    let a = (f_M - x_L) / (f_M - x_L * r);
     let lambda_L = a * (1.0 + a / 2.0);
     let a = (x_R - f_M) / (x_R * q);
     let lambda_R = a * (1.0 + a / 2.0);
@@ -202,7 +202,6 @@ fn btpe<R: rand::Rng>(n: u64, p: f64, rng: &mut R) -> Option<u32> {
             (y, v)
         };
 
-
         let v = v * (u - p3) * lambda_R;
 
         // step 5.0
@@ -211,13 +210,15 @@ fn btpe<R: rand::Rng>(n: u64, p: f64, rng: &mut R) -> Option<u32> {
         if k > 20 && k < (nrq / 2.0) as i32 {
             // step 5.2
             let k = k as f64;
-            let p = (k / nrq) * ((k * (k / 3.0 + 0.625) + 1.0 / 6.0) / nrq + 0.5);
+            let rho = (k / nrq) * ((k * (k / 3.0 + 0.625) + 1.0 / 6.0) / nrq + 0.5);
             let t = -(k * k) / (2.0 * nrq);
             let A = v.ln();
 
-            if A < t - p {
+            if A < t - rho {
                 break y;
-            } else if A > t + p {
+            }
+
+            if A > t + rho {
                 // go back to step 1
                 continue;
             }
@@ -235,12 +236,13 @@ fn btpe<R: rand::Rng>(n: u64, p: f64, rng: &mut R) -> Option<u32> {
                 (13860.0 - (462.0 - (132.0 - (99.0 - 140.0 / x) / x) / x) / x) / x / 166320.0
             }
 
-            if A > x_M * (f1 / x1).ln() + (n - M as f64 + 0.5) * (z / w)
-                   + (y - M) as f64 * (w * r / (x1 * q)).ln()
-                   + estimate_ln(f1)
-                   + estimate_ln(z)
-                   - estimate_ln(x1)
-                   - estimate_ln(w)
+            if A > x_M * (f1 / x1).ln()
+                + (n - M as f64 + 0.5) * (z / w)
+                + (y - M) as f64 * (w * r / (x1 * q)).ln()
+                + estimate_ln(f1)
+                + estimate_ln(z)
+                - estimate_ln(x1)
+                - estimate_ln(w)
             {
                 continue;
             }
@@ -255,11 +257,7 @@ fn btpe<R: rand::Rng>(n: u64, p: f64, rng: &mut R) -> Option<u32> {
         let steps = M.abs_diff(y);
         let start = M.min(y);
 
-        let f = (start..start+steps)
-            .fold(
-                1.0,
-                |f, i| f / (a / i as f64 - s)
-            );
+        let f = (start..start + steps).fold(1.0, |f, i| f / (a / i as f64 - s));
 
         if v <= f {
             break y;
