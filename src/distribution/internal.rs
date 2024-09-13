@@ -376,10 +376,7 @@ pub mod test {
 
             let cdf = dist.cdf(x);
             if (sum - cdf).abs() > 1e-3 {
-                println!("Integral of pdf doesn't equal cdf!");
-                println!("Integration from {x_min} by {step} to {x} = {sum}");
-                println!("cdf = {cdf}");
-                panic!();
+                panic!("Integral of pdf doesn't equal cdf!\nIntegration from {x_min} by {step} to {x} = {sum}\ncdf = {cdf}");
             }
 
             if x >= x_max {
@@ -462,9 +459,12 @@ pub mod test {
         }
 
         let needle = 3;
-        let data = (0..5)
-            .map(|n| if n >= needle { n + 1 } else { n })
-            .collect::<Vec<_>>();
+        let mut data = [0, 1, 2, 3, 4];
+        for n in &mut data {
+            if *n >= needle {
+                *n += 1;
+            }
+        }
 
         for i in 0..(data.len()) {
             assert_eq!(search(data[i], &data), Some(i),)

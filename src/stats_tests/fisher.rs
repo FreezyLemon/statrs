@@ -362,17 +362,15 @@ mod tests {
             ),
         ];
 
-        for (table, less_expected, greater_expected, two_sided_expected) in cases.iter() {
+        for (table, less_expected, greater_expected, two_sided_expected) in cases {
             for (alternative, expected) in [
-                Alternative::Less,
-                Alternative::Greater,
-                Alternative::TwoSided,
+                (Alternative::Less, less_expected),
+                (Alternative::Greater, greater_expected),
+                (Alternative::TwoSided, two_sided_expected),
             ]
-            .iter()
-            .zip(vec![less_expected, greater_expected, two_sided_expected])
             {
-                let p_value = fishers_exact(table, *alternative).unwrap();
-                assert!(prec::almost_eq(p_value, *expected, 1e-12));
+                let p_value = fishers_exact(&table, alternative).unwrap();
+                assert!(prec::almost_eq(p_value, expected, 1e-12));
             }
         }
     }
