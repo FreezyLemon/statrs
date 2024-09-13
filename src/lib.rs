@@ -51,6 +51,11 @@
 #![forbid(unsafe_code)]
 #![cfg_attr(coverage_nightly, feature(coverage_attribute))]
 
+#![cfg_attr(not(feature = "std"), no_std)]
+
+#[cfg(all(not(feature = "std"), feature = "alloc"))]
+extern crate alloc;
+
 #[macro_use]
 extern crate approx;
 

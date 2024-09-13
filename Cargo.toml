@@ -25,9 +25,23 @@ harness = false
 required-features = ["rand"]
 
 [features]
-default = ["nalgebra", "rand"]
+default = ["std", "nalgebra", "rand"]
+
+# optional dependencies #
 nalgebra = ["dep:nalgebra"]
 rand = ["dep:rand", "nalgebra?/rand"]
+
+# no_std support #
+
+# enable standard library. this offers the most complete feature set
+std = ["alloc", "nalgebra?/std", "rand?/std"]
+
+# alloc enables some allocating types like Vec, BTreeMap and Box
+# without requiring the entire standard library
+alloc = ["nalgebra?/alloc", "rand?/alloc"]
+
+# 
+libm = ["nalgebra?/libm"]
 
 [dependencies]
 approx = "0.5.0"
@@ -36,12 +50,12 @@ num-traits = "0.2.14"
 [dependencies.rand]
 version = "0.8"
 optional = true
+default-features = false
 
 [dependencies.nalgebra]
 version = "0.32"
 optional = true
 default-features = false
-features = ["std"]
 
 [dev-dependencies]
 criterion = "0.5"
