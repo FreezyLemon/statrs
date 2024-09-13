@@ -50,7 +50,13 @@ pub mod test {
     #[macro_export]
     macro_rules! testing_boiler {
         ($($arg_name:ident: $arg_ty:ty),+; $dist:ty; $dist_err:ty) => {
-            fn make_param_text($($arg_name: $arg_ty),+) -> String {
+            #[cfg(not(feature = "std"))]
+            fn make_param_text<'s>($(_: $arg_ty),+) -> &'s str {
+                "(N/A w/o std)"
+            }
+
+            #[cfg(feature = "std")]
+            fn make_param_text<'s>($($arg_name: $arg_ty),+) -> &'s str {
                 // ""
                 let mut param_text = String::new();
 
@@ -69,7 +75,9 @@ pub mod test {
                 param_text.pop();
                 param_text.pop();
 
-                param_text
+                // This allows returning any lifetime (incl. 'static),
+                // and it should be fine to leak a few Strings in tests
+                param_text.leak()
             }
 
             /// Creates and returns a distribution with the given parameters,
