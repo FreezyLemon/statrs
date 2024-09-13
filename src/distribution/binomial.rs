@@ -110,11 +110,11 @@ impl std::fmt::Display for Binomial {
 }
 
 #[allow(non_snake_case)]
-fn btpe<R: rand::Rng>(n: u64, p: f64, rng: &mut R) -> Option<f64> {
+fn btpe<R: rand::Rng>(n: u64, p: f64, rng: &mut R) -> Option<u32> {
     use rand::prelude::Distribution;
 
-    let n = match u32::try_from(n) {
-        Ok(n_32) => f64::from(n_32),
+    let (n, n_int) = match u32::try_from(n) {
+        Ok(n_32) => (f64::from(n_32), n_32),
         // not supported
         Err(_) => return None,
     };
@@ -141,7 +141,9 @@ fn btpe<R: rand::Rng>(n: u64, p: f64, rng: &mut R) -> Option<f64> {
     // let M: u32 = unsafe { f_M.to_int_unchecked() };
     let M = f_M as u32;
 
-    let p1 = (2.195 * (n * r * q).sqrt() - 4.6 * q).floor() + 0.5;
+    // r * q is in [0, 0.25].
+    let nrq = n * r * q;
+    let p1 = (2.195 * nrq.sqrt() - 4.6 * q).floor() + 0.5;
     let x_M = M as f64 + 0.5;
     let x_L = x_M - p1;
     let x_R = x_M + p1;
@@ -167,50 +169,50 @@ fn btpe<R: rand::Rng>(n: u64, p: f64, rng: &mut R) -> Option<f64> {
         let v = v_dist.sample(rng);
 
         if u <= p1 {
-            break (x_M - p1 * v + u).floor();
+            break (x_M - p1 * v + u) as u32;
         }
 
-        // step 2
-        let y = if u <= p2 {
+        let (y, v) = if u <= p2 {
+            // step 2
             let x = x_L + (u - p1) / c;
-            let v = v * c + 1.0 - (M - x + 5.0).abs() / p1;
+            let v = v * c + 1.0 - (f_M.floor() - x + 0.5).abs() / p1;
             if v > 1.0 {
-                // go back to step 1
+                // back to step 1
                 continue;
             }
 
-            x.floor()
+            (x as u32, v)
         } else if u <= p3 {
             // step 3
-            let y = (x_L + v.ln() / lambda_L).floor();
-            if y < 0.0 {
-                // go back to step 1
-                continue;
-            } else {
-                // TODO: double-check
-                let v = v * (u - p2) * lambda_L;
-                y
+            let y = (x_L + v.ln() / lambda_L) as i32;
+
+            match u32::try_from(y) {
+                // y is negative -> back to step 1
+                Err(_) => continue,
+                Ok(y) => (y, v * (u - p2) * lambda_L),
             }
         } else {
             // step 4
-            let y = (x_R - v.ln() / lambda_R).floor();
-            if y > n {
-                // go back to step 1
+            let y = (x_R - v.ln() / lambda_R) as u32;
+            if y > n_int {
+                // back to step 1
                 continue;
             }
 
-            y
+            (y, v)
         };
 
 
         let v = v * (u - p3) * lambda_R;
 
         // step 5.0
-        let k = (y - M).abs();
-        if k > 20.0 && k < (n * r * q) / 2.0 - 1.0 {
+        let k = y.abs_diff(M) as i32;
+        // note: the paper uses k < (nrq) / 2 - 1, we can remove the -1 because of `as i32`.
+        if k > 20 && k < (nrq / 2.0) as i32 {
             // step 5.2
-            let p = (k / (n * r * q)) * ((k * (k / 3.0 + 0.625) + 1.0 / 6.0) / (n * r * q) + 0.5);
-            let t = -k.powi(2) / (2 * (n * r * q));
+            let k = k as f64;
+            let p = (k / nrq) * ((k * (k / 3.0 + 0.625) + 1.0 / 6.0) / nrq + 0.5);
+            let t = -(k * k) / (2.0 * nrq);
             let A = v.ln();
 
             if A < t - p {
@@ -221,21 +223,25 @@ fn btpe<R: rand::Rng>(n: u64, p: f64, rng: &mut R) -> Option<f64> {
             }
 
             // step 5.3
-            let x1 = y + 1;
-            let f1 = M + 1;
-            let z = n + 1 - M;
-            let w = n - y + 1;
-            let x2 = x1.powi(2);
-            let f2 = f1.powi(2);
-            let z2 = z.powi(2);
-            let w2 = w.powi(2);
+            let x1 = (y + 1) as f64;
+            let f1 = (M + 1) as f64;
+            let z = (n_int + 1 - M) as f64;
+            let w = (n_int - y + 1) as f64;
 
-            // TODO: Finish
-            let cmp_val = x_M * (f1 / x1).ln() + (n - M + 0.5) * (z / w).ln()
-                + (y - M) * (w * r / x1 * q).ln()
-                + (13860);
+            // Stirling's approximation to ln(f(y))
+            fn estimate_ln(x: f64) -> f64 {
+                let x = x * x;
 
-            if A > cmp_val {
+                (13860.0 - (462.0 - (132.0 - (99.0 - 140.0 / x) / x) / x) / x) / x / 166320.0
+            }
+
+            if A > x_M * (f1 / x1).ln() + (n - M as f64 + 0.5) * (z / w)
+                   + (y - M) as f64 * (w * r / (x1 * q)).ln()
+                   + estimate_ln(f1)
+                   + estimate_ln(z)
+                   - estimate_ln(x1)
+                   - estimate_ln(w)
+            {
                 continue;
             }
 
@@ -245,30 +251,22 @@ fn btpe<R: rand::Rng>(n: u64, p: f64, rng: &mut R) -> Option<f64> {
         // step 5.1
         let s = r / q;
         let a = s * (n + 1.0);
-        let mut F = 1.0;
-        if M < y {
-            for i in M..=y {
-                F *= a / i - s;
-            }
-        } else if M > y {
-            for i in y..=M {
-                F *= a / i - s;
-            }
-        }
 
-        if v > F {
-            continue;
-        } else {
+        let steps = 1 + M.abs_diff(y);
+        let F = (0..steps).fold(1.0, |F, i| F / (a / i as f64 - s));
+
+        if v <= F {
             break y;
         }
 
-        y
+        // else: back to step 1
     };
 
-
-    // step 6
-    // assert!()
-    y
+    if p > 0.5 {
+        Some(n_int - y)
+    } else {
+        Some(y)
+    }
 }
 
 #[cfg(feature = "rand")]
