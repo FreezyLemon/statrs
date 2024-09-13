@@ -47,7 +47,7 @@ impl core::fmt::Display for WeibullError {
     }
 }
 
-impl std::error::Error for WeibullError {}
+impl core::error::Error for WeibullError {}
 
 impl Weibull {
     /// Constructs a new weibull distribution with a shape (k) of `shape`

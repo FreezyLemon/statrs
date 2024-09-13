@@ -51,7 +51,7 @@ impl core::fmt::Display for StudentsTError {
     }
 }
 
-impl std::error::Error for StudentsTError {}
+impl core::error::Error for StudentsTError {}
 
 impl StudentsT {
     /// Constructs a new student's t-distribution with location `location`,

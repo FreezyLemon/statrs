@@ -49,7 +49,7 @@ impl core::fmt::Display for InverseGammaError {
     }
 }
 
-impl std::error::Error for InverseGammaError {}
+impl core::error::Error for InverseGammaError {}
 
 impl InverseGamma {
     /// Constructs a new inverse gamma distribution with a shape (α)

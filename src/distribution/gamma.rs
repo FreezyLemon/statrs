@@ -48,7 +48,7 @@ impl core::fmt::Display for GammaError {
     }
 }
 
-impl std::error::Error for GammaError {}
+impl core::error::Error for GammaError {}
 
 impl Gamma {
     /// Constructs a new gamma distribution with a shape (α)

@@ -60,7 +60,7 @@ impl core::fmt::Display for NegativeBinomialError {
     }
 }
 
-impl std::error::Error for NegativeBinomialError {}
+impl core::error::Error for NegativeBinomialError {}
 
 impl NegativeBinomial {
     /// Constructs a new negative binomial distribution with parameters `r`

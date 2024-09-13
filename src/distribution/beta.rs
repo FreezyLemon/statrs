@@ -47,7 +47,7 @@ impl core::fmt::Display for BetaError {
     }
 }
 
-impl std::error::Error for BetaError {}
+impl core::error::Error for BetaError {}
 
 impl Beta {
     /// Constructs a new beta distribution with shapeA (α) of `shape_a`

@@ -38,7 +38,7 @@ impl core::fmt::Display for DiscreteUniformError {
     }
 }
 
-impl std::error::Error for DiscreteUniformError {}
+impl core::error::Error for DiscreteUniformError {}
 
 impl DiscreteUniform {
     /// Constructs a new discrete uniform distribution with a minimum value

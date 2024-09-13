@@ -50,7 +50,7 @@ impl core::fmt::Display for UniformError {
     }
 }
 
-impl std::error::Error for UniformError {}
+impl core::error::Error for UniformError {}
 
 impl Uniform {
     /// Constructs a new uniform distribution with a min of `min` and a max

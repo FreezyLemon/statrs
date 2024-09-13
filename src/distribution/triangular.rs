@@ -58,7 +58,7 @@ impl core::fmt::Display for TriangularError {
     }
 }
 
-impl std::error::Error for TriangularError {}
+impl core::error::Error for TriangularError {}
 
 impl Triangular {
     /// Constructs a new triangular distribution with a minimum of `min`,

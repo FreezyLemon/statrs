@@ -46,7 +46,7 @@ impl core::fmt::Display for NormalError {
     }
 }
 
-impl std::error::Error for NormalError {}
+impl core::error::Error for NormalError {}
 
 impl Normal {
     ///  Constructs a new normal distribution with a mean of `mean`

@@ -43,7 +43,7 @@ impl core::fmt::Display for ParetoError {
     }
 }
 
-impl std::error::Error for ParetoError {}
+impl core::error::Error for ParetoError {}
 
 impl Pareto {
     /// Constructs a new Pareto distribution with scale `scale`, and `shape`

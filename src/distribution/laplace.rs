@@ -42,7 +42,7 @@ impl core::fmt::Display for LaplaceError {
     }
 }
 
-impl std::error::Error for LaplaceError {}
+impl core::error::Error for LaplaceError {}
 
 impl Laplace {
     /// Constructs a new laplace distribution with the given

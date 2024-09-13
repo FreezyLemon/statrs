@@ -41,7 +41,7 @@ impl core::fmt::Display for ChiError {
     }
 }
 
-impl std::error::Error for ChiError {}
+impl core::error::Error for ChiError {}
 
 impl Chi {
     /// Constructs a new chi distribution

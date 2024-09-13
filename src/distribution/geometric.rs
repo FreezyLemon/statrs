@@ -39,7 +39,7 @@ impl core::fmt::Display for GeometricError {
     }
 }
 
-impl std::error::Error for GeometricError {}
+impl core::error::Error for GeometricError {}
 
 impl Geometric {
     /// Constructs a new shifted geometric distribution with a probability

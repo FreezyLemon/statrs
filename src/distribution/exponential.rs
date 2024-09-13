@@ -40,7 +40,7 @@ impl core::fmt::Display for ExpError {
     }
 }
 
-impl std::error::Error for ExpError {}
+impl core::error::Error for ExpError {}
 
 impl Exp {
     /// Constructs a new exponential distribution with a

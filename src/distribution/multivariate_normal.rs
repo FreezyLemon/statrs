@@ -136,7 +136,7 @@ impl core::fmt::Display for MultivariateNormalError {
     }
 }
 
-impl std::error::Error for MultivariateNormalError {}
+impl core::error::Error for MultivariateNormalError {}
 
 impl MultivariateNormal<Dyn> {
     /// Constructs a new multivariate normal distribution with a mean of `mean`

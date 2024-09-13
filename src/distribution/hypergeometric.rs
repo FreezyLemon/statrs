@@ -36,7 +36,7 @@ impl core::fmt::Display for HypergeometricError {
     }
 }
 
-impl std::error::Error for HypergeometricError {}
+impl core::error::Error for HypergeometricError {}
 
 impl Hypergeometric {
     /// Constructs a new hypergeometric distribution

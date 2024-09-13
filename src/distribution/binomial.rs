@@ -41,7 +41,7 @@ impl core::fmt::Display for BinomialError {
     }
 }
 
-impl std::error::Error for BinomialError {}
+impl core::error::Error for BinomialError {}
 
 impl Binomial {
     /// Constructs a new binomial distribution

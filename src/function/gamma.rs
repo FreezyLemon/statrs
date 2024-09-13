@@ -26,7 +26,7 @@ impl core::fmt::Display for GammaFuncError {
     }
 }
 
-impl std::error::Error for GammaFuncError {}
+impl core::error::Error for GammaFuncError {}
 
 /// Auxiliary variable when evaluating the `gamma_ln` function
 const GAMMA_R: f64 = 10.900511;

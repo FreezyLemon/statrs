@@ -39,7 +39,7 @@ impl core::fmt::Display for PoissonError {
     }
 }
 
-impl std::error::Error for PoissonError {}
+impl core::error::Error for PoissonError {}
 
 impl Poisson {
     /// Constructs a new poisson distribution with a rate (λ)

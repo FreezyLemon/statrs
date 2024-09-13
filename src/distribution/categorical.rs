@@ -53,7 +53,7 @@ impl core::fmt::Display for CategoricalError {
     }
 }
 
-impl std::error::Error for CategoricalError {}
+impl core::error::Error for CategoricalError {}
 
 impl Categorical {
     /// Constructs a new categorical distribution

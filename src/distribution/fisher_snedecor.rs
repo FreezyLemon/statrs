@@ -49,7 +49,7 @@ impl core::fmt::Display for FisherSnedecorError {
     }
 }
 
-impl std::error::Error for FisherSnedecorError {}
+impl core::error::Error for FisherSnedecorError {}
 
 impl FisherSnedecor {
     /// Constructs a new fisher-snedecor distribution with

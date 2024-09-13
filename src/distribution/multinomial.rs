@@ -59,7 +59,7 @@ impl core::fmt::Display for MultinomialError {
     }
 }
 
-impl std::error::Error for MultinomialError {}
+impl core::error::Error for MultinomialError {}
 
 impl Multinomial<Dyn> {
     /// Constructs a new multinomial distribution with probabilities `p`

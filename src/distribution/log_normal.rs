@@ -46,7 +46,7 @@ impl core::fmt::Display for LogNormalError {
     }
 }
 
-impl std::error::Error for LogNormalError {}
+impl core::error::Error for LogNormalError {}
 
 impl LogNormal {
     /// Constructs a new log-normal distribution with a location of `location`

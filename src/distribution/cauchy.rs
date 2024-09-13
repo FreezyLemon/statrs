@@ -42,7 +42,7 @@ impl core::fmt::Display for CauchyError {
     }
 }
 
-impl std::error::Error for CauchyError {}
+impl core::error::Error for CauchyError {}
 
 impl Cauchy {
     /// Constructs a new cauchy distribution with the given
