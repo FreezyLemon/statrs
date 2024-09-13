@@ -109,6 +109,168 @@ impl std::fmt::Display for Binomial {
     }
 }
 
+#[allow(non_snake_case)]
+fn btpe<R: rand::Rng>(n: u64, p: f64, rng: &mut R) -> Option<f64> {
+    use rand::prelude::Distribution;
+
+    let n = match u32::try_from(n) {
+        Ok(n_32) => f64::from(n_32),
+        // not supported
+        Err(_) => return None,
+    };
+
+    if !p.is_finite() {
+        return None;
+    }
+
+    // step 0
+    let r = p.min(1.0 - p);
+
+    // is this needed?
+    assert!(n * r >= 10.0);
+
+    let q = 1.0 - r;
+    let f_M = n * r + r;
+
+    // could maybe benefit from unsafe:
+    // SAFETY:
+    // p is in [0, 1].
+    // -> r is in [0, 0.5].
+    // -> f_M is in [0, 0.5 * n + 0.5].
+    // n is in [0, u32::MAX], so f_M < u32::MAX
+    // let M: u32 = unsafe { f_M.to_int_unchecked() };
+    let M = f_M as u32;
+
+    let p1 = (2.195 * (n * r * q).sqrt() - 4.6 * q).floor() + 0.5;
+    let x_M = M as f64 + 0.5;
+    let x_L = x_M - p1;
+    let x_R = x_M + p1;
+    let c = 0.134 + 20.5 / (15.3 + M as f64);
+    let a = (f_M - x_L)/(f_M - x_L * r);
+    let lambda_L = a * (1.0 + a / 2.0);
+    let a = (x_R - f_M) / (x_R * q);
+    let lambda_R = a * (1.0 + a / 2.0);
+
+    let p2 = p1 * (1.0 + 2.0 * c);
+    let p3 = p2 + c / lambda_L;
+    let p4 = p3 + c / lambda_R;
+
+    use crate::distribution::Uniform;
+    let u_dist = Uniform::new(0.0, p4).unwrap();
+    let v_dist = Uniform::new(0.0, 1.0).unwrap();
+
+    // this loop contains steps 1 to 5.3
+    // the `y` returned here is used in step 6
+    let y = loop {
+        // step 1
+        let u = u_dist.sample(rng);
+        let v = v_dist.sample(rng);
+
+        if u <= p1 {
+            break (x_M - p1 * v + u).floor();
+        }
+
+        // step 2
+        let y = if u <= p2 {
+            let x = x_L + (u - p1) / c;
+            let v = v * c + 1.0 - (M - x + 5.0).abs() / p1;
+            if v > 1.0 {
+                // go back to step 1
+                continue;
+            }
+
+            x.floor()
+        } else if u <= p3 {
+            // step 3
+            let y = (x_L + v.ln() / lambda_L).floor();
+            if y < 0.0 {
+                // go back to step 1
+                continue;
+            } else {
+                // TODO: double-check
+                let v = v * (u - p2) * lambda_L;
+                y
+            }
+        } else {
+            // step 4
+            let y = (x_R - v.ln() / lambda_R).floor();
+            if y > n {
+                // go back to step 1
+                continue;
+            }
+
+            y
+        };
+
+
+        let v = v * (u - p3) * lambda_R;
+
+        // step 5.0
+        let k = (y - M).abs();
+        if k > 20.0 && k < (n * r * q) / 2.0 - 1.0 {
+            // step 5.2
+            let p = (k / (n * r * q)) * ((k * (k / 3.0 + 0.625) + 1.0 / 6.0) / (n * r * q) + 0.5);
+            let t = -k.powi(2) / (2 * (n * r * q));
+            let A = v.ln();
+
+            if A < t - p {
+                break y;
+            } else if A > t + p {
+                // go back to step 1
+                continue;
+            }
+
+            // step 5.3
+            let x1 = y + 1;
+            let f1 = M + 1;
+            let z = n + 1 - M;
+            let w = n - y + 1;
+            let x2 = x1.powi(2);
+            let f2 = f1.powi(2);
+            let z2 = z.powi(2);
+            let w2 = w.powi(2);
+
+            // TODO: Finish
+            let cmp_val = x_M * (f1 / x1).ln() + (n - M + 0.5) * (z / w).ln()
+                + (y - M) * (w * r / x1 * q).ln()
+                + (13860);
+
+            if A > cmp_val {
+                continue;
+            }
+
+            break y;
+        }
+
+        // step 5.1
+        let s = r / q;
+        let a = s * (n + 1.0);
+        let mut F = 1.0;
+        if M < y {
+            for i in M..=y {
+                F *= a / i - s;
+            }
+        } else if M > y {
+            for i in y..=M {
+                F *= a / i - s;
+            }
+        }
+
+        if v > F {
+            continue;
+        } else {
+            break y;
+        }
+
+        y
+    };
+
+
+    // step 6
+    // assert!()
+    y
+}
+
 #[cfg(feature = "rand")]
 impl ::rand::distributions::Distribution<f64> for Binomial {
     fn sample<R: ::rand::Rng + ?Sized>(&self, rng: &mut R) -> f64 {
