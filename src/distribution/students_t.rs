@@ -38,9 +38,9 @@ pub enum StudentsTError {
     FreedomInvalid,
 }
 
-impl std::fmt::Display for StudentsTError {
+impl core::fmt::Display for StudentsTError {
     #[cfg_attr(coverage_nightly, coverage(off))]
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         match self {
             StudentsTError::LocationInvalid => write!(f, "Location is NaN"),
             StudentsTError::ScaleInvalid => write!(f, "Scale is NaN, zero or less than zero"),
@@ -136,8 +136,8 @@ impl StudentsT {
     }
 }
 
-impl std::fmt::Display for StudentsT {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl core::fmt::Display for StudentsT {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "t_{}({},{})", self.freedom, self.location, self.scale)
     }
 }

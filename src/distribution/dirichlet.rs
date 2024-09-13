@@ -41,9 +41,9 @@ pub enum DirichletError {
     AlphaHasInvalidElements,
 }
 
-impl std::fmt::Display for DirichletError {
+impl core::fmt::Display for DirichletError {
     #[cfg_attr(coverage_nightly, coverage(off))]
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         match self {
             DirichletError::AlphaTooShort => write!(f, "Alpha contains less than two elements"),
             DirichletError::AlphaHasInvalidElements => write!(
@@ -181,12 +181,12 @@ where
     }
 }
 
-impl<D> std::fmt::Display for Dirichlet<D>
+impl<D> core::fmt::Display for Dirichlet<D>
 where
     D: Dim,
     nalgebra::DefaultAllocator: nalgebra::allocator::Allocator<f64, D>,
 {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "Dir({}, {})", self.alpha.len(), &self.alpha)
     }
 }

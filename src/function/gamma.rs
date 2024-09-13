@@ -17,8 +17,8 @@ pub enum GammaFuncError {
     XInvalid,
 }
 
-impl std::fmt::Display for GammaFuncError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl core::fmt::Display for GammaFuncError {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         match self {
             GammaFuncError::AInvalid => write!(f, "a is infinite, zero or less than zero"),
             GammaFuncError::XInvalid => write!(f, "x is infinite, zero or less than zero"),

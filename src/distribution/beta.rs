@@ -36,9 +36,9 @@ pub enum BetaError {
     BothShapesInfinite,
 }
 
-impl std::fmt::Display for BetaError {
+impl core::fmt::Display for BetaError {
     #[cfg_attr(coverage_nightly, coverage(off))]
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         match self {
             BetaError::ShapeAInvalid => write!(f, "Shape A is NaN, zero or negative"),
             BetaError::ShapeBInvalid => write!(f, "Shape B is NaN, zero or negative"),
@@ -114,8 +114,8 @@ impl Beta {
     }
 }
 
-impl std::fmt::Display for Beta {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl core::fmt::Display for Beta {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "Beta(a={}, b={})", self.shape_a, self.shape_b)
     }
 }

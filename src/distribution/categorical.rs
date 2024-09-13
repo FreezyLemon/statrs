@@ -39,9 +39,9 @@ pub enum CategoricalError {
     ProbMassHasInvalidElements,
 }
 
-impl std::fmt::Display for CategoricalError {
+impl core::fmt::Display for CategoricalError {
     #[cfg_attr(coverage_nightly, coverage(off))]
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         match self {
             CategoricalError::ProbMassEmpty => write!(f, "Probability mass is empty"),
             CategoricalError::ProbMassSumZero => write!(f, "Probabilities sum up to zero"),
@@ -117,8 +117,8 @@ impl Categorical {
     }
 }
 
-impl std::fmt::Display for Categorical {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl core::fmt::Display for Categorical {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "Cat({:#?})", self.norm_pmf)
     }
 }

@@ -30,9 +30,9 @@ pub enum ChiError {
     FreedomInvalid,
 }
 
-impl std::fmt::Display for ChiError {
+impl core::fmt::Display for ChiError {
     #[cfg_attr(coverage_nightly, coverage(off))]
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         match self {
             ChiError::FreedomInvalid => {
                 write!(f, "Degrees of freedom are NaN, zero or less than zero")
@@ -87,8 +87,8 @@ impl Chi {
     }
 }
 
-impl std::fmt::Display for Chi {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl core::fmt::Display for Chi {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "χ_{}", self.freedom)
     }
 }

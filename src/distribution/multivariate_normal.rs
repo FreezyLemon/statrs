@@ -117,9 +117,9 @@ pub enum MultivariateNormalError {
     CholeskyFailed,
 }
 
-impl std::fmt::Display for MultivariateNormalError {
+impl core::fmt::Display for MultivariateNormalError {
     #[cfg_attr(coverage_nightly, coverage(off))]
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         match self {
             MultivariateNormalError::CovInvalid => {
                 write!(f, "Covariance matrix is asymmetric or contains a NaN")
@@ -227,13 +227,13 @@ where
     }
 }
 
-impl<D> std::fmt::Display for MultivariateNormal<D>
+impl<D> core::fmt::Display for MultivariateNormal<D>
 where
     D: Dim,
     nalgebra::DefaultAllocator:
         nalgebra::allocator::Allocator<f64, D> + nalgebra::allocator::Allocator<f64, D, D>,
 {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "N({}, {})", &self.mu, &self.cov)
     }
 }

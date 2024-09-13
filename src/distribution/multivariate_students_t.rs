@@ -58,9 +58,9 @@ pub enum MultivariateStudentError {
     CholeskyFailed,
 }
 
-impl std::fmt::Display for MultivariateStudentError {
+impl core::fmt::Display for MultivariateStudentError {
     #[cfg_attr(coverage_nightly, coverage(off))]
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         match self {
             MultivariateStudentError::ScaleInvalid => {
                 write!(f, "Scale matrix is asymmetric or contains a NaN")

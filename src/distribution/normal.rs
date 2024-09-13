@@ -34,9 +34,9 @@ pub enum NormalError {
     StandardDeviationInvalid,
 }
 
-impl std::fmt::Display for NormalError {
+impl core::fmt::Display for NormalError {
     #[cfg_attr(coverage_nightly, coverage(off))]
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         match self {
             NormalError::MeanInvalid => write!(f, "Mean is NaN"),
             NormalError::StandardDeviationInvalid => {
@@ -99,8 +99,8 @@ impl Normal {
     }
 }
 
-impl std::fmt::Display for Normal {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl core::fmt::Display for Normal {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "N({},{})", self.mean, self.std_dev)
     }
 }
