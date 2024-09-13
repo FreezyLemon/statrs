@@ -1,5 +1,5 @@
 use crate::statistics::*;
-use std::borrow::Borrow;
+use core::borrow::Borrow;
 use core::f64;
 
 impl<T> Statistics<f64> for T

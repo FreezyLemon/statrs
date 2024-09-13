@@ -342,7 +342,7 @@ mod tests {
         statistics::{MeanN, VarianceN},
     };
     use nalgebra::{dmatrix, dvector, vector, DimMin, Dyn, OVector};
-    use std::fmt::{Debug, Display};
+    use core::fmt::{Debug, Display};
 
     fn try_create<D>(p: OVector<f64, D>, n: u64) -> Multinomial<D>
     where

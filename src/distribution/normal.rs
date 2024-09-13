@@ -355,7 +355,7 @@ pub fn sample_unchecked<R: ::rand::Rng + ?Sized>(rng: &mut R, mean: f64, std_dev
     mean + std_dev * ziggurat::sample_std_normal(rng)
 }
 
-impl std::default::Default for Normal {
+impl core::default::Default for Normal {
     /// Returns the standard normal distribution with a mean of 0
     /// and a standard deviation of 1.
     fn default() -> Self {

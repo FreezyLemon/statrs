@@ -156,7 +156,7 @@ impl core::fmt::Display for Empirical {
         let mut enumerated_values = self
             .data
             .iter()
-            .flat_map(|(&NonNan(x), &count)| std::iter::repeat(x).take(count as usize));
+            .flat_map(|(&NonNan(x), &count)| core::iter::repeat(x).take(count as usize));
 
         if let Some(x) = enumerated_values.next() {
             write!(f, "Empirical([{x:.3e}")?;

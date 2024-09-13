@@ -1,7 +1,7 @@
 use crate::distribution::{Discrete, DiscreteCDF};
 use crate::function::factorial;
 use crate::statistics::*;
-use std::cmp;
+use core::cmp;
 use core::f64;
 
 /// Implements the
