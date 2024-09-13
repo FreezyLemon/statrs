@@ -110,14 +110,11 @@ impl std::fmt::Display for Binomial {
 }
 
 #[allow(non_snake_case)]
-fn btpe<R: rand::Rng>(n: u64, p: f64, rng: &mut R) -> Option<u32> {
+fn btpe<R: rand::Rng>(n: u32, p: f64, rng: &mut R) -> Option<u32> {
     use rand::prelude::Distribution;
 
-    let (n, n_int) = match u32::try_from(n) {
-        Ok(n_32) => (f64::from(n_32), n_32),
-        // more than u32::MAX: not supported
-        Err(_) => return None,
-    };
+    let n_int = n;
+    let n = f64::from(n);
 
     if !p.is_finite() {
         return None;
