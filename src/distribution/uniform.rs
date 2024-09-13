@@ -1,6 +1,6 @@
 use crate::distribution::{Continuous, ContinuousCDF};
 use crate::statistics::*;
-use std::f64;
+use core::f64;
 use std::fmt::Debug;
 
 /// Implements the [Continuous
@@ -65,7 +65,7 @@ impl Uniform {
     ///
     /// ```
     /// use statrs::distribution::Uniform;
-    /// use std::f64;
+    /// use core::f64;
     ///
     /// let mut result = Uniform::new(0.0, 1.0);
     /// assert!(result.is_ok());

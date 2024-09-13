@@ -3,7 +3,7 @@
 
 use crate::function::gamma;
 use crate::prec;
-use std::f64;
+use core::f64;
 
 /// Represents the errors that can occur when computing the natural logarithm
 /// of the beta function or the regularized lower incomplete beta function.

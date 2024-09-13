@@ -2,7 +2,7 @@ use crate::distribution::Continuous;
 use crate::function::gamma;
 use crate::statistics::{Max, MeanN, Min, Mode, VarianceN};
 use nalgebra::{Cholesky, Const, DMatrix, Dim, DimMin, Dyn, OMatrix, OVector};
-use std::f64::consts::PI;
+use core::f64::consts::PI;
 
 /// Implements the [Multivariate Student's t-distribution](https://en.wikipedia.org/wiki/Multivariate_t-distribution)
 /// distribution using the "nalgebra" crate for matrix operations.
@@ -604,7 +604,7 @@ mod tests  {
         let mvs = MultivariateStudent::new(vec![1., 1.], vec![1., 0., 0., 1.], 2.)
             .expect("hard coded valid construction");
         assert_eq!(mvs.freedom(), 2.);
-        assert_relative_eq!(mvs.ln_pdf_const(), std::f64::consts::TAU.recip().ln(), epsilon = 1e-15);
+        assert_relative_eq!(mvs.ln_pdf_const(), core::f64::consts::TAU.recip().ln(), epsilon = 1e-15);
 
         // compare to static
         assert_eq!(mvs.dim(), 2); 

@@ -3,7 +3,7 @@
 
 use crate::consts;
 use crate::prec;
-use std::f64;
+use core::f64;
 
 /// Represents the errors that can occur when computing any of the incomplete
 /// gamma functions.
@@ -446,7 +446,7 @@ fn signum(x: f64) -> f64 {
 mod tests {
     use super::*;
 
-    use std::f64::consts;
+    use core::f64::consts;
 
     #[test]
     fn test_gamma() {

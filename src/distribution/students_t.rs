@@ -1,7 +1,7 @@
 use crate::distribution::{Continuous, ContinuousCDF};
 use crate::function::{beta, gamma};
 use crate::statistics::*;
-use std::f64;
+use core::f64;
 
 /// Implements the [Student's
 /// T](https://en.wikipedia.org/wiki/Student%27s_t-distribution) distribution
@@ -585,7 +585,7 @@ mod tests {
     #[test]
     fn test_pdf() {
         let pdf = |arg: f64| move |x: StudentsT| x.pdf(arg);
-        test_relative(0.0, 1.0, 1.0, std::f64::consts::FRAC_1_PI, pdf(0.0));
+        test_relative(0.0, 1.0, 1.0, core::f64::consts::FRAC_1_PI, pdf(0.0));
         test_relative(0.0, 1.0, 1.0, 0.159154943091895, pdf(1.0));
         test_relative(0.0, 1.0, 1.0, 0.159154943091895, pdf(-1.0));
         test_relative(0.0, 1.0, 1.0, 0.063661977236758, pdf(2.0));

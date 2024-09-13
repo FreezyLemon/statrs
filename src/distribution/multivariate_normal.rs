@@ -1,8 +1,8 @@
 use crate::distribution::Continuous;
 use crate::statistics::{Max, MeanN, Min, Mode, VarianceN};
 use nalgebra::{Cholesky, Const, DMatrix, DVector, Dim, DimMin, Dyn, OMatrix, OVector};
-use std::f64;
-use std::f64::consts::{E, PI};
+use core::f64;
+use core::f64::consts::{E, PI};
 
 /// Computes both the normalization and exponential argument in the normal
 /// distribution, returning `None` on dimension mismatch.

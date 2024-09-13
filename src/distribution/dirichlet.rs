@@ -3,7 +3,7 @@ use crate::function::gamma;
 use crate::prec;
 use crate::statistics::*;
 use nalgebra::{Dim, Dyn, OMatrix, OVector};
-use std::f64;
+use core::f64;
 
 /// Implements the
 /// [Dirichlet](https://en.wikipedia.org/wiki/Dirichlet_distribution)
