@@ -252,10 +252,16 @@ fn btpe<R: rand::Rng>(n: u64, p: f64, rng: &mut R) -> Option<u32> {
         let s = r / q;
         let a = s * (n + 1.0);
 
-        let steps = 1 + M.abs_diff(y);
-        let F = (0..steps).fold(1.0, |F, i| F / (a / i as f64 - s));
+        let steps = M.abs_diff(y);
+        let start = M.min(y);
 
-        if v <= F {
+        let f = (start..start+steps)
+            .fold(
+                1.0,
+                |f, i| f / (a / i as f64 - s)
+            );
+
+        if v <= f {
             break y;
         }
 
