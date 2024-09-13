@@ -56,6 +56,7 @@ impl core::fmt::Display for DirichletError {
 
 impl core::error::Error for DirichletError {}
 
+#[cfg(feature = "std")]
 impl Dirichlet<Dyn> {
     /// Constructs a new dirichlet distribution with the given
     /// concentration parameters (alpha)
@@ -406,11 +407,82 @@ mod tests {
         assert_relative_eq!(expected, x, epsilon = acc);
     }
 
+    // DMatrix, DVector (heap-allocated)
+    #[cfg(feature = "std")]
+    mod dynamic {
+        use super::*;
+
+        #[test]
+        fn test_create() {
+            assert!(Dirichlet::new(vec![1.0, 2.0, 3.0, 4.0, 5.0]).is_ok());
+        }
+
+        #[test]
+        fn test_mean() {
+            let mean = |dd: Dirichlet<_>| dd.mean().unwrap();
+    
+            test_almost(vec![0.5; 5].into(), vec![1.0 / 5.0; 5].into(), 1e-15, mean);
+    
+            test_almost(
+                dvector![0.1, 0.2, 0.3, 0.4],
+                dvector![0.1, 0.2, 0.3, 0.4],
+                1e-15,
+                mean,
+            );
+    
+            test_almost(
+                dvector![1.0, 2.0, 3.0, 4.0],
+                dvector![0.1, 0.2, 0.3, 0.4],
+                1e-15,
+                mean,
+            );
+        }
+    
+        #[test]
+        fn test_variance() {
+            let variance = |dd: Dirichlet<_>| dd.variance().unwrap();
+    
+            test_almost(
+                dvector![1.0, 2.0],
+                dmatrix![0.055555555555555, -0.055555555555555;
+                        -0.055555555555555,  0.055555555555555;
+                ],
+                1e-15,
+                variance,
+            );
+    
+            test_almost(
+                dvector![0.1, 0.2, 0.3, 0.4],
+                dmatrix![0.045, -0.010, -0.015, -0.020;
+                        -0.010,  0.080, -0.030, -0.040;
+                        -0.015, -0.030,  0.105, -0.060;
+                        -0.020, -0.040, -0.060,  0.120;
+                ],
+                1e-15,
+                variance,
+            );
+        }
+
+        #[test]
+        #[should_panic]
+        fn test_ln_pdf_bad_input_length() {
+            let n = try_create(dvector![0.1, 0.3, 0.5, 0.8]);
+            n.ln_pdf(&dvector![0.5]);
+        }
+
+        #[test]
+        #[should_panic]
+        fn test_pdf_bad_input_length() {
+            let n = try_create(dvector![0.1, 0.3, 0.5, 0.8]);
+            n.pdf(&dvector![0.5]);
+        }
+    }
+
     #[test]
     fn test_create() {
         try_create(vector![1.0, 2.0]);
         try_create(vector![1.0, 2.0, 3.0, 4.0, 5.0]);
-        assert!(Dirichlet::new(vec![1.0, 2.0, 3.0, 4.0, 5.0]).is_ok());
+
         // try_create(vector![0.001, f64::INFINITY, 3756.0]); // moved to bad case as this is degenerate
     }
 
@@ -425,52 +497,6 @@ mod tests {
         bad_create_case(vector![1.0, f64::NAN, 3.0, 4.0, 5.0]);
         bad_create_case(vector![0.0, 0.0, 0.0]);
         bad_create_case(vector![0.001, f64::INFINITY, 3756.0]); // moved to bad case as this is degenerate
-    }
-
-    #[test]
-    fn test_mean() {
-        let mean = |dd: Dirichlet<_>| dd.mean().unwrap();
-
-        test_almost(vec![0.5; 5].into(), vec![1.0 / 5.0; 5].into(), 1e-15, mean);
-
-        test_almost(
-            dvector![0.1, 0.2, 0.3, 0.4],
-            dvector![0.1, 0.2, 0.3, 0.4],
-            1e-15,
-            mean,
-        );
-
-        test_almost(
-            dvector![1.0, 2.0, 3.0, 4.0],
-            dvector![0.1, 0.2, 0.3, 0.4],
-            1e-15,
-            mean,
-        );
-    }
-
-    #[test]
-    fn test_variance() {
-        let variance = |dd: Dirichlet<_>| dd.variance().unwrap();
-
-        test_almost(
-            dvector![1.0, 2.0],
-            dmatrix![0.055555555555555, -0.055555555555555;
-                    -0.055555555555555,  0.055555555555555;
-            ],
-            1e-15,
-            variance,
-        );
-
-        test_almost(
-            dvector![0.1, 0.2, 0.3, 0.4],
-            dmatrix![0.045, -0.010, -0.015, -0.020;
-                    -0.010,  0.080, -0.030, -0.040;
-                    -0.015, -0.030,  0.105, -0.060;
-                    -0.020, -0.040, -0.060,  0.120;
-            ],
-            1e-15,
-            variance,
-        );
     }
 
     // #[test]
@@ -538,13 +564,6 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_pdf_bad_input_length() {
-        let n = try_create(dvector![0.1, 0.3, 0.5, 0.8]);
-        n.pdf(&dvector![0.5]);
-    }
-
-    #[test]
-    #[should_panic]
     fn test_pdf_bad_input_range() {
         let n = try_create(vector![0.1, 0.3, 0.5, 0.8]);
         n.pdf(&vector![1.5, 0.0, 0.0, 0.0]);
@@ -555,13 +574,6 @@ mod tests {
     fn test_pdf_bad_input_sum() {
         let n = try_create(vector![0.1, 0.3, 0.5, 0.8]);
         n.pdf(&vector![0.5, 0.25, 0.8, 0.9]);
-    }
-
-    #[test]
-    #[should_panic]
-    fn test_ln_pdf_bad_input_length() {
-        let n = try_create(dvector![0.1, 0.3, 0.5, 0.8]);
-        n.ln_pdf(&dvector![0.5]);
     }
 
     #[test]

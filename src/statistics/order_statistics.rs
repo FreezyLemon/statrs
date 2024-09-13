@@ -1,5 +1,3 @@
-use super::RankTieBreaker;
-
 /// The `OrderStatistics` trait provides statistical utilities
 /// having to do with ordering. All the algorithms are in-place thus requiring
 /// a mutable borrow.
@@ -215,5 +213,6 @@ pub trait OrderStatistics<T> {
     /// assert_eq!(y.clone().ranks(RankTieBreaker::Min), [1.0, 4.0, 2.0,
     /// 2.0]);
     /// ```
-    fn ranks(&mut self, tie_breaker: RankTieBreaker) -> Vec<T>;
+    #[cfg(feature = "std")]
+    fn ranks(&mut self, tie_breaker: super::RankTieBreaker) -> Vec<T>;
 }

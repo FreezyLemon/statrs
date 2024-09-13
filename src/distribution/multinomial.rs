@@ -61,6 +61,7 @@ impl core::fmt::Display for MultinomialError {
 
 impl core::error::Error for MultinomialError {}
 
+#[cfg(feature = "std")]
 impl Multinomial<Dyn> {
     /// Constructs a new multinomial distribution with probabilities `p`
     /// and `n` number of trials.
@@ -376,13 +377,110 @@ mod tests {
         assert_relative_eq!(expected, x, epsilon = acc);
     }
 
+    // DMatrix, DVector (heap-allocated)
+    #[cfg(feature = "std")]
+    mod dynamic {
+        use super::*;
+
+        #[test]
+        fn test_create() {
+            try_create(dvector![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0], 4);
+        }
+
+        #[test]
+        fn test_mean() {
+            let mean = |x: Multinomial<_>| x.mean().unwrap();
+            test_almost(dvector![0.3, 0.7], 5, dvector![1.5, 3.5], 1e-12, mean);
+            test_almost(
+                dvector![0.1, 0.3, 0.6],
+                10,
+                dvector![1.0, 3.0, 6.0],
+                1e-12,
+                mean,
+            );
+            test_almost(
+                dvector![1.0, 3.0, 6.0],
+                10,
+                dvector![1.0, 3.0, 6.0],
+                1e-12,
+                mean,
+            );
+            test_almost(
+                dvector![0.15, 0.35, 0.3, 0.2],
+                20,
+                dvector![3.0, 7.0, 6.0, 4.0],
+                1e-12,
+                mean,
+            );
+        }
+
+        #[test]
+        fn test_variance() {
+            let variance = |x: Multinomial<_>| x.variance().unwrap();
+            test_almost(
+                dvector![0.3, 0.7],
+                5,
+                dmatrix![1.05, -1.05; 
+                        -1.05,  1.05],
+                1e-15,
+                variance,
+            );
+            test_almost(
+                dvector![0.1, 0.3, 0.6],
+                10,
+                dmatrix![0.9, -0.3, -0.6;
+                        -0.3,  2.1, -1.8;
+                        -0.6, -1.8,  2.4;
+                ],
+                1e-15,
+                variance,
+            );
+            test_almost(
+                dvector![0.15, 0.35, 0.3, 0.2],
+                20,
+                dmatrix![2.55, -1.05, -0.90, -0.60;
+                        -1.05,  4.55, -2.10, -1.40;
+                        -0.90, -2.10,  4.20, -1.20;
+                        -0.60, -1.40, -1.20,  3.20;
+                ],
+                1e-15,
+                variance,
+            );
+        }
+
+        #[test]
+        fn test_pmf() {
+            let pmf = |arg: OVector<u64, Dyn>| move |x: Multinomial<_>| x.pmf(&arg);
+            test_almost(
+                dvector![0.3, 0.7],
+                10,
+                0.121060821,
+                1e-15,
+                pmf(dvector![1, 9]),
+            );
+            test_almost(
+                dvector![0.1, 0.3, 0.6],
+                10,
+                0.105815808,
+                1e-15,
+                pmf(dvector![1, 3, 6]),
+            );
+            test_almost(
+                dvector![0.15, 0.35, 0.3, 0.2],
+                10,
+                0.000145152,
+                1e-15,
+                pmf(dvector![1, 1, 1, 7]),
+            );
+        }
+    }
+
     #[test]
     fn test_create() {
         assert_relative_eq!(
             *try_create(vector![1.0, 1.0, 1.0], 4).p(),
             vector![1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0]
         );
-        try_create(dvector![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0], 4);
     }
 
     #[test]
@@ -407,67 +505,6 @@ mod tests {
         );
     }
 
-    #[test]
-    fn test_mean() {
-        let mean = |x: Multinomial<_>| x.mean().unwrap();
-        test_almost(dvector![0.3, 0.7], 5, dvector![1.5, 3.5], 1e-12, mean);
-        test_almost(
-            dvector![0.1, 0.3, 0.6],
-            10,
-            dvector![1.0, 3.0, 6.0],
-            1e-12,
-            mean,
-        );
-        test_almost(
-            dvector![1.0, 3.0, 6.0],
-            10,
-            dvector![1.0, 3.0, 6.0],
-            1e-12,
-            mean,
-        );
-        test_almost(
-            dvector![0.15, 0.35, 0.3, 0.2],
-            20,
-            dvector![3.0, 7.0, 6.0, 4.0],
-            1e-12,
-            mean,
-        );
-    }
-
-    #[test]
-    fn test_variance() {
-        let variance = |x: Multinomial<_>| x.variance().unwrap();
-        test_almost(
-            dvector![0.3, 0.7],
-            5,
-            dmatrix![1.05, -1.05; 
-                    -1.05,  1.05],
-            1e-15,
-            variance,
-        );
-        test_almost(
-            dvector![0.1, 0.3, 0.6],
-            10,
-            dmatrix![0.9, -0.3, -0.6;
-                    -0.3,  2.1, -1.8;
-                    -0.6, -1.8,  2.4;
-            ],
-            1e-15,
-            variance,
-        );
-        test_almost(
-            dvector![0.15, 0.35, 0.3, 0.2],
-            20,
-            dmatrix![2.55, -1.05, -0.90, -0.60;
-                    -1.05,  4.55, -2.10, -1.40;
-                    -0.90, -2.10,  4.20, -1.20;
-                    -0.60, -1.40, -1.20,  3.20;
-            ],
-            1e-15,
-            variance,
-        );
-    }
-
     //     // #[test]
     //     // fn test_skewness() {
     //     //     let skewness = |x: Multinomial| x.skewness().unwrap();
@@ -475,32 +512,6 @@ mod tests {
     //     //     test_almost(&[0.1, 0.3, 0.6], 10, &[0.843274042711568, 0.276026223736942, -0.12909944487358], 1e-15, skewness);
     //     //     test_almost(&[0.15, 0.35, 0.3, 0.2], 20, &[0.438357003759605, 0.140642169281549, 0.195180014589707, 0.335410196624968], 1e-15, skewness);
     //     // }
-
-    #[test]
-    fn test_pmf() {
-        let pmf = |arg: OVector<u64, Dyn>| move |x: Multinomial<_>| x.pmf(&arg);
-        test_almost(
-            dvector![0.3, 0.7],
-            10,
-            0.121060821,
-            1e-15,
-            pmf(dvector![1, 9]),
-        );
-        test_almost(
-            dvector![0.1, 0.3, 0.6],
-            10,
-            0.105815808,
-            1e-15,
-            pmf(dvector![1, 3, 6]),
-        );
-        test_almost(
-            dvector![0.15, 0.35, 0.3, 0.2],
-            10,
-            0.000145152,
-            1e-15,
-            pmf(dvector![1, 1, 1, 7]),
-        );
-    }
 
     #[test]
     fn test_error_is_sync_send() {

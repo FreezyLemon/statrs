@@ -138,6 +138,7 @@ impl core::fmt::Display for MultivariateNormalError {
 
 impl core::error::Error for MultivariateNormalError {}
 
+#[cfg(feature = "std")]
 impl MultivariateNormal<Dyn> {
     /// Constructs a new multivariate normal distribution with a mean of `mean`
     /// and covariance matrix `cov`
@@ -447,6 +448,154 @@ mod tests  {
         assert_almost_eq!(expected, x, acc);
     }
 
+    // DMatrix, DVector (heap-allocated)
+    #[cfg(feature = "std")]
+    mod dynamic {
+        use super::*;
+
+        #[test]
+        fn test_create() {
+            create_case(dvector![0., f64::INFINITY], dmatrix![1., 0.; 0., 1.]);
+            create_case(
+                dvector![0., 0.],
+                dmatrix![f64::INFINITY, 0.; 0., f64::INFINITY],
+            );
+        }
+
+        #[test]
+        fn test_bad_create() {
+            // NaN in mean
+            bad_create_case(dvector![0., f64::NAN], dmatrix![1., 0.; 0., 1.]);
+            // NaN in Covariance Matrix
+            bad_create_case(dvector![0., 0.], dmatrix![1., 0.; 0., f64::NAN]);
+        }
+
+        #[test]
+        fn test_entropy() {
+            let entropy = |x: MultivariateNormal<_>| x.entropy().unwrap();
+            test_case(
+                dvector![0., 0.],
+                dmatrix![1., 0.; 0., 1.],
+                2.8378770664093453,
+                entropy,
+            );
+            test_case(
+                dvector![0., 0.],
+                dmatrix![1., 0.5; 0.5, 1.],
+                2.694036030183455,
+                entropy,
+            );
+            test_case(
+                dvector![0., 0.],
+                dmatrix![f64::INFINITY, 0.; 0., f64::INFINITY],
+                f64::INFINITY,
+                entropy,
+            );
+        }
+
+        #[test]
+        fn test_min_max() {
+            let min = |x: MultivariateNormal<_>| x.min();
+            let max = |x: MultivariateNormal<_>| x.max();
+            test_case(
+                dvector![0., 0.],
+                dmatrix![1., 0.; 0., 1.],
+                dvector![f64::NEG_INFINITY, f64::NEG_INFINITY],
+                min,
+            );
+            test_case(
+                dvector![0., 0.],
+                dmatrix![1., 0.; 0., 1.],
+                dvector![f64::INFINITY, f64::INFINITY],
+                max,
+            );
+            test_case(
+                dvector![10., 1.],
+                dmatrix![1., 0.; 0., 1.],
+                dvector![f64::NEG_INFINITY, f64::NEG_INFINITY],
+                min,
+            );
+            test_case(
+                dvector![-3., 5.],
+                dmatrix![1., 0.; 0., 1.],
+                dvector![f64::INFINITY, f64::INFINITY],
+                max,
+            );
+        }
+
+        #[test]
+        fn test_ln_pdf() {
+            let ln_pdf = |arg| move |x: MultivariateNormal<_>| x.ln_pdf(&arg);
+            test_case(
+                dvector![0., 0.],
+                dmatrix![1., 0.; 0., 1.],
+                (0.05854983152431917f64).ln(),
+                ln_pdf(dvector![1., 1.]),
+            );
+            test_almost(
+                dvector![0., 0.],
+                dmatrix![1., 0.; 0., 1.],
+                (0.013064233284684921f64).ln(),
+                1e-15,
+                ln_pdf(dvector![1., 2.]),
+            );
+            test_almost(
+                dvector![0., 0.],
+                dmatrix![1., 0.; 0., 1.],
+                (1.8618676045881531e-23f64).ln(),
+                1e-15,
+                ln_pdf(dvector![1., 10.]),
+            );
+            test_almost(
+                dvector![0., 0.],
+                dmatrix![1., 0.; 0., 1.],
+                (5.920684802611216e-45f64).ln(),
+                1e-15,
+                ln_pdf(dvector![10., 10.]),
+            );
+            test_almost(
+                dvector![0., 0.],
+                dmatrix![1., 0.9; 0.9, 1.],
+                (1.6576716577547003e-05f64).ln(),
+                1e-14,
+                ln_pdf(dvector![1., -1.]),
+            );
+            test_almost(
+                dvector![0., 0.],
+                dmatrix![1., 0.99; 0.99, 1.],
+                (4.1970621773477824e-44f64).ln(),
+                1e-12,
+                ln_pdf(dvector![1., -1.]),
+            );
+            test_almost(
+                dvector![0.5, -0.2],
+                dmatrix![2.0, 0.3; 0.3, 0.5],
+                (0.0013075203140666656f64).ln(),
+                1e-15,
+                ln_pdf(dvector![2., 2.]),
+            );
+            test_case(
+                dvector![0., 0.],
+                dmatrix![f64::INFINITY, 0.; 0., f64::INFINITY],
+                f64::NEG_INFINITY,
+                ln_pdf(dvector![10., 10.]),
+            );
+            test_case(
+                dvector![0., 0.],
+                dmatrix![f64::INFINITY, 0.; 0., f64::INFINITY],
+                f64::NEG_INFINITY,
+                ln_pdf(dvector![100., 100.]),
+            );
+        }
+
+        #[test]
+        #[should_panic]
+        fn test_pdf_mismatched_arg_size() {
+            let mvn = MultivariateNormal::new(vec![0., 0.], vec![1., 0., 0., 1.,]).unwrap();
+            mvn.pdf(&vec![1.].into()); // x.size != mu.size
+        }
+    }
+
     #[test]
     fn test_create() {
         create_case(vector![0., 0.], matrix![1., 0.; 0., 1.]);
@@ -454,11 +603,6 @@ mod tests  {
         create_case(
             vector![4., 5., 6.],
             matrix![2., 1., 0.; 1., 2., 1.; 0., 1., 2.],
-        );
-        create_case(dvector![0., f64::INFINITY], dmatrix![1., 0.; 0., 1.]);
-        create_case(
-            dvector![0., 0.],
-            dmatrix![f64::INFINITY, 0.; 0., f64::INFINITY],
         );
     }
 
@@ -468,10 +612,6 @@ mod tests  {
         bad_create_case(vector![0., 0.], matrix![1., 1.; 0., 1.]);
         // Covariance not positive-definite
         bad_create_case(vector![0., 0.], matrix![1., 2.; 2., 1.]);
-        // NaN in mean
-        bad_create_case(dvector![0., f64::NAN], dmatrix![1., 0.; 0., 1.]);
-        // NaN in Covariance Matrix
-        bad_create_case(dvector![0., 0.], dmatrix![1., 0.; 0., f64::NAN]);
     }
 
     #[test]
@@ -492,29 +632,6 @@ mod tests  {
     }
 
     #[test]
-    fn test_entropy() {
-        let entropy = |x: MultivariateNormal<_>| x.entropy().unwrap();
-        test_case(
-            dvector![0., 0.],
-            dmatrix![1., 0.; 0., 1.],
-            2.8378770664093453,
-            entropy,
-        );
-        test_case(
-            dvector![0., 0.],
-            dmatrix![1., 0.5; 0.5, 1.],
-            2.694036030183455,
-            entropy,
-        );
-        test_case(
-            dvector![0., 0.],
-            dmatrix![f64::INFINITY, 0.; 0., f64::INFINITY],
-            f64::INFINITY,
-            entropy,
-        );
-    }
-
-    #[test]
     fn test_mode() {
         let mode = |x: MultivariateNormal<_>| x.mode();
         test_case(
@@ -528,36 +645,6 @@ mod tests  {
             matrix![1., 0.; 0., 1.],
             vector![f64::INFINITY, f64::INFINITY],
             mode,
-        );
-    }
-
-    #[test]
-    fn test_min_max() {
-        let min = |x: MultivariateNormal<_>| x.min();
-        let max = |x: MultivariateNormal<_>| x.max();
-        test_case(
-            dvector![0., 0.],
-            dmatrix![1., 0.; 0., 1.],
-            dvector![f64::NEG_INFINITY, f64::NEG_INFINITY],
-            min,
-        );
-        test_case(
-            dvector![0., 0.],
-            dmatrix![1., 0.; 0., 1.],
-            dvector![f64::INFINITY, f64::INFINITY],
-            max,
-        );
-        test_case(
-            dvector![10., 1.],
-            dmatrix![1., 0.; 0., 1.],
-            dvector![f64::NEG_INFINITY, f64::NEG_INFINITY],
-            min,
-        );
-        test_case(
-            dvector![-3., 5.],
-            dmatrix![1., 0.; 0., 1.],
-            dvector![f64::INFINITY, f64::INFINITY],
-            max,
         );
     }
 
@@ -624,78 +711,6 @@ mod tests  {
             0.0,
             pdf(vector![100., 100.]),
         );
-    }
-
-    #[test]
-    fn test_ln_pdf() {
-        let ln_pdf = |arg| move |x: MultivariateNormal<_>| x.ln_pdf(&arg);
-        test_case(
-            dvector![0., 0.],
-            dmatrix![1., 0.; 0., 1.],
-            (0.05854983152431917f64).ln(),
-            ln_pdf(dvector![1., 1.]),
-        );
-        test_almost(
-            dvector![0., 0.],
-            dmatrix![1., 0.; 0., 1.],
-            (0.013064233284684921f64).ln(),
-            1e-15,
-            ln_pdf(dvector![1., 2.]),
-        );
-        test_almost(
-            dvector![0., 0.],
-            dmatrix![1., 0.; 0., 1.],
-            (1.8618676045881531e-23f64).ln(),
-            1e-15,
-            ln_pdf(dvector![1., 10.]),
-        );
-        test_almost(
-            dvector![0., 0.],
-            dmatrix![1., 0.; 0., 1.],
-            (5.920684802611216e-45f64).ln(),
-            1e-15,
-            ln_pdf(dvector![10., 10.]),
-        );
-        test_almost(
-            dvector![0., 0.],
-            dmatrix![1., 0.9; 0.9, 1.],
-            (1.6576716577547003e-05f64).ln(),
-            1e-14,
-            ln_pdf(dvector![1., -1.]),
-        );
-        test_almost(
-            dvector![0., 0.],
-            dmatrix![1., 0.99; 0.99, 1.],
-            (4.1970621773477824e-44f64).ln(),
-            1e-12,
-            ln_pdf(dvector![1., -1.]),
-        );
-        test_almost(
-            dvector![0.5, -0.2],
-            dmatrix![2.0, 0.3; 0.3, 0.5],
-            (0.0013075203140666656f64).ln(),
-            1e-15,
-            ln_pdf(dvector![2., 2.]),
-        );
-        test_case(
-            dvector![0., 0.],
-            dmatrix![f64::INFINITY, 0.; 0., f64::INFINITY],
-            f64::NEG_INFINITY,
-            ln_pdf(dvector![10., 10.]),
-        );
-        test_case(
-            dvector![0., 0.],
-            dmatrix![f64::INFINITY, 0.; 0., f64::INFINITY],
-            f64::NEG_INFINITY,
-            ln_pdf(dvector![100., 100.]),
-        );
-    }
-
-    #[test]
-    #[should_panic]
-    fn test_pdf_mismatched_arg_size() {
-        let mvn = MultivariateNormal::new(vec![0., 0.], vec![1., 0., 0., 1.,]).unwrap();
-        mvn.pdf(&vec![1.].into()); // x.size != mu.size
     }
 
     #[test]

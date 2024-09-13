@@ -242,9 +242,7 @@ where
 #[rustfmt::skip]
 #[cfg(test)]
 mod tests {
-    use core::f64::consts;
     use crate::statistics::Statistics;
-    use crate::generate::{InfinitePeriodic, InfiniteSinusoidal};
 
     #[test]
     fn test_empty_data_returns_nan() {
@@ -260,7 +258,10 @@ mod tests {
     // TODO: test github issue 137 (Math.NET)
 
     #[test]
+    #[cfg(feature = "std")]
     fn test_large_samples() {
+        use crate::generate::InfinitePeriodic;
+
         let shorter = InfinitePeriodic::default(4.0, 1.0).take(4*4096).collect::<Vec<f64>>();
         let longer = InfinitePeriodic::default(4.0, 1.0).take(4*32768).collect::<Vec<f64>>();
         assert_almost_eq!((&shorter).mean(), 0.375, 1e-14);
@@ -270,8 +271,11 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "std")]
     fn test_quadratic_mean_of_sinusoidal() {
+        use crate::generate::InfiniteSinusoidal;
+
         let data = InfiniteSinusoidal::default(64.0, 16.0, 2.0).take(128).collect::<Vec<f64>>();
-        assert_almost_eq!((&data).quadratic_mean(), 2.0 / consts::SQRT_2, 1e-15);
+        assert_almost_eq!((&data).quadratic_mean(), 2.0 / core::f64::consts::SQRT_2, 1e-15);
     }
 }
