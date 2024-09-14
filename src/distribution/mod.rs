@@ -8,7 +8,7 @@ use num_traits::NumAssignOps;
 pub use self::bernoulli::Bernoulli;
 pub use self::beta::{Beta, BetaError};
 pub use self::binomial::{Binomial, BinomialError};
-#[cfg(feature = "std")]
+#[cfg(feature = "alloc")]
 pub use self::categorical::{Categorical, CategoricalError};
 pub use self::cauchy::{Cauchy, CauchyError};
 pub use self::chi::{Chi, ChiError};
@@ -46,7 +46,7 @@ pub use self::weibull::{Weibull, WeibullError};
 mod bernoulli;
 mod beta;
 mod binomial;
-#[cfg(feature = "std")]
+#[cfg(feature = "alloc")]
 mod categorical;
 mod cauchy;
 mod chi;

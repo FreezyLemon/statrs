@@ -1,10 +1,10 @@
 use crate::distribution::Discrete;
 use crate::function::factorial;
 use crate::statistics::*;
-use nalgebra::{DVector, Dim, Dyn, OMatrix, OVector};
+use nalgebra::{Dim, OMatrix, OVector};
 
 #[cfg(all(feature = "alloc", not(feature = "std")))]
-use alloc::{vec, vec::Vec};
+use alloc::vec::Vec;
 
 /// Implements the
 /// [Multinomial](https://en.wikipedia.org/wiki/Multinomial_distribution)
@@ -65,7 +65,7 @@ impl core::fmt::Display for MultinomialError {
 impl core::error::Error for MultinomialError {}
 
 #[cfg(feature = "alloc")]
-impl Multinomial<Dyn> {
+impl Multinomial<nalgebra::Dyn> {
     /// Constructs a new multinomial distribution with probabilities `p`
     /// and `n` number of trials.
     ///
@@ -163,7 +163,9 @@ where
     }
 }
 
-#[cfg(feature = "rand")]
+// TODO: Make this work without alloc (maybe),
+// alternatively implement for DVector and SVector separately
+#[cfg(all(feature = "rand", feature = "alloc"))]
 impl<D> ::rand::distributions::Distribution<OVector<f64, D>> for Multinomial<D>
 where
     D: Dim,
@@ -183,6 +185,10 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
+use nalgebra::DVector;
+
+#[cfg(feature = "alloc")]
 impl<D> MeanN<DVector<f64>> for Multinomial<D>
 where
     D: Dim,
@@ -341,11 +347,11 @@ where
 #[rustfmt::skip]
 #[cfg(test)]
 mod tests {
-    use crate::{
-        distribution::{Discrete, Multinomial, MultinomialError},
-        statistics::{MeanN, VarianceN},
-    };
-    use nalgebra::{dmatrix, dvector, vector, DimMin, Dyn, OVector};
+    #[cfg(all(feature = "alloc", not(feature = "std")))]
+    use alloc::vec;
+
+    use super::*;
+    use nalgebra::{DimMin, vector};
     use core::fmt::{Debug, Display};
 
     fn try_create<D>(p: OVector<f64, D>, n: u64) -> Multinomial<D>
@@ -384,6 +390,7 @@ mod tests {
     #[cfg(feature = "alloc")]
     mod dynamic {
         use super::*;
+        use nalgebra::{dmatrix, dvector, Dyn};
 
         #[test]
         fn test_create() {

@@ -1,11 +1,11 @@
 use crate::distribution::Continuous;
 use crate::statistics::{Max, MeanN, Min, Mode, VarianceN};
-use nalgebra::{Cholesky, Const, DMatrix, DVector, Dim, DimMin, Dyn, OMatrix, OVector};
+use nalgebra::{Cholesky, Const, Dim, DimMin, OMatrix, OVector};
 use core::f64;
 use core::f64::consts::{E, PI};
 
 #[cfg(all(feature = "alloc", not(feature = "std")))]
-use alloc::{vec, vec::Vec};
+use alloc::vec::Vec;
 
 /// Computes both the normalization and exponential argument in the normal
 /// distribution, returning `None` on dimension mismatch.
@@ -142,7 +142,7 @@ impl core::fmt::Display for MultivariateNormalError {
 impl core::error::Error for MultivariateNormalError {}
 
 #[cfg(feature = "alloc")]
-impl MultivariateNormal<Dyn> {
+impl MultivariateNormal<nalgebra::Dyn> {
     /// Constructs a new multivariate normal distribution with a mean of `mean`
     /// and covariance matrix `cov`
     ///
@@ -151,6 +151,8 @@ impl MultivariateNormal<Dyn> {
     /// Returns an error if the given covariance matrix is not
     /// symmetric or positive-definite
     pub fn new(mean: Vec<f64>, cov: Vec<f64>) -> Result<Self, MultivariateNormalError> {
+        use nalgebra::{DMatrix, DVector};
+
         let mean = DVector::from_vec(mean);
         let cov = DMatrix::from_vec(mean.len(), mean.len(), cov);
         MultivariateNormal::new_from_nalgebra(mean, cov)
@@ -375,17 +377,13 @@ where
 
 #[rustfmt::skip]
 #[cfg(test)]
-mod tests  {
+mod tests {
+    #[cfg(all(feature = "alloc", not(feature = "std")))]
+    use alloc::vec;
+
+    use super::*;
     use core::fmt::Debug;
-
-    use nalgebra::{dmatrix, dvector, matrix, vector, DimMin, OMatrix, OVector};
-
-    use crate::{
-        distribution::{Continuous, MultivariateNormal},
-        statistics::{Max, MeanN, Min, Mode, VarianceN},
-    };
-
-    use super::MultivariateNormalError;
+    use nalgebra::{matrix, vector};
 
     fn try_create<D>(mean: OVector<f64, D>, covariance: OMatrix<f64, D, D>) -> MultivariateNormal<D>
     where
@@ -455,6 +453,7 @@ mod tests  {
     #[cfg(feature = "alloc")]
     mod dynamic {
         use super::*;
+        use nalgebra::{dmatrix, dvector};
 
         #[test]
         fn test_create() {

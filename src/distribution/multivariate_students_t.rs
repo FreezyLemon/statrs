@@ -1,11 +1,11 @@
 use crate::distribution::Continuous;
 use crate::function::gamma;
 use crate::statistics::{Max, MeanN, Min, Mode, VarianceN};
-use nalgebra::{Cholesky, Const, DMatrix, Dim, DimMin, Dyn, OMatrix, OVector};
+use nalgebra::{Cholesky, Const, Dim, DimMin, OMatrix, OVector};
 use core::f64::consts::PI;
 
 #[cfg(all(feature = "alloc", not(feature = "std")))]
-use alloc::{vec, vec::Vec};
+use alloc::vec::Vec;
 
 /// Implements the [Multivariate Student's t-distribution](https://en.wikipedia.org/wiki/Multivariate_t-distribution)
 /// distribution using the "nalgebra" crate for matrix operations.
@@ -88,7 +88,7 @@ impl core::fmt::Display for MultivariateStudentError {
 impl core::error::Error for MultivariateStudentError {}
 
 #[cfg(feature = "alloc")]
-impl MultivariateStudent<Dyn> {
+impl MultivariateStudent<nalgebra::Dyn> {
     /// Constructs a new multivariate students t distribution with a location of `location`,
     /// scale matrix `scale` and `freedom` degrees of freedom.
     ///
@@ -101,6 +101,8 @@ impl MultivariateStudent<Dyn> {
         scale: Vec<f64>,
         freedom: f64,
     ) -> Result<Self, MultivariateStudentError> {
+        use nalgebra::DMatrix;
+
         let dim = location.len();
         Self::new_from_nalgebra(location.into(), DMatrix::from_vec(dim, dim, scale), freedom)
     }
@@ -394,16 +396,17 @@ where
 
 #[rustfmt::skip]
 #[cfg(test)]
+#[cfg(feature = "alloc")]
 mod tests  {
-    use core::fmt::Debug;
+    #[cfg(all(feature = "alloc", not(feature = "std")))]
+    use alloc::vec;
+
+    use super::*;
+    use crate::distribution::MultivariateNormal;
 
     use approx::RelativeEq;
-    use nalgebra::{DMatrix, DVector, Dyn, OMatrix, OVector, U1, U2};
-
-    use crate::{
-        distribution::{Continuous, MultivariateStudent, MultivariateNormal},
-        statistics::{Max, MeanN, Min, Mode, VarianceN},
-    };
+    use core::fmt::Debug;
+    use nalgebra::{DMatrix, DVector, Dyn, U1, U2};
 
     use super::MultivariateStudentError;
 
