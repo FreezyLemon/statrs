@@ -61,7 +61,7 @@ impl core::fmt::Display for MultinomialError {
 
 impl core::error::Error for MultinomialError {}
 
-#[cfg(feature = "std")]
+#[cfg(feature = "alloc")]
 impl Multinomial<Dyn> {
     /// Constructs a new multinomial distribution with probabilities `p`
     /// and `n` number of trials.
@@ -378,7 +378,7 @@ mod tests {
     }
 
     // DMatrix, DVector (heap-allocated)
-    #[cfg(feature = "std")]
+    #[cfg(feature = "alloc")]
     mod dynamic {
         use super::*;
 

@@ -2,7 +2,7 @@ use crate::distribution::Continuous;
 use crate::function::gamma;
 use crate::prec;
 use crate::statistics::*;
-use nalgebra::{Dim, Dyn, OMatrix, OVector};
+use nalgebra::{Dim, OMatrix, OVector};
 use core::f64;
 
 /// Implements the
@@ -56,8 +56,8 @@ impl core::fmt::Display for DirichletError {
 
 impl core::error::Error for DirichletError {}
 
-#[cfg(feature = "std")]
-impl Dirichlet<Dyn> {
+#[cfg(feature = "alloc")]
+impl Dirichlet<nalgebra::Dyn> {
     /// Constructs a new dirichlet distribution with the given
     /// concentration parameters (alpha)
     ///
@@ -374,7 +374,7 @@ mod tests {
 
     use core::fmt::{Debug, Display};
 
-    use nalgebra::{dmatrix, dvector, vector, DimMin, OVector};
+    use nalgebra::{vector, DimMin, OVector};
 
     fn try_create<D>(alpha: OVector<f64, D>) -> Dirichlet<D>
     where
@@ -408,9 +408,10 @@ mod tests {
     }
 
     // DMatrix, DVector (heap-allocated)
-    #[cfg(feature = "std")]
+    #[cfg(feature = "alloc")]
     mod dynamic {
         use super::*;
+        use nalgebra::{dmatrix, dvector};
 
         #[test]
         fn test_create() {

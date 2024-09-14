@@ -84,7 +84,7 @@ impl core::fmt::Display for MultivariateStudentError {
 
 impl core::error::Error for MultivariateStudentError {}
 
-#[cfg(feature = "std")]
+#[cfg(feature = "alloc")]
 impl MultivariateStudent<Dyn> {
     /// Constructs a new multivariate students t distribution with a location of `location`,
     /// scale matrix `scale` and `freedom` degrees of freedom.
@@ -485,7 +485,7 @@ mod tests  {
     // }
 
     // DMatrix, DVector (heap-allocated)
-    #[cfg(feature = "std")]
+    #[cfg(feature = "alloc")]
     mod dynamic {
         use super::*;
 

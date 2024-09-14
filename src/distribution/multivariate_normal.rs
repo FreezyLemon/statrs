@@ -138,7 +138,7 @@ impl core::fmt::Display for MultivariateNormalError {
 
 impl core::error::Error for MultivariateNormalError {}
 
-#[cfg(feature = "std")]
+#[cfg(feature = "alloc")]
 impl MultivariateNormal<Dyn> {
     /// Constructs a new multivariate normal distribution with a mean of `mean`
     /// and covariance matrix `cov`
@@ -449,7 +449,7 @@ mod tests  {
     }
 
     // DMatrix, DVector (heap-allocated)
-    #[cfg(feature = "std")]
+    #[cfg(feature = "alloc")]
     mod dynamic {
         use super::*;
 
