@@ -17,7 +17,7 @@ pub use self::dirac::{Dirac, DiracError};
 #[cfg(feature = "nalgebra")]
 pub use self::dirichlet::{Dirichlet, DirichletError};
 pub use self::discrete_uniform::{DiscreteUniform, DiscreteUniformError};
-#[cfg(feature = "std")]
+#[cfg(feature = "alloc")]
 pub use self::empirical::Empirical;
 pub use self::erlang::Erlang;
 pub use self::exponential::{Exp, ExpError};
@@ -55,7 +55,7 @@ mod dirac;
 #[cfg(feature = "nalgebra")]
 mod dirichlet;
 mod discrete_uniform;
-#[cfg(feature = "std")]
+#[cfg(feature = "alloc")]
 mod empirical;
 mod erlang;
 mod exponential;

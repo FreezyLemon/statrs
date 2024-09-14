@@ -50,13 +50,16 @@ pub mod test {
     #[macro_export]
     macro_rules! testing_boiler {
         ($($arg_name:ident: $arg_ty:ty),+; $dist:ty; $dist_err:ty) => {
-            #[cfg(not(feature = "std"))]
+            #[cfg(not(feature = "alloc"))]
             fn make_param_text<'s>($(_: $arg_ty),+) -> &'s str {
-                "(N/A w/o std)"
+                "(N/A w/o alloc)"
             }
 
-            #[cfg(feature = "std")]
+            #[cfg(feature = "alloc")]
             fn make_param_text<'s>($($arg_name: $arg_ty),+) -> &'s str {
+                #[cfg(not(feature = "std"))]
+                use alloc::string::String;
+
                 // ""
                 let mut param_text = String::new();
 
