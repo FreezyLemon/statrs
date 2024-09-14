@@ -4,6 +4,9 @@ use nalgebra::{Cholesky, Const, DMatrix, DVector, Dim, DimMin, Dyn, OMatrix, OVe
 use core::f64;
 use core::f64::consts::{E, PI};
 
+#[cfg(all(feature = "alloc", not(feature = "std")))]
+use alloc::{vec, vec::Vec};
+
 /// Computes both the normalization and exponential argument in the normal
 /// distribution, returning `None` on dimension mismatch.
 pub(super) fn density_normalization_and_exponential<D>(

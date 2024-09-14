@@ -3,6 +3,9 @@ use crate::function::factorial;
 use crate::statistics::*;
 use nalgebra::{DVector, Dim, Dyn, OMatrix, OVector};
 
+#[cfg(all(feature = "alloc", not(feature = "std")))]
+use alloc::{vec, vec::Vec};
+
 /// Implements the
 /// [Multinomial](https://en.wikipedia.org/wiki/Multinomial_distribution)
 /// distribution which is a generalization of the

@@ -5,6 +5,9 @@ use crate::statistics::*;
 use nalgebra::{Dim, OMatrix, OVector};
 use core::f64;
 
+#[cfg(all(feature = "alloc", not(feature = "std")))]
+use alloc::{vec, vec::Vec};
+
 /// Implements the
 /// [Dirichlet](https://en.wikipedia.org/wiki/Dirichlet_distribution)
 /// distribution

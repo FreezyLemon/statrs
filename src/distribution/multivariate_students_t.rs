@@ -4,6 +4,9 @@ use crate::statistics::{Max, MeanN, Min, Mode, VarianceN};
 use nalgebra::{Cholesky, Const, DMatrix, Dim, DimMin, Dyn, OMatrix, OVector};
 use core::f64::consts::PI;
 
+#[cfg(all(feature = "alloc", not(feature = "std")))]
+use alloc::{vec, vec::Vec};
+
 /// Implements the [Multivariate Student's t-distribution](https://en.wikipedia.org/wiki/Multivariate_t-distribution)
 /// distribution using the "nalgebra" crate for matrix operations.
 ///
