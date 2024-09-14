@@ -28,11 +28,11 @@ pub use self::hypergeometric::{Hypergeometric, HypergeometricError};
 pub use self::inverse_gamma::{InverseGamma, InverseGammaError};
 pub use self::laplace::{Laplace, LaplaceError};
 pub use self::log_normal::{LogNormal, LogNormalError};
-#[cfg(feature = "nalgebra")]
+#[cfg(all(feature = "nalgebra", any(feature = "std", feature = "libm")))]
 pub use self::multinomial::{Multinomial, MultinomialError};
-#[cfg(feature = "nalgebra")]
+#[cfg(all(feature = "nalgebra", any(feature = "std", feature = "libm")))]
 pub use self::multivariate_normal::{MultivariateNormal, MultivariateNormalError};
-#[cfg(feature = "nalgebra")]
+#[cfg(all(feature = "nalgebra", any(feature = "std", feature = "libm")))]
 pub use self::multivariate_students_t::{MultivariateStudent, MultivariateStudentError};
 pub use self::negative_binomial::{NegativeBinomial, NegativeBinomialError};
 pub use self::normal::{Normal, NormalError};
@@ -68,11 +68,11 @@ mod internal;
 mod inverse_gamma;
 mod laplace;
 mod log_normal;
-#[cfg(feature = "nalgebra")]
+#[cfg(all(feature = "nalgebra", any(feature = "std", feature = "libm")))]
 mod multinomial;
-#[cfg(feature = "nalgebra")]
+#[cfg(all(feature = "nalgebra", any(feature = "std", feature = "libm")))]
 mod multivariate_normal;
-#[cfg(feature = "nalgebra")]
+#[cfg(all(feature = "nalgebra", any(feature = "std", feature = "libm")))]
 mod multivariate_students_t;
 mod negative_binomial;
 mod normal;
