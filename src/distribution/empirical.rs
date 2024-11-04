@@ -1,6 +1,7 @@
 use crate::distribution::ContinuousCDF;
 use crate::statistics::*;
 use core::cmp::Ordering;
+use std::collections::btree_map::Entry;
 use std::collections::BTreeMap;
 
 #[derive(Clone, PartialEq, Debug)]
@@ -37,7 +38,8 @@ impl<T: PartialOrd> Ord for NonNan<T> {
 #[derive(Clone, PartialEq, Debug)]
 pub struct Empirical {
     sum: f64,
-    mean_and_var: Option<(f64, f64)>,
+    mean: f64,
+    var: f64,
     // keys are data points, values are number of data points with equal value
     data: BTreeMap<NonNan<f64>, u64>,
 }
@@ -59,51 +61,52 @@ impl Empirical {
     #[allow(clippy::result_unit_err)]
     pub fn new() -> Result<Empirical, ()> {
         Ok(Empirical {
-            sum: 0.,
-            mean_and_var: None,
+            sum: 0.0,
+            mean: 0.0,
+            var: 0.0,
             data: BTreeMap::new(),
         })
     }
 
-    pub fn add(&mut self, data_point: f64) {
-        if !data_point.is_nan() {
-            self.sum += 1.;
-            match self.mean_and_var {
-                Some((mean, var)) => {
-                    let sum = self.sum;
-                    let var = var + (sum - 1.) * (data_point - mean) * (data_point - mean) / sum;
-                    let mean = mean + (data_point - mean) / sum;
-                    self.mean_and_var = Some((mean, var));
-                }
-                None => {
-                    self.mean_and_var = Some((data_point, 0.));
-                }
-            }
-            *self.data.entry(NonNan(data_point)).or_insert(0) += 1;
+    pub fn add(&mut self, data_point: f64) -> bool {
+        if data_point.is_nan() {
+            return false;
         }
+
+        self.sum += 1.0;
+        let Self { sum, mean, var, .. } = *self;
+
+        self.var = var + (sum - 1.) * (data_point - mean) * (data_point - mean) / sum;
+        self.mean = mean + (data_point - mean) / sum;
+        *self.data.entry(NonNan(data_point)).or_insert(0) += 1;
+
+        true
     }
 
-    pub fn remove(&mut self, data_point: f64) {
-        if !data_point.is_nan() {
-            if let (Some(val), Some((mean, var))) =
-                (self.data.remove(&NonNan(data_point)), self.mean_and_var)
-            {
-                if val == 1 && self.data.is_empty() {
-                    self.mean_and_var = None;
-                    self.sum = 0.;
-                    return;
-                };
-                // reset mean and var
-                let mean = (self.sum * mean - data_point) / (self.sum - 1.);
-                let var =
-                    var - (self.sum - 1.) * (data_point - mean) * (data_point - mean) / self.sum;
-                self.sum -= 1.;
-                if val != 1 {
-                    self.data.insert(NonNan(data_point), val - 1);
-                };
-                self.mean_and_var = Some((mean, var));
-            }
+    pub fn remove(&mut self, data_point: f64) -> bool {
+        if data_point.is_nan() {
+            return false;
         }
+
+        let mut entry = match self.data.entry(NonNan(data_point)) {
+            Entry::Vacant(_) => return false,
+            Entry::Occupied(entry) => entry,
+        };
+
+        if *entry.get() == 1 {
+            entry.remove_entry();
+        } else {
+            *entry.get_mut() -= 1;
+        }
+
+        let Self { sum, mean, var, .. } = *self;
+
+        let new_mean = (sum * mean - data_point) / (sum - 1.0);
+        self.mean = new_mean;
+        self.var = var - (sum - 1.0) * (data_point - new_mean) * (data_point - new_mean) / sum;
+        self.sum -= 1.0;
+
+        true
     }
 
     // Due to issues with rounding and floating-point accuracy the default
@@ -203,11 +206,19 @@ impl Min<f64> for Empirical {
 
 impl Distribution<f64> for Empirical {
     fn mean(&self) -> Option<f64> {
-        self.mean_and_var.map(|(mean, _)| mean)
+        if self.data.is_empty() {
+            None
+        } else {
+            Some(self.mean)
+        }
     }
 
     fn variance(&self) -> Option<f64> {
-        self.mean_and_var.map(|(_, var)| var / (self.sum - 1.))
+        if self.data.is_empty() {
+            None
+        } else {
+            Some(self.var)
+        }
     }
 }
 
