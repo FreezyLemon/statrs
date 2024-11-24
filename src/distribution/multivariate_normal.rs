@@ -14,9 +14,8 @@ pub(super) fn density_normalization_and_exponential<D>(
 ) -> Option<(f64, f64)>
 where
     D: DimMin<D, Output = D>,
-    nalgebra::DefaultAllocator: nalgebra::allocator::Allocator<f64, D>
-        + nalgebra::allocator::Allocator<f64, D, D>
-        + nalgebra::allocator::Allocator<(usize, usize), D>,
+    nalgebra::DefaultAllocator:
+        nalgebra::allocator::Allocator<D> + nalgebra::allocator::Allocator<D, D>,
 {
     Some((
         density_distribution_pdf_const(mu, cov)?,
@@ -35,7 +34,7 @@ fn density_distribution_exponential<D>(
 where
     D: Dim,
     nalgebra::DefaultAllocator:
-        nalgebra::allocator::Allocator<f64, D> + nalgebra::allocator::Allocator<f64, D, D>,
+        nalgebra::allocator::Allocator<D> + nalgebra::allocator::Allocator<D, D>,
 {
     if x.shape_generic().0 != precision.shape_generic().0
         || x.shape_generic().0 != mu.shape_generic().0
@@ -55,9 +54,8 @@ where
 fn density_distribution_pdf_const<D>(mu: &OVector<f64, D>, cov: &OMatrix<f64, D, D>) -> Option<f64>
 where
     D: DimMin<D, Output = D>,
-    nalgebra::DefaultAllocator: nalgebra::allocator::Allocator<f64, D>
-        + nalgebra::allocator::Allocator<f64, D, D>
-        + nalgebra::allocator::Allocator<(usize, usize), D>,
+    nalgebra::DefaultAllocator:
+        nalgebra::allocator::Allocator<D> + nalgebra::allocator::Allocator<D, D>,
 {
     if cov.shape_generic().0 != mu.shape_generic().0 || !cov.is_square() {
         return None;
@@ -90,7 +88,7 @@ pub struct MultivariateNormal<D>
 where
     D: Dim,
     nalgebra::DefaultAllocator:
-        nalgebra::allocator::Allocator<f64, D> + nalgebra::allocator::Allocator<f64, D, D>,
+        nalgebra::allocator::Allocator<D> + nalgebra::allocator::Allocator<D, D>,
 {
     cov_chol_decomp: OMatrix<f64, D, D>,
     mu: OVector<f64, D>,
@@ -156,9 +154,8 @@ impl MultivariateNormal<Dyn> {
 impl<D> MultivariateNormal<D>
 where
     D: DimMin<D, Output = D>,
-    nalgebra::DefaultAllocator: nalgebra::allocator::Allocator<f64, D>
-        + nalgebra::allocator::Allocator<f64, D, D>
-        + nalgebra::allocator::Allocator<(usize, usize), D>,
+    nalgebra::DefaultAllocator:
+        nalgebra::allocator::Allocator<D> + nalgebra::allocator::Allocator<D, D>,
 {
     /// Constructs a new multivariate normal distribution with a mean of `mean`
     /// and covariance matrix `cov` using `nalgebra` `OVector` and `OMatrix`
@@ -231,7 +228,7 @@ impl<D> std::fmt::Display for MultivariateNormal<D>
 where
     D: Dim,
     nalgebra::DefaultAllocator:
-        nalgebra::allocator::Allocator<f64, D> + nalgebra::allocator::Allocator<f64, D, D>,
+        nalgebra::allocator::Allocator<D> + nalgebra::allocator::Allocator<D, D>,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "N({}, {})", &self.mu, &self.cov)
@@ -244,7 +241,7 @@ impl<D> ::rand::distributions::Distribution<OVector<f64, D>> for MultivariateNor
 where
     D: Dim,
     nalgebra::DefaultAllocator:
-        nalgebra::allocator::Allocator<f64, D> + nalgebra::allocator::Allocator<f64, D, D>,
+        nalgebra::allocator::Allocator<D> + nalgebra::allocator::Allocator<D, D>,
 {
     /// Samples from the multivariate normal distribution
     ///
@@ -268,7 +265,7 @@ impl<D> Min<OVector<f64, D>> for MultivariateNormal<D>
 where
     D: Dim,
     nalgebra::DefaultAllocator:
-        nalgebra::allocator::Allocator<f64, D> + nalgebra::allocator::Allocator<f64, D, D>,
+        nalgebra::allocator::Allocator<D> + nalgebra::allocator::Allocator<D, D>,
 {
     /// Returns the minimum value in the domain of the
     /// multivariate normal distribution represented by a real vector
@@ -281,7 +278,7 @@ impl<D> Max<OVector<f64, D>> for MultivariateNormal<D>
 where
     D: Dim,
     nalgebra::DefaultAllocator:
-        nalgebra::allocator::Allocator<f64, D> + nalgebra::allocator::Allocator<f64, D, D>,
+        nalgebra::allocator::Allocator<D> + nalgebra::allocator::Allocator<D, D>,
 {
     /// Returns the maximum value in the domain of the
     /// multivariate normal distribution represented by a real vector
@@ -294,7 +291,7 @@ impl<D> MeanN<OVector<f64, D>> for MultivariateNormal<D>
 where
     D: Dim,
     nalgebra::DefaultAllocator:
-        nalgebra::allocator::Allocator<f64, D> + nalgebra::allocator::Allocator<f64, D, D>,
+        nalgebra::allocator::Allocator<D> + nalgebra::allocator::Allocator<D, D>,
 {
     /// Returns the mean of the normal distribution
     ///
@@ -310,7 +307,7 @@ impl<D> VarianceN<OMatrix<f64, D, D>> for MultivariateNormal<D>
 where
     D: Dim,
     nalgebra::DefaultAllocator:
-        nalgebra::allocator::Allocator<f64, D> + nalgebra::allocator::Allocator<f64, D, D>,
+        nalgebra::allocator::Allocator<D> + nalgebra::allocator::Allocator<D, D>,
 {
     /// Returns the covariance matrix of the multivariate normal distribution
     fn variance(&self) -> Option<OMatrix<f64, D, D>> {
@@ -322,7 +319,7 @@ impl<D> Mode<OVector<f64, D>> for MultivariateNormal<D>
 where
     D: Dim,
     nalgebra::DefaultAllocator:
-        nalgebra::allocator::Allocator<f64, D> + nalgebra::allocator::Allocator<f64, D, D>,
+        nalgebra::allocator::Allocator<D> + nalgebra::allocator::Allocator<D, D>,
 {
     /// Returns the mode of the multivariate normal distribution
     ///
@@ -342,7 +339,7 @@ impl<'a, D> Continuous<&'a OVector<f64, D>, f64> for MultivariateNormal<D>
 where
     D: Dim,
     nalgebra::DefaultAllocator:
-        nalgebra::allocator::Allocator<f64, D> + nalgebra::allocator::Allocator<f64, D, D>,
+        nalgebra::allocator::Allocator<D> + nalgebra::allocator::Allocator<D, D>,
 {
     /// Calculates the probability density function for the multivariate
     /// normal distribution at `x`
@@ -387,9 +384,8 @@ mod tests  {
     fn try_create<D>(mean: OVector<f64, D>, covariance: OMatrix<f64, D, D>) -> MultivariateNormal<D>
     where
         D: DimMin<D, Output = D>,
-        nalgebra::DefaultAllocator: nalgebra::allocator::Allocator<f64, D>
-            + nalgebra::allocator::Allocator<f64, D, D>
-            + nalgebra::allocator::Allocator<(usize, usize), D>,
+        nalgebra::DefaultAllocator: nalgebra::allocator::Allocator<D>
+            + nalgebra::allocator::Allocator<D, D>,
     {
         let mvn = MultivariateNormal::new_from_nalgebra(mean, covariance);
         assert!(mvn.is_ok());
@@ -399,9 +395,8 @@ mod tests  {
     fn create_case<D>(mean: OVector<f64, D>, covariance: OMatrix<f64, D, D>)
     where
         D: DimMin<D, Output = D>,
-        nalgebra::DefaultAllocator: nalgebra::allocator::Allocator<f64, D>
-            + nalgebra::allocator::Allocator<f64, D, D>
-            + nalgebra::allocator::Allocator<(usize, usize), D>,
+        nalgebra::DefaultAllocator: nalgebra::allocator::Allocator<D>
+            + nalgebra::allocator::Allocator<D, D>,
     {
         let mvn = try_create(mean.clone(), covariance.clone());
         assert_eq!(mean, mvn.mean().unwrap());
@@ -411,9 +406,8 @@ mod tests  {
     fn bad_create_case<D>(mean: OVector<f64, D>, covariance: OMatrix<f64, D, D>)
     where
         D: DimMin<D, Output = D>,
-        nalgebra::DefaultAllocator: nalgebra::allocator::Allocator<f64, D>
-            + nalgebra::allocator::Allocator<f64, D, D>
-            + nalgebra::allocator::Allocator<(usize, usize), D>,
+        nalgebra::DefaultAllocator: nalgebra::allocator::Allocator<D>
+            + nalgebra::allocator::Allocator<D, D>,
     {
         let mvn = MultivariateNormal::new_from_nalgebra(mean, covariance);
         assert!(mvn.is_err());
@@ -425,9 +419,8 @@ mod tests  {
         T: Debug + PartialEq,
         F: FnOnce(MultivariateNormal<D>) -> T,
         D: DimMin<D, Output = D>,
-        nalgebra::DefaultAllocator: nalgebra::allocator::Allocator<f64, D>
-            + nalgebra::allocator::Allocator<f64, D, D>
-            + nalgebra::allocator::Allocator<(usize, usize), D>,
+        nalgebra::DefaultAllocator: nalgebra::allocator::Allocator<D>
+            + nalgebra::allocator::Allocator<D, D>,
     {
         let mvn = try_create(mean, covariance);
         let x = eval(mvn);
@@ -439,9 +432,8 @@ mod tests  {
     ) where
         F: FnOnce(MultivariateNormal<D>) -> f64,
         D: DimMin<D, Output = D>,
-        nalgebra::DefaultAllocator: nalgebra::allocator::Allocator<f64, D>
-            + nalgebra::allocator::Allocator<f64, D, D>
-            + nalgebra::allocator::Allocator<(usize, usize), D>,
+        nalgebra::DefaultAllocator: nalgebra::allocator::Allocator<D>
+            + nalgebra::allocator::Allocator<D, D>,
     {
         let mvn = try_create(mean, covariance);
         let x = eval(mvn);
