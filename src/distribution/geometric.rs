@@ -60,7 +60,7 @@ impl Geometric {
     /// result = Geometric::new(0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(p: f64) -> Result<Geometric, GeometricError> {
+    pub const fn new(p: f64) -> Result<Geometric, GeometricError> {
         if p <= 0.0 || p > 1.0 || p.is_nan() {
             Err(GeometricError::ProbabilityInvalid)
         } else {
@@ -79,7 +79,7 @@ impl Geometric {
     /// let n = Geometric::new(0.5).unwrap();
     /// assert_eq!(n.p(), 0.5);
     /// ```
-    pub fn p(&self) -> f64 {
+    pub const fn p(&self) -> f64 {
         self.p
     }
 }

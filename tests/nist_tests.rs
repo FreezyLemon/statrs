@@ -130,8 +130,8 @@ fn parse_file(path: impl AsRef<std::path::Path>) -> anyhow::Result<TestCase> {
 
 #[test]
 #[ignore = "NIST tests should not run from typical `cargo test` calls"]
-fn nist_test_covariance_consistent_with_variance() {}
+const fn nist_test_covariance_consistent_with_variance() {}
 
 #[test]
 #[ignore = "NIST tests should not run from typical `cargo test` calls"]
-fn nist_test_covariance_is_symmetric() {}
+const fn nist_test_covariance_is_symmetric() {}

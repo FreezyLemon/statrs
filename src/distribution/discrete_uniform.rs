@@ -59,7 +59,7 @@ impl DiscreteUniform {
     /// result = DiscreteUniform::new(5, 0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(min: i64, max: i64) -> Result<DiscreteUniform, DiscreteUniformError> {
+    pub const fn new(min: i64, max: i64) -> Result<DiscreteUniform, DiscreteUniformError> {
         if max < min {
             Err(DiscreteUniformError::MinMaxInvalid)
         } else {

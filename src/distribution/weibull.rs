@@ -95,7 +95,7 @@ impl Weibull {
     /// let n = Weibull::new(10.0, 1.0).unwrap();
     /// assert_eq!(n.shape(), 10.0);
     /// ```
-    pub fn shape(&self) -> f64 {
+    pub const fn shape(&self) -> f64 {
         self.shape
     }
 
@@ -109,7 +109,7 @@ impl Weibull {
     /// let n = Weibull::new(10.0, 1.0).unwrap();
     /// assert_eq!(n.scale(), 1.0);
     /// ```
-    pub fn scale(&self) -> f64 {
+    pub const fn scale(&self) -> f64 {
         self.scale
     }
 }

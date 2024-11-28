@@ -73,7 +73,7 @@ impl StudentsT {
     /// result = StudentsT::new(0.0, 0.0, 0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(location: f64, scale: f64, freedom: f64) -> Result<StudentsT, StudentsTError> {
+    pub const fn new(location: f64, scale: f64, freedom: f64) -> Result<StudentsT, StudentsTError> {
         if location.is_nan() {
             return Err(StudentsTError::LocationInvalid);
         }
@@ -103,7 +103,7 @@ impl StudentsT {
     /// let n = StudentsT::new(0.0, 1.0, 2.0).unwrap();
     /// assert_eq!(n.location(), 0.0);
     /// ```
-    pub fn location(&self) -> f64 {
+    pub const fn location(&self) -> f64 {
         self.location
     }
 
@@ -117,7 +117,7 @@ impl StudentsT {
     /// let n = StudentsT::new(0.0, 1.0, 2.0).unwrap();
     /// assert_eq!(n.scale(), 1.0);
     /// ```
-    pub fn scale(&self) -> f64 {
+    pub const fn scale(&self) -> f64 {
         self.scale
     }
 
@@ -131,7 +131,7 @@ impl StudentsT {
     /// let n = StudentsT::new(0.0, 1.0, 2.0).unwrap();
     /// assert_eq!(n.freedom(), 2.0);
     /// ```
-    pub fn freedom(&self) -> f64 {
+    pub const fn freedom(&self) -> f64 {
         self.freedom
     }
 }

@@ -65,7 +65,7 @@ impl Pareto {
     /// result = Pareto::new(0.0, 0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(scale: f64, shape: f64) -> Result<Pareto, ParetoError> {
+    pub const fn new(scale: f64, shape: f64) -> Result<Pareto, ParetoError> {
         if scale.is_nan() || scale <= 0.0 {
             return Err(ParetoError::ScaleInvalid);
         }
@@ -87,7 +87,7 @@ impl Pareto {
     /// let n = Pareto::new(1.0, 2.0).unwrap();
     /// assert_eq!(n.scale(), 1.0);
     /// ```
-    pub fn scale(&self) -> f64 {
+    pub const fn scale(&self) -> f64 {
         self.scale
     }
 
@@ -101,7 +101,7 @@ impl Pareto {
     /// let n = Pareto::new(1.0, 2.0).unwrap();
     /// assert_eq!(n.shape(), 2.0);
     /// ```
-    pub fn shape(&self) -> f64 {
+    pub const fn shape(&self) -> f64 {
         self.shape
     }
 }

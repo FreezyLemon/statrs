@@ -63,7 +63,7 @@ impl Cauchy {
     /// result = Cauchy::new(0.0, -1.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(location: f64, scale: f64) -> Result<Cauchy, CauchyError> {
+    pub const fn new(location: f64, scale: f64) -> Result<Cauchy, CauchyError> {
         if location.is_nan() {
             return Err(CauchyError::LocationInvalid);
         }
@@ -85,7 +85,7 @@ impl Cauchy {
     /// let n = Cauchy::new(0.0, 1.0).unwrap();
     /// assert_eq!(n.location(), 0.0);
     /// ```
-    pub fn location(&self) -> f64 {
+    pub const fn location(&self) -> f64 {
         self.location
     }
 
@@ -99,7 +99,7 @@ impl Cauchy {
     /// let n = Cauchy::new(0.0, 1.0).unwrap();
     /// assert_eq!(n.scale(), 1.0);
     /// ```
-    pub fn scale(&self) -> f64 {
+    pub const fn scale(&self) -> f64 {
         self.scale
     }
 }

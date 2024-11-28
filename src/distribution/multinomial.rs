@@ -129,7 +129,7 @@ where
     /// let n = Multinomial::new(vec![0.0, 1.0, 2.0], 3).unwrap();
     /// assert_eq!(*n.p(), dvector![0.0, 1.0/3.0, 2.0/3.0]);
     /// ```
-    pub fn p(&self) -> &OVector<f64, D> {
+    pub const fn p(&self) -> &OVector<f64, D> {
         &self.p
     }
 
@@ -144,7 +144,7 @@ where
     /// let n = Multinomial::new(vec![0.0, 1.0, 2.0], 3).unwrap();
     /// assert_eq!(n.n(), 3);
     /// ```
-    pub fn n(&self) -> u64 {
+    pub const fn n(&self) -> u64 {
         self.n
     }
 }
@@ -529,7 +529,7 @@ mod tests {
 
     #[test]
     fn test_error_is_sync_send() {
-        fn assert_sync_send<T: Sync + Send>() {}
+        const fn assert_sync_send<T: Sync + Send>() {}
         assert_sync_send::<MultinomialError>();
     }
 

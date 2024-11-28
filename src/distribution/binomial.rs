@@ -64,8 +64,8 @@ impl Binomial {
     /// result = Binomial::new(-0.5, 5);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(p: f64, n: u64) -> Result<Binomial, BinomialError> {
-        if p.is_nan() || !(0.0..=1.0).contains(&p) {
+    pub const fn new(p: f64, n: u64) -> Result<Binomial, BinomialError> {
+        if p.is_nan() || p < 0.0 || p > 1.0 {
             Err(BinomialError::ProbabilityInvalid)
         } else {
             Ok(Binomial { p, n })
@@ -83,7 +83,7 @@ impl Binomial {
     /// let n = Binomial::new(0.5, 5).unwrap();
     /// assert_eq!(n.p(), 0.5);
     /// ```
-    pub fn p(&self) -> f64 {
+    pub const fn p(&self) -> f64 {
         self.p
     }
 
@@ -98,7 +98,7 @@ impl Binomial {
     /// let n = Binomial::new(0.5, 5).unwrap();
     /// assert_eq!(n.n(), 5);
     /// ```
-    pub fn n(&self) -> u64 {
+    pub const fn n(&self) -> u64 {
         self.n
     }
 }

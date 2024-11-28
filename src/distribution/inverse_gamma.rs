@@ -71,7 +71,7 @@ impl InverseGamma {
     /// result = InverseGamma::new(0.0, 0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(shape: f64, rate: f64) -> Result<InverseGamma, InverseGammaError> {
+    pub const fn new(shape: f64, rate: f64) -> Result<InverseGamma, InverseGammaError> {
         if shape.is_nan() || shape.is_infinite() || shape <= 0.0 {
             return Err(InverseGammaError::ShapeInvalid);
         }
@@ -93,7 +93,7 @@ impl InverseGamma {
     /// let n = InverseGamma::new(3.0, 1.0).unwrap();
     /// assert_eq!(n.shape(), 3.0);
     /// ```
-    pub fn shape(&self) -> f64 {
+    pub const fn shape(&self) -> f64 {
         self.shape
     }
 
@@ -107,7 +107,7 @@ impl InverseGamma {
     /// let n = InverseGamma::new(3.0, 1.0).unwrap();
     /// assert_eq!(n.rate(), 1.0);
     /// ```
-    pub fn rate(&self) -> f64 {
+    pub const fn rate(&self) -> f64 {
         self.rate
     }
 }

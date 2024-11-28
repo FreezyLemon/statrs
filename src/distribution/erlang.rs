@@ -43,8 +43,11 @@ impl Erlang {
     /// result = Erlang::new(0, 0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(shape: u64, rate: f64) -> Result<Erlang, GammaError> {
-        Gamma::new(shape as f64, rate).map(|g| Erlang { g })
+    pub const fn new(shape: u64, rate: f64) -> Result<Erlang, GammaError> {
+        match Gamma::new(shape as f64, rate) {
+            Ok(g) => Ok(Self { g }),
+            Err(e) => Err(e),
+        }
     }
 
     /// Returns the shape (k) of the erlang distribution
@@ -57,7 +60,7 @@ impl Erlang {
     /// let n = Erlang::new(3, 1.0).unwrap();
     /// assert_eq!(n.shape(), 3);
     /// ```
-    pub fn shape(&self) -> u64 {
+    pub const fn shape(&self) -> u64 {
         self.g.shape() as u64
     }
 
@@ -71,7 +74,7 @@ impl Erlang {
     /// let n = Erlang::new(3, 1.0).unwrap();
     /// assert_eq!(n.rate(), 1.0);
     /// ```
-    pub fn rate(&self) -> f64 {
+    pub const fn rate(&self) -> f64 {
         self.g.rate()
     }
 }

@@ -68,7 +68,7 @@ impl Normal {
     /// result = Normal::new(0.0, 0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(mean: f64, std_dev: f64) -> Result<Normal, NormalError> {
+    pub const fn new(mean: f64, std_dev: f64) -> Result<Normal, NormalError> {
         if mean.is_nan() {
             return Err(NormalError::MeanInvalid);
         }
@@ -91,7 +91,7 @@ impl Normal {
     ///
     /// let mut result = Normal::standard();
     /// ```
-    pub fn standard() -> Normal {
+    pub const fn standard() -> Normal {
         Normal {
             mean: 0.0,
             std_dev: 1.0,

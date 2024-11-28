@@ -245,7 +245,7 @@ pub mod test {
             /// Asserts that associated error type is Send and Sync
             #[test]
             fn test_error_is_sync_send() {
-                fn assert_sync_send<T: Sync + Send>() {}
+                const fn assert_sync_send<T: Sync + Send>() {}
                 assert_sync_send::<$dist_err>();
             }
         };

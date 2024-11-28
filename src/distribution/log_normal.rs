@@ -68,7 +68,7 @@ impl LogNormal {
     /// result = LogNormal::new(0.0, 0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(location: f64, scale: f64) -> Result<LogNormal, LogNormalError> {
+    pub const fn new(location: f64, scale: f64) -> Result<LogNormal, LogNormalError> {
         if location.is_nan() {
             return Err(LogNormalError::LocationInvalid);
         }

@@ -44,7 +44,7 @@ impl<D: AsMut<[f64]> + AsRef<[f64]>> IndexMut<usize> for Data<D> {
 }
 
 impl<D: AsMut<[f64]> + AsRef<[f64]>> Data<D> {
-    pub fn new(data: D) -> Self {
+    pub const fn new(data: D) -> Self {
         Data(data)
     }
 

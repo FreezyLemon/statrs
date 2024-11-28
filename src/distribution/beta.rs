@@ -87,7 +87,7 @@ impl Beta {
     /// let n = Beta::new(1.0, 2.0).unwrap();
     /// assert_eq!(n.shape_a(), 1.0);
     /// ```
-    pub fn shape_a(&self) -> f64 {
+    pub const fn shape_a(&self) -> f64 {
         self.shape_a
     }
 
@@ -101,7 +101,7 @@ impl Beta {
     /// let n = Beta::new(1.0, 2.0).unwrap();
     /// assert_eq!(n.shape_b(), 2.0);
     /// ```
-    pub fn shape_b(&self) -> f64 {
+    pub const fn shape_b(&self) -> f64 {
         self.shape_b
     }
 }

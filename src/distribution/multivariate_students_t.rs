@@ -165,33 +165,33 @@ where
     /// Returns the cholesky decomposiiton matrix of the scale matrix.
     ///
     /// Returns A where Σ = AAᵀ.
-    pub fn scale_chol_decomp(&self) -> &OMatrix<f64, D, D> {
+    pub const fn scale_chol_decomp(&self) -> &OMatrix<f64, D, D> {
         &self.scale_chol_decomp
     }
 
     /// Returns the location of the distribution.
-    pub fn location(&self) -> &OVector<f64, D> {
+    pub const fn location(&self) -> &OVector<f64, D> {
         &self.location
     }
 
     /// Returns the scale matrix of the distribution.
-    pub fn scale(&self) -> &OMatrix<f64, D, D> {
+    pub const fn scale(&self) -> &OMatrix<f64, D, D> {
         &self.scale
     }
 
     /// Returns the degrees of freedom of the distribution.
-    pub fn freedom(&self) -> f64 {
+    pub const fn freedom(&self) -> f64 {
         self.freedom
     }
 
     /// Returns the inverse of the cholesky decomposition matrix.
-    pub fn precision(&self) -> &OMatrix<f64, D, D> {
+    pub const fn precision(&self) -> &OMatrix<f64, D, D> {
         &self.precision
     }
 
     /// Returns the logarithmed constant part of the probability
     /// distribution function.
-    pub fn ln_pdf_const(&self) -> f64 {
+    pub const fn ln_pdf_const(&self) -> f64 {
         self.ln_pdf_const
     }
 }
@@ -623,7 +623,7 @@ mod tests  {
         
     #[test]
     fn test_error_is_sync_send() {
-        fn assert_sync_send<T: Sync + Send>() {}
+        const fn assert_sync_send<T: Sync + Send>() {}
         assert_sync_send::<MultivariateStudentError>();
     }
 }

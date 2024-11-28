@@ -53,7 +53,7 @@ impl Dirac {
     /// result = Dirac::new(f64::NAN);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(v: f64) -> Result<Self, DiracError> {
+    pub const fn new(v: f64) -> Result<Self, DiracError> {
         if v.is_nan() {
             Err(DiracError::ValueInvalid)
         } else {

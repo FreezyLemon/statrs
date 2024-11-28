@@ -60,7 +60,7 @@ impl Poisson {
     /// result = Poisson::new(0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(lambda: f64) -> Result<Poisson, PoissonError> {
+    pub const fn new(lambda: f64) -> Result<Poisson, PoissonError> {
         if lambda.is_nan() || lambda <= 0.0 {
             Err(PoissonError::LambdaInvalid)
         } else {
@@ -78,7 +78,7 @@ impl Poisson {
     /// let n = Poisson::new(1.0).unwrap();
     /// assert_eq!(n.lambda(), 1.0);
     /// ```
-    pub fn lambda(&self) -> f64 {
+    pub const fn lambda(&self) -> f64 {
         self.lambda
     }
 }

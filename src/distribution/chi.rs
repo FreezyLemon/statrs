@@ -63,7 +63,7 @@ impl Chi {
     /// result = Chi::new(0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(freedom: u64) -> Result<Chi, ChiError> {
+    pub const fn new(freedom: u64) -> Result<Chi, ChiError> {
         match NonZeroU64::new(freedom) {
             Some(freedom) => Ok(Self { freedom }),
             None => Err(ChiError::FreedomInvalid),
@@ -81,7 +81,7 @@ impl Chi {
     /// let n = Chi::new(2).unwrap();
     /// assert_eq!(n.freedom(), 2);
     /// ```
-    pub fn freedom(&self) -> u64 {
+    pub const fn freedom(&self) -> u64 {
         self.freedom.get()
     }
 }

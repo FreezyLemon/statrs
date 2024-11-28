@@ -76,7 +76,7 @@ impl Uniform {
     /// result = Uniform::new(f64::NEG_INFINITY, 1.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(min: f64, max: f64) -> Result<Uniform, UniformError> {
+    pub const fn new(min: f64, max: f64) -> Result<Uniform, UniformError> {
         if !min.is_finite() {
             return Err(UniformError::MinInvalid);
         }
@@ -102,7 +102,7 @@ impl Uniform {
     ///
     /// let uniform = Uniform::standard();
     /// ```
-    pub fn standard() -> Self {
+    pub const fn standard() -> Self {
         Self { min: 0.0, max: 1.0 }
     }
 }

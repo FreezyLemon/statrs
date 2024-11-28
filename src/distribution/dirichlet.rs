@@ -144,7 +144,7 @@ where
     /// let n = Dirichlet::new(vec![1.0, 2.0, 3.0]).unwrap();
     /// assert_eq!(n.alpha(), &DVector::from_vec(vec![1.0, 2.0, 3.0]));
     /// ```
-    pub fn alpha(&self) -> &nalgebra::OVector<f64, D> {
+    pub const fn alpha(&self) -> &nalgebra::OVector<f64, D> {
         &self.alpha
     }
 
@@ -577,7 +577,7 @@ mod tests {
 
     #[test]
     fn test_error_is_sync_send() {
-        fn assert_sync_send<T: Sync + Send>() {}
+        const fn assert_sync_send<T: Sync + Send>() {}
         assert_sync_send::<DirichletError>();
     }
 }

@@ -61,7 +61,7 @@ impl Exp {
     /// result = Exp::new(-1.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(rate: f64) -> Result<Exp, ExpError> {
+    pub const fn new(rate: f64) -> Result<Exp, ExpError> {
         if rate.is_nan() || rate <= 0.0 {
             Err(ExpError::RateInvalid)
         } else {
@@ -79,7 +79,7 @@ impl Exp {
     /// let n = Exp::new(1.0).unwrap();
     /// assert_eq!(n.rate(), 1.0);
     /// ```
-    pub fn rate(&self) -> f64 {
+    pub const fn rate(&self) -> f64 {
         self.rate
     }
 }

@@ -47,7 +47,10 @@ impl ChiSquared {
     /// assert!(result.is_err());
     /// ```
     pub fn new(freedom: f64) -> Result<ChiSquared, GammaError> {
-        Gamma::new(freedom / 2.0, 0.5).map(|g| ChiSquared { freedom, g })
+        match Gamma::new(freedom / 2.0, 0.5) {
+            Ok(g) => Ok(Self { freedom, g }),
+            Err(e) => Err(e),
+        }
     }
 
     /// Returns the degrees of freedom of the chi-squared
@@ -61,7 +64,7 @@ impl ChiSquared {
     /// let n = ChiSquared::new(3.0).unwrap();
     /// assert_eq!(n.freedom(), 3.0);
     /// ```
-    pub fn freedom(&self) -> f64 {
+    pub const fn freedom(&self) -> f64 {
         self.freedom
     }
 
@@ -75,7 +78,7 @@ impl ChiSquared {
     /// let n = ChiSquared::new(3.0).unwrap();
     /// assert_eq!(n.shape(), 3.0 / 2.0);
     /// ```
-    pub fn shape(&self) -> f64 {
+    pub const fn shape(&self) -> f64 {
         self.g.shape()
     }
 
@@ -89,7 +92,7 @@ impl ChiSquared {
     /// let n = ChiSquared::new(3.0).unwrap();
     /// assert_eq!(n.rate(), 0.5);
     /// ```
-    pub fn rate(&self) -> f64 {
+    pub const fn rate(&self) -> f64 {
         self.g.rate()
     }
 }

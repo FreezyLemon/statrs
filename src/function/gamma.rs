@@ -830,7 +830,7 @@ mod tests {
 
     #[test]
     fn test_error_is_sync_send() {
-        fn assert_sync_send<T: Sync + Send>() {}
+        const fn assert_sync_send<T: Sync + Send>() {}
         assert_sync_send::<GammaFuncError>();
     }
 }

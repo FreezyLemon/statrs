@@ -44,7 +44,10 @@ impl Bernoulli {
     /// assert!(result.is_err());
     /// ```
     pub fn new(p: f64) -> Result<Bernoulli, BinomialError> {
-        Binomial::new(p, 1).map(|b| Bernoulli { b })
+        match Binomial::new(p, 1) {
+            Ok(b) => Ok(Self { b }),
+            Err(e) => Err(e),
+        }
     }
 
     /// Returns the probability of success `p` of the
@@ -58,7 +61,7 @@ impl Bernoulli {
     /// let n = Bernoulli::new(0.5).unwrap();
     /// assert_eq!(n.p(), 0.5);
     /// ```
-    pub fn p(&self) -> f64 {
+    pub const fn p(&self) -> f64 {
         self.b.p()
     }
 
@@ -73,7 +76,7 @@ impl Bernoulli {
     /// let n = Bernoulli::new(0.5).unwrap();
     /// assert_eq!(n.n(), 1);
     /// ```
-    pub fn n(&self) -> u64 {
+    pub const fn n(&self) -> u64 {
         1
     }
 }

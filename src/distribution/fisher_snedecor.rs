@@ -71,7 +71,10 @@ impl FisherSnedecor {
     /// result = FisherSnedecor::new(0.0, 0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(freedom_1: f64, freedom_2: f64) -> Result<FisherSnedecor, FisherSnedecorError> {
+    pub const fn new(
+        freedom_1: f64,
+        freedom_2: f64,
+    ) -> Result<FisherSnedecor, FisherSnedecorError> {
         if !freedom_1.is_finite() || freedom_1 <= 0.0 {
             return Err(FisherSnedecorError::Freedom1Invalid);
         }
@@ -97,7 +100,7 @@ impl FisherSnedecor {
     /// let n = FisherSnedecor::new(2.0, 3.0).unwrap();
     /// assert_eq!(n.freedom_1(), 2.0);
     /// ```
-    pub fn freedom_1(&self) -> f64 {
+    pub const fn freedom_1(&self) -> f64 {
         self.freedom_1
     }
 
@@ -112,7 +115,7 @@ impl FisherSnedecor {
     /// let n = FisherSnedecor::new(2.0, 3.0).unwrap();
     /// assert_eq!(n.freedom_2(), 3.0);
     /// ```
-    pub fn freedom_2(&self) -> f64 {
+    pub const fn freedom_2(&self) -> f64 {
         self.freedom_2
     }
 }

@@ -71,7 +71,7 @@ impl Hypergeometric {
     /// result = Hypergeometric::new(2, 3, 2);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(
+    pub const fn new(
         population: u64,
         successes: u64,
         draws: u64,
@@ -102,7 +102,7 @@ impl Hypergeometric {
     /// let n = Hypergeometric::new(10, 5, 3).unwrap();
     /// assert_eq!(n.population(), 10);
     /// ```
-    pub fn population(&self) -> u64 {
+    pub const fn population(&self) -> u64 {
         self.population
     }
 
@@ -117,7 +117,7 @@ impl Hypergeometric {
     /// let n = Hypergeometric::new(10, 5, 3).unwrap();
     /// assert_eq!(n.successes(), 5);
     /// ```
-    pub fn successes(&self) -> u64 {
+    pub const fn successes(&self) -> u64 {
         self.successes
     }
 
@@ -132,13 +132,13 @@ impl Hypergeometric {
     /// let n = Hypergeometric::new(10, 5, 3).unwrap();
     /// assert_eq!(n.draws(), 3);
     /// ```
-    pub fn draws(&self) -> u64 {
+    pub const fn draws(&self) -> u64 {
         self.draws
     }
 
     /// Returns population, successes, and draws in that order
     /// as a tuple of doubles
-    fn values_f64(&self) -> (f64, f64, f64) {
+    const fn values_f64(&self) -> (f64, f64, f64) {
         (
             self.population as f64,
             self.successes as f64,

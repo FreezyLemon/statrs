@@ -57,7 +57,7 @@ impl Empirical {
     /// assert!(result.is_ok());
     /// ```
     #[allow(clippy::result_unit_err)]
-    pub fn new() -> Result<Empirical, ()> {
+    pub const fn new() -> Result<Empirical, ()> {
         Ok(Empirical {
             sum: 0.,
             mean_and_var: None,

@@ -85,12 +85,12 @@ impl NegativeBinomial {
     /// result = NegativeBinomial::new(-0.5, 5.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(r: f64, p: f64) -> Result<NegativeBinomial, NegativeBinomialError> {
+    pub const fn new(r: f64, p: f64) -> Result<NegativeBinomial, NegativeBinomialError> {
         if r.is_nan() || r < 0.0 {
             return Err(NegativeBinomialError::RInvalid);
         }
 
-        if p.is_nan() || !(0.0..=1.0).contains(&p) {
+        if p.is_nan() || p < 0.0 || p > 1.0 {
             return Err(NegativeBinomialError::PInvalid);
         }
 
@@ -109,7 +109,7 @@ impl NegativeBinomial {
     /// let r = NegativeBinomial::new(5.0, 0.5).unwrap();
     /// assert_eq!(r.p(), 0.5);
     /// ```
-    pub fn p(&self) -> f64 {
+    pub const fn p(&self) -> f64 {
         self.p
     }
 
@@ -124,7 +124,7 @@ impl NegativeBinomial {
     /// let r = NegativeBinomial::new(5.0, 0.5).unwrap();
     /// assert_eq!(r.r(), 5.0);
     /// ```
-    pub fn r(&self) -> f64 {
+    pub const fn r(&self) -> f64 {
         self.r
     }
 }

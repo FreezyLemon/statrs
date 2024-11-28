@@ -80,7 +80,7 @@ impl Triangular {
     /// result = Triangular::new(2.5, 1.5, 0.0);
     /// assert!(result.is_err());
     /// ```
-    pub fn new(min: f64, max: f64, mode: f64) -> Result<Triangular, TriangularError> {
+    pub const fn new(min: f64, max: f64, mode: f64) -> Result<Triangular, TriangularError> {
         if !min.is_finite() {
             return Err(TriangularError::MinInvalid);
         }
