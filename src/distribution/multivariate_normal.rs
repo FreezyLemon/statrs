@@ -256,7 +256,6 @@ where
     /// where `L` is the Cholesky decomposition of the covariance matrix,
     /// `Z` is a vector of normally distributed random variables, and
     /// `μ` is the mean vector
-
     fn sample<R: ::rand::Rng + ?Sized>(&self, rng: &mut R) -> OVector<f64, D> {
         let d = crate::distribution::Normal::new(0., 1.).unwrap();
         let z = OVector::from_distribution_generic(self.mu.shape_generic().0, Const::<1>, &d, rng);
@@ -338,7 +337,7 @@ where
     }
 }
 
-impl<'a, D> Continuous<&'a OVector<f64, D>, f64> for MultivariateNormal<D>
+impl<D> Continuous<&OVector<f64, D>, f64> for MultivariateNormal<D>
 where
     D: Dim,
     nalgebra::DefaultAllocator:
