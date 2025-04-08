@@ -196,10 +196,10 @@ fn calc_mwu_exact_pvalue(u: f64, n1: usize, n2: usize) -> f64 {
     }
 
     if k == n1 {
-        1.0 - numerator as f64 / total as f64
+        1.0 - f64::from(numerator) / f64::from(total)
     } else {
         // if k was set to n2, return back the compliment p-value
-        numerator as f64 / total as f64
+        f64::from(numerator) / f64::from(total)
     }
 }
 
@@ -296,7 +296,7 @@ pub fn mannwhitneyu<T: PartialOrd + Clone>(
         }
     };
 
-    pvalue *= f as f64;
+    pvalue *= f64::from(f);
     pvalue = clamp(pvalue, 0.0, 1.0);
 
     Ok((u1, pvalue))

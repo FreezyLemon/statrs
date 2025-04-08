@@ -46,11 +46,14 @@
 
 #![crate_type = "lib"]
 #![crate_name = "statrs"]
-#![allow(clippy::excessive_precision)]
-#![allow(clippy::many_single_char_names)]
 #![forbid(unsafe_code)]
 #![cfg_attr(coverage_nightly, feature(coverage_attribute))]
 #![cfg_attr(docsrs, feature(doc_cfg))]
+
+#![allow(clippy::excessive_precision)]
+#![allow(clippy::many_single_char_names)]
+
+#![deny(clippy::cast_lossless)]
 
 #[macro_use]
 extern crate approx;
