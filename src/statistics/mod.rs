@@ -7,6 +7,7 @@ pub use self::traits::*;
 
 mod iter_statistics;
 mod order_statistics;
+mod reductor;
 // TODO: fix later
 mod slice_statistics;
 #[allow(clippy::module_inception)]
