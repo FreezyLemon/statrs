@@ -1,24 +1,168 @@
 // TODO: proper docs
 
-trait Reductor {
+trait Reductor: Sized {
     type Item;
     type Output;
 
     // add a new reductor to the chain
-    fn with<O, IR, OR>(r: IR) -> OR
+    fn with<O, IR, OR>(self, r: IR) -> impl Reductor<Item = Self::Item, Output = (Self::Output, O)>
     where
-        IR: Reductor<Item = Self::Item, Output = O>,
-        OR: Reductor<Item = Self::Item, Output = (Self::Output, O)>;
+        IR: Reductor<Item = Self::Item, Output = O>
+    {
+        CompositeReductor {
+            r1: self,
+            r2: r,
+        }
+    }
 
-    // (optional?) use the `iter.size_hint()` to initialize any local state,
+    // (optional) use the `iter.size_hint()` to initialize any local state,
     // for optimization purposes
-    fn apply_size_hint(&mut self, hint: (usize, Option<usize>));
+    fn apply_size_hint(&mut self, _hint: (usize, Option<usize>)) {}
 
     // pass the `iter.next()` value through the chain of reductors
-    fn signal_next(&mut self, item: Self::Item);
+    fn signal_next(&mut self, item: &Self::Item);
 
     // signal that we're done iterating, and return the output
     fn finish(self) -> Self::Output;
+}
+
+struct CompositeReductor<R1, R2> {
+    r1: R1,
+    r2: R2,
+}
+
+impl<RI, R1, R2> Reductor for CompositeReductor<R1, R2>
+where
+    R1: Reductor<Item = RI>,
+    R2: Reductor<Item = RI>,
+{
+    type Item = R1::Item;
+    type Output = (R1::Output, R2::Output);
+
+    fn apply_size_hint(&mut self, hint: (usize, Option<usize>)) {
+        self.r1.apply_size_hint(hint);
+        self.r2.apply_size_hint(hint);
+    }
+
+    fn signal_next(&mut self, item: &Self::Item) {
+        self.r1.signal_next(item);
+        self.r2.signal_next(item);
+    }
+
+    fn finish(self) -> Self::Output {
+        (self.r1.finish(), self.r2.finish())
+    }
+}
+
+struct MinReductor {
+    min: f64,
+}
+
+impl Reductor for MinReductor {
+    type Item = f64;
+    type Output = f64;
+
+    fn signal_next(&mut self, item: &Self::Item) {
+        if *item < self.min {
+            self.min = *item;
+        }
+    }
+
+    fn finish(self) -> Self::Output {
+        self.min
+    }
+}
+
+struct MaxReductor {
+    max: f64,
+}
+
+impl Reductor for MaxReductor {
+    type Item = f64;
+    type Output = f64;
+
+    fn signal_next(&mut self, item: &Self::Item) {
+        if *item > self.max {
+            self.max = *item;
+        }
+    }
+
+    fn finish(self) -> Self::Output {
+        self.max
+    }
+}
+
+struct MeanReductor {
+    count: f64,
+    running_mean: f64,
+}
+
+impl Reductor for MeanReductor {
+    type Item = f64;
+    type Output = f64;
+
+    fn signal_next(&mut self, item: &Self::Item) {
+        self.count += 1.0;
+        self.running_mean += (*item - self.running_mean) / self.count;
+    }
+
+    fn finish(self) -> Self::Output {
+        if self.count > 0.0 {
+            self.running_mean
+        } else {
+            f64::NAN
+        }
+    }
+}
+
+struct GeometricMeanReductor {
+    count: f64,
+    running_ln: f64,
+}
+
+impl Reductor for GeometricMeanReductor {
+    type Item = f64;
+    type Output = f64;
+
+    fn signal_next(&mut self, item: &Self::Item) {
+        self.count += 1.0;
+        self.running_ln += (*item).ln();
+    }
+
+    fn finish(self) -> Self::Output {
+        if self.count > 0.0 {
+            (self.running_ln / self.count).exp()
+        } else {
+            f64::NAN
+        }
+    }
+}
+
+struct VarianceReductor {
+    count: f64,
+    sum: f64,
+    variance: f64,
+}
+
+impl Reductor for VarianceReductor {
+    type Item = f64;
+    type Output = f64;
+
+    fn signal_next(&mut self, item: &Self::Item) {
+        self.count += 1.0;
+        self.sum += *item;
+
+        let diff = self.count * *item - self.sum;
+        self.variance += diff * diff / (self.count * (self.count - 1.0));
+    }
+
+    fn finish(self) -> Self::Output {
+        if self.count > 1.0 {
+            self.variance / (self.count - 1.0)
+        } else {
+            f64::NAN
+        }
+    }
 }
 
 trait Reducible {
@@ -39,7 +183,7 @@ where
         
         r.apply_size_hint(i.size_hint());
         while let Some(x) = i.next() {
-            r.signal_next(x);
+            r.signal_next(&x);
         }
 
         r.finish()
