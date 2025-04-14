@@ -165,10 +165,16 @@ impl Reductor for VarianceReductor {
     type Output = f64;
 
     fn signal_next(&mut self, item: &Self::Item) {
+        if self.count == 0.0 {
+            self.count = 1.0;
+            self.sum = *item;
+            return;
+        }
+
         self.count += 1.0;
         self.sum += *item;
 
-        let diff = self.count * *item - self.sum;
+        let diff = self.count * item - self.sum;
         self.variance += diff * diff / (self.count * (self.count - 1.0));
     }
 
@@ -208,21 +214,24 @@ where
 
 #[cfg(test)]
 mod test {
+    use crate::statistics::Statistics;
+
     use super::*;
 
     #[test]
     fn basic_usage() {
-        let data = vec![5.0, 2.5, -1.0, 10.0, 5.0];
+        let data = vec![5.0, 2.5, 3.0, 10.0, 5.0];
 
         let reductor = MinReductor::default()
             .with::<MeanReductor>()
             .with::<GeometricMeanReductor>()
             .with::<VarianceReductor>();
 
-        let result = (reductor, data.into_iter()).reduce();
-
-        println!("result: {result:?}");
+        let result = (reductor, data.iter().cloned()).reduce();
 
         let (((min, mean), geomean), variance) = result;
+
+        println!("(((min, mean), geomean), variance)");
+        println!("((({min}, {mean}), {geomean}), {variance})");
     }
 }
