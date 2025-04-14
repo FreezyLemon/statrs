@@ -5,13 +5,24 @@ trait Reductor: Sized {
     type Output;
 
     // add a new reductor to the chain
-    fn with<O, IR, OR>(self, r: IR) -> impl Reductor<Item = Self::Item, Output = (Self::Output, O)>
+    fn with_val<IR>(self, r: IR) -> impl Reductor<Item = Self::Item, Output = (Self::Output, IR::Output)>
     where
-        IR: Reductor<Item = Self::Item, Output = O>
+        IR: Reductor<Item = Self::Item>
     {
         CompositeReductor {
             r1: self,
             r2: r,
+        }
+    }
+
+    // maybe better than with_val?
+    fn with<IR>(self) -> impl Reductor<Item = Self::Item, Output = (Self::Output, IR::Output)>
+    where
+        IR: Reductor<Item = Self::Item> + Default
+    {
+        CompositeReductor {
+            r1: self,
+            r2: IR::default(),
         }
     }
 
@@ -54,6 +65,7 @@ where
     }
 }
 
+#[derive(Default)]
 struct MinReductor {
     min: f64,
 }
@@ -73,6 +85,7 @@ impl Reductor for MinReductor {
     }
 }
 
+#[derive(Default)]
 struct MaxReductor {
     max: f64,
 }
@@ -92,6 +105,7 @@ impl Reductor for MaxReductor {
     }
 }
 
+#[derive(Default)]
 struct MeanReductor {
     count: f64,
     running_mean: f64,
@@ -115,6 +129,7 @@ impl Reductor for MeanReductor {
     }
 }
 
+#[derive(Default)]
 struct GeometricMeanReductor {
     count: f64,
     running_ln: f64,
@@ -138,6 +153,7 @@ impl Reductor for GeometricMeanReductor {
     }
 }
 
+#[derive(Default)]
 struct VarianceReductor {
     count: f64,
     sum: f64,
@@ -187,5 +203,26 @@ where
         }
 
         r.finish()
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn basic_usage() {
+        let data = vec![5.0, 2.5, -1.0, 10.0, 5.0];
+
+        let reductor = MinReductor::default()
+            .with::<MeanReductor>()
+            .with::<GeometricMeanReductor>()
+            .with::<VarianceReductor>();
+
+        let result = (reductor, data.into_iter()).reduce();
+
+        println!("result: {result:?}");
+
+        let (((min, mean), geomean), variance) = result;
     }
 }
