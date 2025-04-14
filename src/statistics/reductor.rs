@@ -1,6 +1,6 @@
 // TODO: proper docs
 
-trait Reductor: Sized {
+pub trait Reductor: Sized {
     type Item;
     type Output;
 
@@ -37,7 +37,7 @@ trait Reductor: Sized {
     fn finish(self) -> Self::Output;
 }
 
-struct CompositeReductor<R1, R2> {
+pub struct CompositeReductor<R1, R2> {
     r1: R1,
     r2: R2,
 }
@@ -66,7 +66,7 @@ where
 }
 
 #[derive(Default)]
-struct MinReductor {
+pub struct MinReductor {
     min: f64,
 }
 
@@ -86,7 +86,7 @@ impl Reductor for MinReductor {
 }
 
 #[derive(Default)]
-struct MaxReductor {
+pub struct MaxReductor {
     max: f64,
 }
 
@@ -106,7 +106,7 @@ impl Reductor for MaxReductor {
 }
 
 #[derive(Default)]
-struct MeanReductor {
+pub struct MeanReductor {
     count: f64,
     running_mean: f64,
 }
@@ -130,7 +130,7 @@ impl Reductor for MeanReductor {
 }
 
 #[derive(Default)]
-struct GeometricMeanReductor {
+pub struct GeometricMeanReductor {
     count: f64,
     running_ln: f64,
 }
@@ -154,7 +154,7 @@ impl Reductor for GeometricMeanReductor {
 }
 
 #[derive(Default)]
-struct VarianceReductor {
+pub struct VarianceReductor {
     count: f64,
     sum: f64,
     variance: f64,
@@ -187,7 +187,7 @@ impl Reductor for VarianceReductor {
     }
 }
 
-trait Reducible {
+pub trait Reducible {
     type Output;
 
     fn reduce(self) -> Self::Output;
@@ -214,8 +214,6 @@ where
 
 #[cfg(test)]
 mod test {
-    use crate::statistics::Statistics;
-
     use super::*;
 
     #[test]
