@@ -5,20 +5,20 @@ pub trait Reductor: Sized {
     type Output;
 
     // add a new reductor to the chain
-    fn with_val<IR>(self, r: IR) -> impl Reductor<Item = Self::Item, Output = (Self::Output, IR::Output)>
+    fn with_val<IR>(
+        self,
+        r: IR,
+    ) -> impl Reductor<Item = Self::Item, Output = (Self::Output, IR::Output)>
     where
-        IR: Reductor<Item = Self::Item>
+        IR: Reductor<Item = Self::Item>,
     {
-        CompositeReductor {
-            r1: self,
-            r2: r,
-        }
+        CompositeReductor { r1: self, r2: r }
     }
 
     // maybe better than with_val?
     fn with<IR>(self) -> impl Reductor<Item = Self::Item, Output = (Self::Output, IR::Output)>
     where
-        IR: Reductor<Item = Self::Item> + Default
+        IR: Reductor<Item = Self::Item> + Default,
     {
         CompositeReductor {
             r1: self,
@@ -202,7 +202,7 @@ where
 
     fn reduce(self) -> Self::Output {
         let (mut r, mut i) = self;
-        
+
         r.apply_size_hint(i.size_hint());
         while let Some(x) = i.next() {
             r.signal_next(&x);
